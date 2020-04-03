@@ -1,4 +1,11 @@
+
 .va-sidenav {
+  @mixin expanded {
+    color: $color-primary-darker;
+    border-left: 8px solid $color-primary-darker !important;
+    background: $color-gray-lighter !important;
+  }
+
   background: $color-white;
   border: 1px solid $color-gray-lighter;
   border-radius: 5px;
@@ -43,6 +50,11 @@
     background: $color-gray-lighter;
     height: 1px;
     margin: 10px 23px;
+  }
+
+  .line-expanded {
+    background: $color-primary-darker;
+    height: 1px;
   }
 
   .va-sidenav-toggle-expand {
@@ -95,6 +107,11 @@
     }
   }
 
+  .item-expanded {
+    border-top: 1px solid $color-primary-darker;
+    //@include expanded()
+  }
+
   .va-sidenav-level-2 {
     a, button {
       color: $color-primary;
@@ -105,8 +122,17 @@
       transition: color 0.5s ease;
 
       &:hover {
-        color: $color-gray-dark;
+        border: 2px solid $color-primary;
+        border-left: 8px solid $color-primary !important;
+      }
+      &:active {
+        border: 2px solid $color-primary-darker;
+        //@include expanded()
       }
     }
+  }
+
+  .item-lvone-color {
+    color: $color-gray-dark !important;
   }
 }

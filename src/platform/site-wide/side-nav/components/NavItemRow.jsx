@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { get } from 'lodash';
 // Relative
-import ExpandCollapseIcon from './ExpandCollapseIcon';
+// import ExpandCollapseIcon from './ExpandCollapseIcon';
 import LabelText from './LabelText';
 import { NavItemPropTypes } from '../prop-types';
 
@@ -15,36 +15,53 @@ const NavItemRow = ({ depth, item, toggleItemExpanded }) => {
   const id = get(item, 'id');
   const isSelected = get(item, 'isSelected');
   const label = get(item, 'label', '');
+  const expanded = get(item, 'expanded');
 
   // Derive depth booleans.
   const isFirstLevel = depth === 1;
   const isDeeperThanSecondLevel = depth >= 2;
 
-  // Caclculate the indentation for the child items.
+  // Calculate the indentation for the child items.
   const indentation = isDeeperThanSecondLevel ? 20 * (depth - 1) : 20;
 
   // Render the row not as a link when there are child nav items.
   if (hasChildren) {
+    // Expanded
+    const expandedItem = !!(expanded && depth === 2);
+    // console.log({ expandedItem });
+    let clsName;
+    if (expandedItem) {
+      clsName = classNames(
+        'va-sidenav-item-label',
+        'va-sidenav-item-label-underlined',
+        {
+          'va-sidenav-item-label-bold': isFirstLevel,
+          selected: isSelected,
+        },
+        'item-expanded',
+      );
+    } else {
+      clsName = classNames(
+        'va-sidenav-item-label',
+        'va-sidenav-item-label-underlined',
+        {
+          'va-sidenav-item-label-bold': isFirstLevel,
+          selected: isSelected,
+        },
+      );
+    }
+    // console.log({ clsName });
     return (
       <button
         aria-label={label}
-        className={classNames(
-          'va-sidenav-item-label',
-          'va-sidenav-item-label',
-          'va-sidenav-item-label-underlined',
-          {
-            'va-sidenav-item-label-bold': isFirstLevel,
-            selected: isSelected,
-          },
-        )}
+        className={clsName}
         onClick={toggleItemExpanded(id)}
         style={{ paddingLeft: indentation }}
       >
         {/* Label */}
-        <LabelText item={item} />
-
+        <LabelText item={item} isLevelOne={isFirstLevel} />
         {/* Expand/Collapse Button */}
-        <ExpandCollapseIcon depth={depth} item={item} />
+        {/* <ExpandCollapseIcon depth={depth} item={item} /> */}
       </button>
     );
   }
@@ -52,7 +69,6 @@ const NavItemRow = ({ depth, item, toggleItemExpanded }) => {
   return (
     <a
       className={classNames(
-        'va-sidenav-item-label',
         'va-sidenav-item-label',
         'va-sidenav-item-label-underlined',
         {

@@ -19,7 +19,6 @@ class SideNav extends Component {
 
   toggleItemExpanded = id => () => {
     const { navItemsLookup } = this.state;
-
     // Derive the nav item and its properties.
     const navItem = get(navItemsLookup, `[${id}]`);
     const hasChildren = get(navItem, 'hasChildren');
@@ -46,9 +45,8 @@ class SideNav extends Component {
     });
   };
 
-  renderChildItems = (parentID, depth) => {
+  renderChildItems = (parentID, depth, skipLine) => {
     const { navItemsLookup } = this.state;
-
     // Derive the items to render.
     const filteredNavItems = filter(
       navItemsLookup,
@@ -67,6 +65,7 @@ class SideNav extends Component {
         renderChildItems={this.renderChildItems}
         sortedNavItems={sortedNavItems}
         toggleItemExpanded={this.toggleItemExpanded}
+        skipLine={skipLine}
       />
     ));
   };
@@ -83,11 +82,10 @@ class SideNav extends Component {
     if (!parentMostID) {
       return null;
     }
-
     return (
       <ul className="usa-width-one-fourth va-sidenav">
         {/* Render all the items recursively. */}
-        {renderChildItems(parentMostID, 1)}
+        {renderChildItems(parentMostID, 1, false)}
       </ul>
     );
   }
