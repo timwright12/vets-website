@@ -1,5 +1,3 @@
-import ReviewCardField from 'platform/forms-system/src/js/components/ReviewCardField';
-import AddressViewField from 'platform/forms-system/src/js/components/AddressViewField';
 import { VA_FORM_IDS } from 'platform/forms/constants';
 import fullSchemaMDOT from '../2346-schema.json';
 import personalInfoBox from '../components/personalInfoBox';
@@ -7,10 +5,6 @@ import { schemaFields } from '../constants';
 import ConfirmationPage from '../containers/ConfirmationPage';
 import IntroductionPage from '../containers/IntroductionPage';
 import UIDefinitions from '../definitions/2346UI';
-import {
-  buildAddressSchema,
-  addressUISchema,
-} from '../../686c-674/config/address-schema';
 
 const { email, address, yesOrNo, supplies } = fullSchemaMDOT.definitions;
 
@@ -44,8 +38,6 @@ const formPages = {
   addBatteriesPage: 'Add batteries to your order',
   addAccessoriesPage: 'Add accessories to your order',
 };
-
-const addressSchema = buildAddressSchema(true);
 
 const formConfig = {
   urlPrefix: '/',
@@ -89,62 +81,52 @@ const formConfig = {
           path: 'veteran-information/addresses',
           title: formPages.address,
           uiSchema: {
-            permanentAddressOption: {
-              [permAddressField]: {
-                ...addressUISchema(
-                  true,
-                  'permanentAddressOption.permanentAddress',
-                  () => true,
-                ),
-                'ui:field': ReviewCardField,
-                'ui:options': {
-                  viewComponent: AddressViewField,
-                },
-              },
-              useThisAddress: {
-                'ui:title': 'Ship to this address',
+            currentAddress: {
+              'ui:widget': 'radio',
+              'ui:title': 'Shipping Address',
+            },
+            newAddress: {
+              'ui:options': {
+                expandUnder: 'currentAddress',
+                expandUnderCondition: 'Add new address',
+                keepInPageOnReview: true,
               },
             },
-            temporaryAddressOption: {
-              [tempAddressField]: {
-                ...addressUISchema(
-                  true,
-                  'temporaryAddressOption.temporaryAddress',
-                  () => true,
-                ),
-                'ui:field': ReviewCardField,
-                'ui:options': {
-                  viewComponent: AddressViewField,
-                },
-              },
-              useThisAddress: {
-                'ui:title': 'Ship to this address',
-              },
-            },
-            [emailField]: emailUI,
           },
           schema: {
             type: 'object',
             properties: {
-              permanentAddressOption: {
+              currentAddress: {
+                type: 'string',
+                enum: [
+                  '1019 Robin Circle, Arroyo Grande CA 93420',
+                  '100 Some other pl, Niceville IN, 10293',
+                  'Add new address',
+                ],
+              },
+              newAddress: {
                 type: 'object',
                 properties: {
-                  permanentAddress: addressSchema,
-                  useThisAddress: {
-                    type: 'boolean',
+                  Country: {
+                    type: 'string',
+                  },
+                  City: {
+                    type: 'string',
+                  },
+                  State: {
+                    type: 'string',
+                  },
+                  Street: {
+                    type: 'string',
+                  },
+                  Postal: {
+                    type: 'string',
                   },
                 },
               },
-              temporaryAddressOption: {
-                type: 'object',
-                properties: {
-                  temporaryAddress: addressSchema,
-                  useThisAddress: {
-                    type: 'boolean',
-                  },
-                },
+              email: {
+                type: 'string',
               },
-              email,
             },
           },
         },
