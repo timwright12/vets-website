@@ -34,18 +34,6 @@ const initialState = {
     highest: null,
   },
   verified: false,
-  // TODO: add MVI identifiers for cerner patients
-  /* something along these lines:
-      {
-      isCernerPatient: true,
-      registeredFacilities: [
-        {
-          facilityId: "983",
-          isCerner: true,
-        }
-      ]
-    }
-  */
   mhvAccount: {
     accountLevel: null,
     accountState: null,
