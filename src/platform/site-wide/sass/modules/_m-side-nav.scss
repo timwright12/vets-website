@@ -1,11 +1,5 @@
 
 .va-sidenav {
-  @mixin expanded {
-    color: $color-primary-darker;
-    border-left: 8px solid $color-primary-darker !important;
-    background: $color-gray-lighter !important;
-  }
-
   background: $color-white;
   border: 1px solid $color-gray-lighter;
   border-radius: 5px;
@@ -99,6 +93,16 @@
     }
   }
 
+  .parent-children-open{
+    border-top: 1px solid $color-primary-darker;
+  }
+
+  @mixin expanded {
+    color: $color-primary-darker;
+    border-left: 8px solid $color-primary-darker !important;
+    background: $color-gray-lighter !important;
+  }
+
   .va-sidenav-item-label-bold {
     font-weight: bold;
 
@@ -107,7 +111,7 @@
     }
   }
 
-  .item-expanded {
+  .item-selected {
     border-top: 1px solid $color-primary-darker;
     //@include expanded()
   }
@@ -135,4 +139,9 @@
   .item-lvone-color {
     color: $color-gray-dark !important;
   }
+  .grandchild-left-line{
+    border-left: 2px solid $color-gray-lighter;
+    padding-left: 15px;
+  }
+
 }

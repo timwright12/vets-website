@@ -36,9 +36,9 @@ const NavItemRow = ({ depth, item, toggleItemExpanded }) => {
         'va-sidenav-item-label-underlined',
         {
           'va-sidenav-item-label-bold': isFirstLevel,
-          selected: isSelected,
+          'item-selected': isSelected,
         },
-        'item-expanded',
+        'parent-children-open',
       );
     } else {
       clsName = classNames(
@@ -46,23 +46,25 @@ const NavItemRow = ({ depth, item, toggleItemExpanded }) => {
         'va-sidenav-item-label-underlined',
         {
           'va-sidenav-item-label-bold': isFirstLevel,
-          selected: isSelected,
+          'item-selected': isSelected,
         },
       );
     }
-    // console.log({ clsName });
     return (
-      <button
+      <a
         aria-label={label}
+        id={item.id}
         className={clsName}
         onClick={toggleItemExpanded(id)}
+        href={isSelected ? '/pittsburgh-health-care' : href}
+        rel="noopener noreferrer"
         style={{ paddingLeft: indentation }}
       >
         {/* Label */}
         <LabelText item={item} isLevelOne={isFirstLevel} />
         {/* Expand/Collapse Button */}
         {/* <ExpandCollapseIcon depth={depth} item={item} /> */}
-      </button>
+      </a>
     );
   }
 
@@ -72,11 +74,11 @@ const NavItemRow = ({ depth, item, toggleItemExpanded }) => {
         'va-sidenav-item-label',
         'va-sidenav-item-label-underlined',
         {
-          selected: isSelected,
+          'item-selected': isSelected,
         },
       )}
       rel="noopener noreferrer"
-      href={href}
+      href={isSelected ? '/pittsburgh-health-care' : href}
       style={{ paddingLeft: indentation }}
     >
       {/* Label */}

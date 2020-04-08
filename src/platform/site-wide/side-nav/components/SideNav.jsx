@@ -15,6 +15,9 @@ class SideNav extends Component {
     this.state = {
       navItemsLookup: props.navItemsLookup,
     };
+    // DELETE THIS -before push
+    const element = document.getElementById('usa-alert-full-width-2925');
+    element.remove();
   }
 
   toggleItemExpanded = id => () => {
@@ -45,7 +48,7 @@ class SideNav extends Component {
     });
   };
 
-  renderChildItems = (parentID, depth, skipLine) => {
+  renderChildItems = (parentID, depth) => {
     const { navItemsLookup } = this.state;
     // Derive the items to render.
     const filteredNavItems = filter(
@@ -65,7 +68,6 @@ class SideNav extends Component {
         renderChildItems={this.renderChildItems}
         sortedNavItems={sortedNavItems}
         toggleItemExpanded={this.toggleItemExpanded}
-        skipLine={skipLine}
       />
     ));
   };
@@ -85,7 +87,7 @@ class SideNav extends Component {
     return (
       <ul className="usa-width-one-fourth va-sidenav">
         {/* Render all the items recursively. */}
-        {renderChildItems(parentMostID, 1, false)}
+        {renderChildItems(parentMostID, 1)}
       </ul>
     );
   }
