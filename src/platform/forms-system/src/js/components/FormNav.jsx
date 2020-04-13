@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash/fp'; // eslint-disable-line no-restricted-imports
 import shallowEqual from 'recompose/shallowEqual';
 
 import SegmentedProgressBar from './SegmentedProgressBar';
@@ -25,9 +24,9 @@ export default class FormNav extends React.Component {
 
     const eligiblePageList = getActiveExpandedPages(pageList, formData);
 
-    const chapters = _.uniq(
-      eligiblePageList.map(p => p.chapterKey).filter(key => !!key),
-    );
+    const chapters = [
+      ...new Set(eligiblePageList.map(p => p.chapterKey).filter(key => !!key)),
+    ];
 
     let page = eligiblePageList.filter(p => p.path === currentPath)[0];
     // If the page isn’t active, it won’t be in the eligiblePageList
