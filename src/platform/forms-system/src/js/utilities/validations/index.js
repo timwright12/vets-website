@@ -1,4 +1,3 @@
-import _ from 'lodash/fp'; // eslint-disable-line no-restricted-imports
 import moment from 'moment';
 
 // Conditions for valid SSN from the original 1010ez pdf form:
@@ -19,7 +18,7 @@ export function isValidSSN(value) {
     return false;
   }
 
-  const noBadSameDigitNumber = _.range(0, 10).every(i => {
+  const noBadSameDigitNumber = [...Array.from(10)].every(i => {
     const sameDigitRegex = new RegExp(`${i}{3}-?${i}{2}-?${i}{4}`);
     return !sameDigitRegex.test(value);
   });
