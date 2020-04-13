@@ -15,29 +15,6 @@ export function getPageList(routes, prefix = '') {
     .filter(page => page.name !== '/submit-message');
 }
 
-export function groupPagesIntoChapters(routes, prefix = '') {
-  const pageList = routes.filter(route => route.chapter).map(page => {
-    const obj = {
-      name: page.name,
-      chapter: page.chapter,
-      path: `${prefix}${page.path}`,
-    };
-
-    if (page.depends) {
-      obj.depends = page.depends;
-    }
-
-    return obj;
-  });
-
-  const pageGroups = _.groupBy(pageList, page => page.chapter);
-
-  return Object.keys(pageGroups).map(chapter => ({
-    name: chapter,
-    pages: pageGroups[chapter],
-  }));
-}
-
 /**
  * Checks if the passed-in path is part of the application form or not. This
  * function is useful for checking if a logged-out user has started filling out
