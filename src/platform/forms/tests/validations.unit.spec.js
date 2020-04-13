@@ -8,63 +8,12 @@ import {
   isValidDateRange,
   isValidMonetaryValue,
   isValidName,
-  isValidSSN,
   validateCustomFormComponent,
   validateLength,
   validateWhiteSpace,
 } from '../validations';
 
 describe('Validations unit tests', () => {
-  describe('isValidSSN', () => {
-    it('accepts ssns of the right one including "invalid" test ones', () => {
-      expect(isValidSSN('111-22-1234')).to.be.true;
-
-      // SSNs have certain invalid versions. These are useful for tests so not
-      // the validation should return TRUE for them.
-      //
-      // For information on invalid values see:
-      //   https://secure.ssa.gov/poms.nsf/lnx/0110201035
-      expect(isValidSSN('666-22-1234')).to.be.true;
-      expect(isValidSSN('900-22-1234')).to.be.true;
-      expect(isValidSSN('111221234')).to.be.true;
-      expect(isValidSSN('111111112')).to.be.true;
-    });
-
-    it('rejects invalid ssn format', () => {
-      // Disallow empty.
-      expect(isValidSSN('')).to.be.false;
-
-      // 123-45-6789 is invalid.
-      expect(isValidSSN('123-45-6789')).to.be.false;
-
-      // Invalid characters.
-      expect(isValidSSN('111-22-1%34')).to.be.false;
-      expect(isValidSSN('111-22-1A34')).to.be.false;
-      expect(isValidSSN('hi mom')).to.be.false;
-      expect(isValidSSN('123-456789')).to.be.false;
-      expect(isValidSSN('12345-6789')).to.be.false;
-
-      // No leading or trailing spaces.
-      expect(isValidSSN('111-22-1A34 ')).to.be.false;
-      expect(isValidSSN(' 111-22-1234')).to.be.false;
-      expect(isValidSSN('-11-11111111')).to.be.false;
-
-      // Too few numbers is invalid.
-      expect(isValidSSN('111-22-123')).to.be.false;
-
-      // Consecutive 0's in each segment is invalid.
-      expect(isValidSSN('000-22-1234')).to.be.false;
-      expect(isValidSSN('111-00-1234')).to.be.false;
-      expect(isValidSSN('111-22-0000')).to.be.false;
-
-      // Values with all the same digit are not allowed
-      expect(isValidSSN('111111111')).to.be.false;
-      expect(isValidSSN('999-99-9999')).to.be.false;
-      expect(isValidSSN('222222222')).to.be.false;
-      expect(isValidSSN('444-44-4444')).to.be.false;
-    });
-  });
-
   describe('isValidDate', () => {
     it('validate february separately cause its a special snowflake', () => {
       // feb 28 should work always.

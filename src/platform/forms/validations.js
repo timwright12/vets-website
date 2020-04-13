@@ -146,36 +146,6 @@ function isValidFullNameField(field) {
   );
 }
 
-// Conditions for valid SSN from the original 1010ez pdf form:
-// '123456789' is not a valid SSN
-// A value where the first 3 digits are 0 is not a valid SSN
-// A value where the 4th and 5th digits are 0 is not a valid SSN
-// A value where the last 4 digits are 0 is not a valid SSN
-// A value with 3 digits, an optional -, 2 digits, an optional -, and 4 digits is a valid SSN
-// 9 of the same digits (e.g., '111111111') is not a valid SSN
-function isValidSSN(value) {
-  if (
-    value === '123456789' ||
-    value === '123-45-6789' ||
-    /^0{3}-?\d{2}-?\d{4}$/.test(value) ||
-    /^\d{3}-?0{2}-?\d{4}$/.test(value) ||
-    /^\d{3}-?\d{2}-?0{4}$/.test(value)
-  ) {
-    return false;
-  }
-
-  const noBadSameDigitNumber = [...Array.from(10)].every(i => {
-    const sameDigitRegex = new RegExp(`${i}{3}-?${i}{2}-?${i}{4}`);
-    return !sameDigitRegex.test(value);
-  });
-
-  if (!noBadSameDigitNumber) {
-    return false;
-  }
-
-  return /^\d{9}$/.test(value) || /^\d{3}-\d{2}-\d{4}$/.test(value);
-}
-
 function isValidMonetaryValue(value) {
   if (value !== null) {
     return /^\d+\.?\d*$/.test(value);
@@ -265,7 +235,6 @@ export {
   isValidMonetaryValue,
   isValidPhone,
   isValidRequiredField,
-  isValidSSN,
   isValidValue,
   validateCustomFormComponent,
   validateIfDirty,
