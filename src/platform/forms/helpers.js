@@ -37,7 +37,7 @@ export function isInProgressPath(pathName, additionalNonFormPaths = []) {
   return nonFormPaths.every(path => !trimmedPathname.endsWith(path));
 }
 
-export function isActivePage(page, data) {
+function isActivePage(page, data) {
   if (typeof page.depends === 'function') {
     return page.depends(data, page.index);
   }
