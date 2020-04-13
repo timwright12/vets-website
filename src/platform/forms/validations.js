@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import moment from 'moment';
 import { dateToMoment } from '../utilities/date';
 
@@ -165,7 +164,7 @@ function isValidSSN(value) {
     return false;
   }
 
-  const noBadSameDigitNumber = _.range(0, 10).every(i => {
+  const noBadSameDigitNumber = [...Array.from(10)].every(i => {
     const sameDigitRegex = new RegExp(`${i}{3}-?${i}{2}-?${i}{4}`);
     return !sameDigitRegex.test(value);
   });
