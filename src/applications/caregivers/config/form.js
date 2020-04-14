@@ -1,5 +1,6 @@
 import fullSchema from 'vets-json-schema/dist/10-10CG-schema.json';
 import * as getAddressSchema from 'platform/forms-system/src/js/definitions/address';
+import Caregivers404 from '../containers/404';
 
 import fullNameUI from 'platform/forms-system/src/js/definitions/fullName';
 import { states } from 'platform/forms/address';
@@ -66,6 +67,8 @@ const hasSecondaryTwoCaregiver = formData =>
     secondaryCaregiverFields.secondaryOne.hasSecondaryTwoCaregiverView
   ] === true;
 
+const is1010CGDown = true;
+
 /* Chapters
  * 1 - Vet/Service Member (required)
  * 2 - Primary Family Caregiver (required)
@@ -77,8 +80,9 @@ const formConfig = {
   submit: () =>
     Promise.resolve({ attributes: { confirmationNumber: '123123123' } }),
   trackingPrefix: 'caregiver-',
-  introduction: IntroductionPage,
-  footerContent: NeedHelpFooter,
+  introduction: is1010CGDown ? Caregivers404 : IntroductionPage,
+  downtime: is1010CGDown ? Caregivers404 : undefined,
+  footerContent: is1010CGDown ? undefined : NeedHelpFooter,
   preSubmitInfo: PreSubmitInfo,
   confirmation: ConfirmationPage,
   formId: '10-10CG',
