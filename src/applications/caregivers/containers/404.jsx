@@ -7,7 +7,7 @@ const Caregivers404 = () => (
     headline="Sorry Caregivers 10-10CG is currently not available"
     status="error"
   >
-    <p>Please apply via mail, find additional at the page below:</p>
+    <p>Please apply via mail, find additional information at the page below:</p>
     <a href="https://www.va.gov/health-care/family-caregiver-benefits/comprehensive-assistance/">
       The Program of Comprehensive Assistance for Family Caregivers
     </a>
