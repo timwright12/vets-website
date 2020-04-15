@@ -1,3 +1,4 @@
+$side-nav-color-gray-lightest: #f8f8f8; // I could not find the color in our design utilities.
 
 .va-sidenav {
   background: $color-white;
@@ -89,7 +90,7 @@
     }
 
     &:hover {
-      background: #f8f8f8; // I could not find the color in our design utilities.
+      background: $side-nav-color-gray-lightest;
     }
   }
 

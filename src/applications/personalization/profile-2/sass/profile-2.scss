@@ -1,7 +1,11 @@
 @import "~@department-of-veterans-affairs/formation/sass/shared-variables";
 @import "../../../../platform/forms/sass/m-schemaform";
+@import "./profile-info-table";
 
 nav.profile-side-nav {
+  ul {
+    padding: 0;
+  }
   li {
     list-style: none;
   }
@@ -12,4 +16,8 @@ nav.profile-side-nav {
     font-weight: bold;
     color: $color-black;
   }
+}
+
+.profile-service-badge {
+  max-height: 108px;
 }

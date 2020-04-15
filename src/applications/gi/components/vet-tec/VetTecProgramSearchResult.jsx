@@ -30,6 +30,8 @@ class VetTecProgramSearchResult extends React.Component {
       ? formatCurrency(tuitionAmount)
       : 'TBD';
 
+    const cautionFlag = cautionFlags && cautionFlags.length > 0;
+
     const displayHours =
       lengthInHours === '0' ? 'TBD' : `${lengthInHours} hours`;
 
@@ -45,8 +47,8 @@ class VetTecProgramSearchResult extends React.Component {
             <div className="row vads-u-padding-top--1p5">
               <div className="small-12 medium-7 columns">
                 <h2>
-                  <a
-                    href={linkTo.pathname}
+                  <Link
+                    to={linkTo}
                     aria-label={`${description} ${locationInfo(
                       city,
                       state,
@@ -54,22 +56,18 @@ class VetTecProgramSearchResult extends React.Component {
                     )}`}
                   >
                     {description}
-                  </a>
+                  </Link>
                 </h2>
               </div>
               <div className="small-12 medium-3 columns">
                 {renderPreferredProviderFlag(this.props.result)}
               </div>
             </div>
-            {(schoolClosing || cautionFlags) && (
+            {(schoolClosing || cautionFlag) && (
               <div className="row alert-row">
                 <div className="small-12 columns">
                   {renderSchoolClosingAlert({ schoolClosing, schoolClosingOn })}
-                  {cautionFlags &&
-                    cautionFlags.length > 0 &&
-                    renderCautionAlert({
-                      cautionFlags,
-                    })}
+                  {renderCautionAlert({ cautionFlag, cautionFlags })}
                 </div>
               </div>
             )}
