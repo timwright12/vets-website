@@ -5,6 +5,7 @@ const mock = require('./mock-helpers');
 const VA_FORM_IDS = require('platform/forms/constants').VA_FORM_IDS;
 
 const logoutRequestUrl = '/sessions/slo/new';
+// const logoutRequestUrlSSO = 'v1/sessions/ssoe_slo/new';
 
 function setUserSession(token, client) {
   client.setCookie({ name: 'token', value: token, httpOnly: true });
