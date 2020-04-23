@@ -1,9 +1,11 @@
 import React from 'react';
+import { Element as ScrollElement, scroller } from 'react-scroll';
 import PropTypes from 'prop-types';
 
 import Modal from '@department-of-veterans-affairs/formation-react/Modal';
 
 import LoadingButton from 'platform/site-wide/loading-button/LoadingButton';
+import { getScrollOptions, focusElement } from 'platform/utilities/ui';
 import {
   isFailedTransaction,
   isPendingTransaction,
@@ -38,6 +40,23 @@ export default class Vet360EditModal extends React.Component {
       this.props.formSchema,
       this.props.uiSchema,
     );
+  }
+
+  componentWillUpdate(nextProps) {
+    if (nextProps.transactionRequest !== this.props.transactionRequest) {
+      if (nextProps.transactionRequest.error) {
+        // This setTimeout ensures the DOM is able to update with the error message
+        // after a transaction failure
+        setTimeout(
+          () =>
+            scroller.scrollTo('profileError', {
+              containerId: '.va-modal-body',
+            }),
+          300,
+        );
+        focusElement('.usa-alert .usa-alert-error');
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -107,13 +126,15 @@ export default class Vet360EditModal extends React.Component {
       <Modal id="profile-edit-modal" onClose={onCancel} visible={isFormReady}>
         <h3>Edit {title.toLowerCase()}</h3>
         {error && (
-          <div className="vads-u-margin-bottom--1">
-            <Vet360EditModalErrorMessage
-              title={title}
-              error={error}
-              clearErrors={clearErrors}
-            />
-          </div>
+          <ScrollElement name="profileError">
+            <div className="vads-u-margin-bottom--1">
+              <Vet360EditModalErrorMessage
+                title={title}
+                error={error}
+                clearErrors={clearErrors}
+              />
+            </div>
+          </ScrollElement>
         )}
         {isFormReady && render(actionButtons, onSubmit)}
       </Modal>
