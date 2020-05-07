@@ -38,7 +38,7 @@ function downloadFile(url, dest) {
 }
 
 async function downloadFromLiveBucket(files, buildOptions) {
-  const bucket = buckets[buildOptions.buildtype];
+  const bucket = buckets[buildOptions['asset-source-buildtype']];
   const fileManifestPath = 'generated/file-manifest.json';
 
   console.log(`Downloading assets from ${bucket}...`);
@@ -104,11 +104,12 @@ async function downloadFromArchive(files, assetSource, buildtype) {
 function downloadAssets(buildOptions) {
   return async (files, smith, done) => {
     const assetSource = buildOptions['asset-source'];
+    const assetSourceBuildType = buildOptions['asset-source-buildtype'];
 
     if (assetSource === assetSources.DEPLOYED) {
       await downloadFromLiveBucket(files, buildOptions);
     } else {
-      await downloadFromArchive(files, assetSource, buildOptions.buildtype);
+      await downloadFromArchive(files, assetSource, assetSourceBuildType);
     }
 
     done();

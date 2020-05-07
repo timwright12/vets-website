@@ -30,6 +30,7 @@ const COMMAND_LINE_OPTIONS_DEFINITIONS = [
   { name: 'public', type: String, defaultValue: null },
   { name: 'destination', type: String, defaultValue: null },
   { name: 'asset-source', type: String, defaultValue: assetSources.LOCAL },
+  { name: 'asset-source-buildtype', type: String, defaultValue: defaultBuildtype },
   { name: 'content-directory', type: String, defaultValue: defaultContentDir },
   { name: 'pull-drupal', type: Boolean, defaultValue: false },
   { name: 'use-cms-export', type: Boolean, defaultValue: false },
@@ -64,6 +65,9 @@ function gatherFromCommandLine() {
   // Set defaults which require the value of other options
   options['cms-export-dir'] =
     options['cms-export-dir'] || defaultCMSExportContentDir(options.buildtype);
+
+  options['asset-source-buildtype'] = options['asset-source-buildtype'] ||
+    options.buildtype;
 
   if (options.unexpected && options.unexpected.length !== 0) {
     throw new Error(`Unexpected arguments: '${options.unexpected}'`);

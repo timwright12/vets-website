@@ -33,6 +33,12 @@ const helpSections = [
           'Tell the build where to pull the application assets from.\nOptions include {bold local} (default), {bold deployed}, or a {bold vets-website commit hash}.',
       },
       {
+        name: 'asset-source-buildtype',
+        type: String,
+        description:
+          'Tell the build which application assets source to use. Only used when asset-source is not local.\nOptions include {bold vagovdev}, {bold vagovstaging}, {bold vagovprod}.  Defaults to {bold --buildtype}.',
+      },
+      {
         name: 'content-directory',
         type: String,
         description: `Tell the build where to find the vagov-content repo.\nDefaults to {underline ${defaultContentDir}}`,
