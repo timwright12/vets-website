@@ -42,7 +42,6 @@ class PaymentsReceived extends Component {
   };
 
   paginate = (array, pageSize, pageNumber) =>
-    // human-readable page numbers usually start with 1, so we reduce 1 in the first argument
     array.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
 
   handleDataPagination = page => {
