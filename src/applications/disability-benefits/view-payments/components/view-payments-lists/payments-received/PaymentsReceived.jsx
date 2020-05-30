@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import SortableTable from '@department-of-veterans-affairs/formation-react/SortableTable';
 import Pagination from '@department-of-veterans-affairs/formation-react/Pagination';
+import ResponsiveTable from '../../responsive-table/ResponsiveTable';
 import { mockData } from './helpers';
 
 class PaymentsReceived extends Component {
@@ -65,7 +66,7 @@ class PaymentsReceived extends Component {
           benefits on the last business day before the 1st. For example, if May
           1st is a Saturday, benefits would be paid on Friday, April 30.
         </p>
-        <SortableTable
+        <ResponsiveTable
           className="va-table"
           currentSort={{
             value: 'String',
