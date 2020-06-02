@@ -47,7 +47,11 @@ class ResponsiveTable extends Component {
     return (
       <tr key={item.id} className={item.rowClass}>
         {fields.map(field => (
-          <td data-label={field.value} key={`${item.id}-${field.value}`}>
+          <td
+            data-label={field.value}
+            key={`${item.id}-${field.value}`}
+            className="vads-u-font-size--sm"
+          >
             {item[field.value]}
           </td>
         ))}

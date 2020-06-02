@@ -22,7 +22,7 @@ export const mockData = [
   {
     id: 3,
     date: 'June 7, 2020',
-    amount: '$$24',
+    amount: '$24',
     type: 'Some cool type',
     method: 'Mssenger pigeon',
     bank: 'Chase',
