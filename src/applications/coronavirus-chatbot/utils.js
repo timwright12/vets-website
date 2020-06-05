@@ -14,7 +14,7 @@ export const recordLinkClicks = () => {
   });
 };
 
-const disableButtons = event => {
+export const disableButtons = event => {
   // if user clicked the div, bubble up to parent to disable the button
   const targetButton =
     event.target.tagName.toLowerCase() === 'button'
