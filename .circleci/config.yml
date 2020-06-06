@@ -58,7 +58,7 @@ jobs:
           at: ~/
       - restore_cache:
           keys:
-            - yarn-packages-e2e-{{ checksum "yarn.lock" }}
+            - yarn-packages-e2e-v1-{{ checksum "yarn.lock" }}
       - run:
           name: Installed Dependencies
           command: yarn --frozen-lockfile --cache-folder ~/.cache/yarn
@@ -119,12 +119,12 @@ jobs:
   build-e2e:
     working_directory: ~/vets-website
     docker:
-      - image: cypress/base:10.15.3
+      - image: cypress/base:10.15.3-browsers
     steps:
       - checkout
       - restore_cache:
           keys:
-            - yarn-packages-e2e-{{ checksum "yarn.lock" }}
+            - yarn-packages-e2e-v1-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
           command: yarn --frozen-lockfile --cache-folder ~/.cache/yarn
