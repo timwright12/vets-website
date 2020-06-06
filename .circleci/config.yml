@@ -119,7 +119,7 @@ jobs:
   build-e2e:
     working_directory: ~/vets-website
     docker:
-      - image: cypress/base:10.15.3-browsers
+      - image: circleci/node:10.15.3-browsers
     steps:
       - checkout
       - restore_cache:
