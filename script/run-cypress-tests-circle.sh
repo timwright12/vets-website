@@ -15,5 +15,5 @@ else
 
   # Start the web server & run Cypress tests.
   # Wait for http://localhost:3001/generated/style.css to finish bundling so Cypress doesn't start too soon.
-  yarn start-server-and-test watch http-get://localhost:3001/generated/style.css "cypress run $reporterArgs"
+  yarn start-server-and-test "node src/platform/testing/e2e/test-server.js --buildtype=localhost --port=3001" 3001 "cypress run $reporterArgs"
 fi
