@@ -51,6 +51,7 @@ jobs:
     working_directory: ~/vets-website
     docker:
       - image: circleci/node:10.15.3-browsers
+    resource_class: xlarge
     parallelism: 2
     steps:
       - checkout
