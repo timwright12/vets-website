@@ -212,7 +212,7 @@ export class AdditionalInformation extends React.Component {
     };
 
     return (
-      <div className="additional-information row">
+      <div role="application" className="additional-information row">
         <div className="usa-width-one-half medium-6 columns">
           {this.renderInstitutionSummary()}
           <div className="historical-information list">
