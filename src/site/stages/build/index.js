@@ -267,6 +267,25 @@ function build(BUILD_OPTIONS) {
   smith.use(injectAxeCore(BUILD_OPTIONS), 'Inject axe-core for accessibility');
   smith.use(replaceContentsWithDom, 'Save the changes from the modified DOM');
 
+const terms = [
+  'VR&E',
+  'Vocational Rehabilitation and Employment',
+  'voc rehab',
+  'vocational Rehab',
+  'rehabilitation services and Chapter 31',
+]
+
+  smith.use((files) => {
+    for (const [fileName, file] of Object.entries(files)) {
+      if (fileName.endsWith('html')) {
+        const hasKeyword = terms.filter(t => file.contents.toString().toLowerCase().includes(t.toLowerCase()))
+        if (hasKeyword.length > 0) {
+          console.log(`| ${fileName} | ${hasKeyword.join()} |`)
+        }
+      }
+    }
+  })
+
   /* eslint-disable no-console */
   smith.build(err => {
     if (err) throw err;
