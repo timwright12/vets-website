@@ -65,7 +65,7 @@ export const mhvToolName = appId => {
       return 'VA Blue Button';
 
     case widgetTypes.RX:
-      return 'Prescription Refill and Tracking';
+      return 'VA Prescription Refill and Tracking';
 
     case widgetTypes.MESSAGING:
       return 'Secure Messaging';
@@ -75,7 +75,7 @@ export const mhvToolName = appId => {
 
     case widgetTypes.SCHEDULE_APPOINTMENTS:
     case widgetTypes.VIEW_APPOINTMENTS:
-      return 'VA Appointments';
+      return 'VA health appointment';
 
     case widgetTypes.DIRECT_DEPOSIT:
       return 'Direct Deposit';

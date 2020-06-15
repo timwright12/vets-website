@@ -20,7 +20,11 @@ import {
   upgradeMHVAccount,
 } from 'platform/user/profile/actions';
 
-import { isLoggedIn, selectProfile } from 'platform/user/selectors';
+import {
+  isLoggedIn,
+  selectProfile,
+  selectIsCernerPatient,
+} from 'platform/user/selectors';
 import titleCase from 'platform/utilities/data/titleCase';
 
 import {
@@ -148,19 +152,19 @@ export class CallToActionWidget extends React.Component {
   };
 
   getHealthToolContent = () => {
-    const { appId, mhvAccount, profile } = this.props;
+    const { appId, mhvAccount, profile, isCernerPatient } = this.props;
 
     if (this.hasMVIError()) {
       return this.getMviErrorContent();
     }
 
     if (this.isAccessible()) {
-      // TODO add a flag here for cerner vs non-cerner
       return (
         <OpenMyHealtheVet
           serviceDescription={this._serviceDescription}
           primaryButtonHandler={this.goToTool}
           toolName={this._mhvToolName}
+          isCernerPatient={isCernerPatient}
         />
       );
     }
@@ -447,6 +451,7 @@ const mapStateToProps = state => {
     mhvAccount,
     mviStatus: status,
     featureToggles: state.featureToggles,
+    isCernerPatient: selectIsCernerPatient(state),
     useSSOe: ssoe(state),
   };
 };

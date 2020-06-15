@@ -42,6 +42,5 @@ export function createIsServiceAvailableSelector(service) {
 
 export const selectIsCernerOnlyPatient = state =>
   !!selectPatientFacilities(state)?.every(f => f.isCerner);
-// TODO use this in alert box
 export const selectIsCernerPatient = state =>
   selectPatientFacilities(state)?.some(f => f.isCerner);
