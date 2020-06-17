@@ -32,7 +32,7 @@ When we look at the JSON inside this `formConfig` object you will see many of th
 
 > There is a full API reference for form.js located [here](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/reference.md) if you need it.
 
-Critically this `form.js` file also contains configuration options for the pages and fields of the form. In the file created by the Yeoman generator we will look at in a moment you will see a key/ value pair for `chapters`, the concept of chapters is really just a way to organize the pages of your form into 'sections'. A good example of this may be that your form might require a 'veteran information' page with things like name, social security number, and email address. Your form might also require a'veteran address' page with things like city, state, and street address. Both the 'veteran information' and 'veteran address' pages could be considered part of a section called 'veteran details', this 'veteran details' section is the perfect use case for a `chapter`. The `chapter` for 'veteran details' would include two pages, one for 'veteran information' and one for 'veteran address'. Inside the page objects for 'veteran information' and 'veteran address' you would place the key/ value pairs for each of the fields you want included on these pages.
+Critically this `form.js` file also contains configuration options for the pages and fields of the form. In the file created by the Yeoman generator we will look at in a moment you will see a key/ value pair for `chapters`, the concept of chapters is really just a way to organize the pages of your form into 'sections'. A good example of this may be that your form might require a 'veteran information' page with things like name, social security number, and email address. Your form might also require a 'veteran address' page with things like city, state, and street address. Both the 'veteran information' and 'veteran address' pages could be considered part of a section called 'veteran details', this 'veteran details' section is the perfect use case for a `chapter`. The `chapter` for 'veteran details' would include two pages, one for 'veteran information' and one for 'veteran address'. Inside the page objects for 'veteran information' and 'veteran address' you would place the key/ value pairs for each of the fields you want included on these pages.
 
 At this point it will be helpful for us to actually build a form using the Yeoman generator so we can see what this all looks like in practice.
 
@@ -40,7 +40,7 @@ At this point it will be helpful for us to actually build a form using the Yeoma
 
 > This section assumes you have `vets-website` running on your local machine, if you still need to set that up you can visit [this page for instructions](https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/getting-started).
 
-To make setting up a form as easy as possible we have a Yeoman generator that will take you through a few questions about the form you are building and then create the files and code you need to get started. To beign, navigate to the root of your local `vets-website` and run
+To make setting up a form as easy as possible we have a Yeoman generator that will take you through a few questions about the form you are building and then create the files and code you need to get started. To begin, navigate to the root of your local `vets-website` and run
 
 ```
 yo @department-of-veterans-affairs/vets-website
@@ -55,14 +55,122 @@ This will take you through a few questions as follows -
 | What should be the name of your app's entry bundle? | 'newForm' | This is used as the name of the entry file by React when it builds your form's HTML, CSS and JavaScript. It can be changed later if needed. |
 | What's the root url for this app? | '/new-form' | This is the URl you will use to access your form |
 | Is this a form app? | Y | This is if the app we are building is a form app or not |
-| What's your form number? | '21-230' | Each for at the VA has a form number accosiated with it, this is where that form number goes for the digital version |
-| What's the Google Analytics event prefix you want to use? | 'my-form' | Our forms come out of the box with a standard set of Google Analytics events, this is the prefox you want for your events to be tracked in Google Analytics based on. This can be changed later |
-| What's the respondent burden of this form in minutes? | 30 | Each form at the VA has a respondent burden, the time it takes to fill out the paper form, accosiated with it. This will be displayed on the introduction page to your form |
+| Where can I find the vagov-content repo? | 'new-page' | Within the vagov-content repo there is a page created for you that can be used as a static landing page with information before a user enters your form |
+| What's your form number? | '21-230' | Each for at the VA has a form number associated with it, this is where that form number goes for the digital version |
+| What's the Google Analytics event prefix you want to use? | 'my-form' | Our forms come out of the box with a standard set of Google Analytics events, this is the prefix you want for your events to be tracked in Google Analytics based on. This can be changed later |
+| What's the respondent burden of this form in minutes? | 30 | Each form at the VA has a respondent burden, the time it takes to fill out the paper form, associated with it. This will be displayed on the introduction page to your form |
 | What's the OMB control number for this form? | 112233 | The Paperwork Reduction Act mandates that all federal government agencies receive approval from OMB, this is the number that the OMB assigned to the form. You can change this later if you need to |
-| What's the OMB expiration date (in M/D/YYYY format) for this form? | 5/31/2018 | This is when the OMB contol number expires and the paper version of your form would need to be reviewed. You can change this later if you need to |
+| What's the OMB expiration date (in M/D/YYYY format) for this form? | 5/31/2018 | This is when the OMB control number expires and the paper version of your form would need to be reviewed. You can change this later if you need to |
 | What's the benefit description for this form? | 'new form benefits' | This is a short description of what benefit the form you are working on is for. This doesn't show up anywhere on the front end and can be changed later if you need to |
-| Which form template would you like to start with? | BLANK: A form without any fields | Our form generator can create three different types of forms with three different levels of complexity. This is how complex your form will be and what the generator should generate for you |
+| Which form template would you like to start with? | SIMPLE: A single-chapter form with a single field | Our form generator can create three different types of forms with three different levels of complexity. This is how complex your form will be and what the generator should generate for you |
+
+The answer you give to the question `Which form template would you like to start with?` will change what folders, files, and code are created - The more complex of a form you answer in this question the more folders, files and code the generator will create for you. In the sample answers given above we went with the answer `SIMPLE: A single-chapter form with a single field`. If you use this answer, along with the other sample answers shown in the table above, this will create the following folders and files inside the vets-website/src/applications directory - 
+
+```
+new-form
+| config
+| | form.js
+|
+| containers
+| | App.jsx
+| | ConfirmationPage.jsx
+| | IntroductionPage.jsx
+|
+| reducers
+| | index.js
+|
+| sass
+| | new-form.scss
+|
+| tests
+| | 00.new-form.e2e.spec.js
+|
+| app-entry.jsx
+| manifest.json
+| routes.jsx
+
+```
+
+### Open your form on your local machine
+
+Next you'll need to start the site up locally (restart this task if it is already running):
+
+```
+yarn watch
+```
+Then navigate to http://localhost:3001/new-form. You should see the introduction page of your form. If you do not see your form check your terminal for any errors.
+
+## Form Schema
+
+The main file we will continue to focus on is `form.js`, lets open up new-form/config/form.js and take a look, you should see this code inside the file -
+
+```javascript
+// import fullSchema from 'vets-json-schema/dist/-schema.json';
+
+import IntroductionPage from '../containers/IntroductionPage';
+import ConfirmationPage from '../containers/ConfirmationPage';
+
+// const { } = fullSchema.properties;
+
+// const { } = fullSchema.definitions;
+
+const formFields = {
+  firstName: 'firstName',
+};
+
+const formConfig = {
+  urlPrefix: '/',
+  submitUrl: '/v0/api',
+  trackingPrefix: 'new-form-',
+  introduction: IntroductionPage,
+  confirmation: ConfirmationPage,
+  formId: '',
+  version: 0,
+  prefillEnabled: true,
+  savedFormMessages: {
+    notFound: 'Please start over to apply for benefits.',
+    noAuth: 'Please sign in again to continue your application for benefits.',
+  },
+  title: 'A New Form',
+  defaultDefinitions: {},
+  chapters: {
+    trackingPrefix: {
+      title: 'Personal Information',
+      pages: {
+        page1: {
+          path: 'first-name',
+          title: 'Personal Information - Page 1',
+          uiSchema: {
+            [formFields.firstName]: {
+              'ui:title': 'First Name',
+            },
+          },
+          schema: {
+            required: [formFields.firstName],
+            type: 'object',
+            properties: {
+              [formFields.firstName]: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export default formConfig;
+
+```
+You can see the variable `formConfig` which is being assigned a large bit of JSON code and then being exported as the default for the file. This JSON code is the configuration of your form mentioned [earlier](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/my-first-form.md#form-system-concepts) in this document. You can see key/ value pairs such as `submitUrl` and `trackingPrefix`, all of the key value pairs are how you configure your form to be built the way you want it. 
+
+At the most basic level, our forms consist of: widgets, fields, pages, and chapters.
+
+- Chapters are collections of pages.
+- We then have pages, which are collections of fields.
+- Fields are the next level up and contain a widget and a `label`, plus some extra optional description information.
+- Widgets are the basic form controls, things like `input` and `select` elements.
 
 
-
-
+We can see in the config that there's already one chapter, with one page inside it, called page1. In the page1object there are a few pieces of information, which we can mostly ignore for now. The important properties for us right now are uiSchemaand schema. schemais the initial structure of our page, in the form of a JSON Schema. This describes the type of data that will result from a user filling in our form. It's also used by the form library to determine what fields and widgets to display in the application, except when overridden by uiSchema. uiSchemais an object that has extra, user interface-focused information to help render the form.
