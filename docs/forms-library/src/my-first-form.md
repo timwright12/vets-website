@@ -4,8 +4,8 @@
 
 1. [Form System Concepts](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/my-first-form.md#form-system-concepts)
 2. [The Yeoman generator](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/my-first-form.md#the-yeoman-generator)
-3. Form Schema
-4. Form uiSchema
+3. [Form Schema](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/my-first-form.md#form-schema)
+4. [Form uiSchema](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/my-first-form.md#form-uischema)
 
 Welcome to the VA Forms Library! In this chapter, we'll create a simple form application from the ground up and get it running on your local machine. Before we dive into actually building a form it will be helpful to give a bird's eye view of how our form system works.
 
@@ -15,9 +15,9 @@ Welcome to the VA Forms Library! In this chapter, we'll create a simple form app
 
 Conceptually our form system is set up to help you build a form on VA.gov as quickly and painlessly as possible. In practice what this means is that you as the engineer building the form only need to fill out a configuration file and everything else in terms of building the HTML, CSS, and JavaScript is all taken care of by the form system.  This can be a huge abstraction at first so let's explore this a little deeper. 
 
-The work you do with the form system will center around the configuration file I mentioned earlier, this file is called `form.js`. This configuration file is mostly a JSON object that gets exported as the default from the file. This JSON object is where you tell the form system what your form is called, how many pages it has, what form fields are in each page, how each field is to be validated, basically everything about your form. This configuration file can become very large and very complicated so it is critical that we become very comfortable with it from the outset, otherwise things can get tricky later on.
+The work you do with the form system will center around the configuration file I mentioned earlier, this file is called `form.js`. This configuration file is mostly a JSON object that gets exported as the default from the file. This JSON object is where you tell the form system what your form is called, how many pages it has, what form fields are on each page, how each field is to be validated, basically everything about your form. This configuration file can become very large and very complicated so it is critical that we become very comfortable with it from the outset, otherwise things can get tricky later on.
 
-In a moment we will run the Yeoman generator to build a form and a `form.js` file will be created for you, however let's look at what that file will contain so that we are familiar with it before we see it in action. The main areas of interest are a set of imports and a JSON object called `formConfig`, lets focus on this `formConfig` object for a moment, here is what it looks like and it contains lots of JSON -
+In a moment we will run the Yeoman generator to build a form and a `form.js` file will be created for you, however, let's look at what that file will contain so that we are familiar with it before we see it in action. The main areas of interest are a set of imports and a JSON object called `formConfig`, let's focus on this `formConfig` object for a moment, here is what it looks like and it contains lots of JSON -
 
 ```
 ...Some imports
@@ -32,9 +32,9 @@ When we look at the JSON inside this `formConfig` object you will see many of th
 
 > There is a full API reference for form.js located [here](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/reference.md) if you need it.
 
-Critically this `form.js` file also contains configuration options for the pages and fields of the form. In the file created by the Yeoman generator we will look at in a moment you will see a key/ value pair for `chapters`, the concept of chapters is really just a way to organize the pages of your form into 'sections'. A good example of this may be that your form might require a 'veteran information' page with things like name, social security number, and email address. Your form might also require a 'veteran address' page with things like city, state, and street address. Both the 'veteran information' and 'veteran address' pages could be considered part of a section called 'veteran details', this 'veteran details' section is the perfect use case for a `chapter`. The `chapter` for 'veteran details' would include two pages, one for 'veteran information' and one for 'veteran address'. Inside the page objects for 'veteran information' and 'veteran address' you would place the key/ value pairs for each of the fields you want included on these pages.
+Critically this `form.js` file also contains configuration options for the pages and fields of the form. In the file created by the Yeoman generator, we will look at in a moment you will see a key/ value pair for `chapters`, the concept of chapters is really just a way to organize the pages of your form into 'sections'. A good example of this may be that your form might require a 'veteran information' page with things like name, social security number, and email address. Your form might also require a 'veteran address' page with things like city, state, and street address. Both the 'veteran information' and 'veteran address' pages could be considered part of a section called 'veteran details', this 'veteran details' section is the perfect use case for a `chapter`. The `chapter` for 'veteran details' would include two pages, one for 'veteran information' and one for 'veteran address'. Inside the page objects for 'veteran information' and 'veteran address' you would place the key/ value pairs for each of the fields you want to be included on these pages.
 
-At this point it will be helpful for us to actually build a form using the Yeoman generator so we can see what this all looks like in practice.
+At this point, it will be helpful for us to build a form using the Yeoman generator so we can see what this all looks like in practice.
 
 ## The Yeoman generator
 
@@ -64,7 +64,7 @@ This will take you through a few questions as follows -
 | What's the benefit description for this form? | 'new form benefits' | This is a short description of what benefit the form you are working on is for. This doesn't show up anywhere on the front end and can be changed later if you need to |
 | Which form template would you like to start with? | SIMPLE: A single-chapter form with a single field | Our form generator can create three different types of forms with three different levels of complexity. This is how complex your form will be and what the generator should generate for you |
 
-The answer you give to the question `Which form template would you like to start with?` will change what folders, files, and code are created - The more complex of a form you answer in this question the more folders, files and code the generator will create for you. In the sample answers given above we went with the answer `SIMPLE: A single-chapter form with a single field`. If you use this answer, along with the other sample answers shown in the table above, this will create the following folders and files inside the vets-website/src/applications directory - 
+The answer you give to the question `Which form template would you like to start with?` will change what folders, files, and code are created - The more complex of a form you answer in this question the more folders, files and code the generator will create for you. In the sample answers given above, we went with the answer `SIMPLE: A single-chapter form with a single field`. If you use this answer, along with the other sample answers shown in the table above, this will create the following folders and files inside the vets-website/src/applications directory - 
 
 ```
 new-form
@@ -93,7 +93,7 @@ new-form
 
 ### Open your form on your local machine
 
-Next you'll need to start the site up locally (restart this task if it is already running):
+Next, you'll need to start the site up locally (restart this task if it is already running):
 
 ```
 yarn watch
@@ -102,7 +102,7 @@ Then navigate to http://localhost:3001/new-form. You should see the introduction
 
 ## Form Schema
 
-The main file we will continue to focus on is `form.js`, lets open up new-form/config/form.js and take a look, you should see this code inside the file -
+The main file we will continue to focus on for the moment is `form.js`, lets open up new-form/config/form.js and take a look, you should see this code inside the file -
 
 ```javascript
 // import fullSchema from 'vets-json-schema/dist/-schema.json';
@@ -134,7 +134,7 @@ const formConfig = {
   title: 'A New Form',
   defaultDefinitions: {},
   chapters: {
-    trackingPrefix: {
+    chapter1: {
       title: 'Personal Information',
       pages: {
         page1: {
@@ -163,14 +163,132 @@ const formConfig = {
 export default formConfig;
 
 ```
-You can see the variable `formConfig` which is being assigned a large bit of JSON code and then being exported as the default for the file. This JSON code is the configuration of your form mentioned [earlier](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/my-first-form.md#form-system-concepts) in this document. You can see key/ value pairs such as `submitUrl` and `trackingPrefix`, all of the key value pairs are how you configure your form to be built the way you want it. 
+You can see the variable `formConfig` which is being assigned a large bit of JSON code and then being exported as the default for the file. This JSON code is the configuration of your form mentioned [earlier](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/my-first-form.md#form-system-concepts) in this document. You can see key/ value pairs such as `submitUrl` and `trackingPrefix`, these key/ value pairs are how you configure your form to be built the way you want it. 
 
-At the most basic level, our forms consist of: widgets, fields, pages, and chapters.
+At the most basic level, our forms consist of chapters, pages, fields, and widgets -
 
 - Chapters are collections of pages.
-- We then have pages, which are collections of fields.
-- Fields are the next level up and contain a widget and a `label`, plus some extra optional description information.
+- Pages are collections of fields.
+- Fields contain a widget and a `label`, and maybe some extra description information.
 - Widgets are the basic form controls, things like `input` and `select` elements.
 
+We can see in the `formConfig` object there's already one chapter, with one page inside it, called page1. In the page1 object, there are a few pieces of information. The important properties for us right now are uiSchema and schema. This schema describes the fields that will be on this page, which of those fields are required, as well as a `type` for the schema, in JSON. You can see the `properties` object inside the schema, where we declare what fields will be in the form, that we are declaring there will be one field with a key of `firstName` ( which we are getting from the `formFields` object declared earlier in the file ) that is of type `string`. This will give us one text field on the page named `firstName`. If you go back to the browser and click 'Start the Application' you will see our one page with our one text field.
 
-We can see in the config that there's already one chapter, with one page inside it, called page1. In the page1object there are a few pieces of information, which we can mostly ignore for now. The important properties for us right now are uiSchemaand schema. schemais the initial structure of our page, in the form of a JSON Schema. This describes the type of data that will result from a user filling in our form. It's also used by the form library to determine what fields and widgets to display in the application, except when overridden by uiSchema. uiSchemais an object that has extra, user interface-focused information to help render the form.
+Using this JSON structure is how you add chapters, pages, and fields to your form. Let's try adding a second field, modify the `page1` object by adding a second field called `lastName` so that it looks like this -
+
+```javascript
+page1: {
+          path: 'first-name',
+          title: 'Personal Information - Page 1',
+          uiSchema: {
+            [formFields.firstName]: {
+              'ui:title': 'First Name',
+            },
+          },
+          schema: {
+            required: [formFields.firstName],
+            type: 'object',
+            properties: {
+              [formFields.firstName]: {
+                type: 'string',
+              },
+              lastName: {
+                type: 'string',
+              }
+            },
+          },
+        },
+
+```
+Save the file and rerun this command -
+
+```
+yarn watch
+```
+ If you navigate back to the form and go to the page that had our one field on it you should now see two fields. Let's add a second page to our form. Modify the `chapter1` object to add a second page like this - 
+
+ ```javascript
+
+  chapter1: {
+      title: 'Personal Information',
+      pages: {
+        page1: {
+          path: 'first-name',
+          title: 'Personal Information - Page 1',
+          uiSchema: {
+            [formFields.firstName]: {
+              'ui:title': 'First Name',
+            },
+          },
+          schema: {
+            required: [formFields.firstName],
+            type: 'object',
+            properties: {
+              [formFields.firstName]: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+      page2: {
+        path: 'second-page',
+        title: 'More information - Page 2',
+        uiSchema: {
+          firstName: {},
+        },
+        schema: {
+          type: 'object',
+          properties: {
+            city: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    },
+  },
+
+```
+Save the file and rerun this command -
+
+```
+yarn watch
+```
+
+If you navigate back to the form and go through it you should now see our second page that we added. This is the basic workflow with the form system, adding chapters, pages, and fields. There will be times when you need to do more complex things, like build custom widgets to use in your form, but that will come later. Let's talk a little bit about the other object inside the `page1` and `page2` objects, the `uiSchema`.
+
+## Form uiSchema
+
+When building a form we need to tell the form system two basic things, 1. What fields we want and 2. What we want those fields to look like. The way we tell the form system what we want our fields to look like is by the `uiSchema`. You can see here in our example we have been using in this document that our `uiSchema` has only one key/ value pair in it so far, `ui:title` - 
+
+```javascript
+
+uiSchema: {
+  [formFields.firstName]: {
+    'ui:title': 'First Name',
+  },
+},
+```
+
+This simply sets the title of the form field to 'First Name'. There are numerous key/ value pairs you can use to configure how you want your field to look ( we have a full reference [here](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/reference.md) ) but let's go through a one that you will use most often. Let's add a description to our field by modifying the uiSchema like this -
+
+```javascript
+
+uiSchema: {
+  [formFields.firstName]: {
+    'ui:title': 'First Name',
+    'ui:description': 'A field for a first name',
+  },
+},
+```
+
+Save the file and rerun this command -
+
+```
+yarn watch
+```
+
+If you navigate back to the first name field in our form you will now see a description for the field. This is the basic workflow for adjusting how your form fields look. There are lot's of different uiSchema options you can change, we have a full reference [here](https://github.com/department-of-veterans-affairs/vets-website/blob/forms-library-book-cv/docs/forms-library/src/reference.md)
+
+> It is worth pointing out that the key for this is prefixed with `ui:`, as in `ui:title`. All of the keys that are available for the uiSchema are prefixed with `ui:` in this way.
