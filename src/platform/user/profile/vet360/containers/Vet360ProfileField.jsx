@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Modal from '@department-of-veterans-affairs/formation-react/Modal';
 import { connect } from 'react-redux';
 import { focusElement } from 'platform/utilities/ui';
 
@@ -44,6 +45,7 @@ class Vet360ProfileField extends React.Component {
 
   static defaultProps = {
     fieldName: '',
+    showConfirmCancelModal: false,
   };
 
   componentDidUpdate(prevProps) {
@@ -77,6 +79,12 @@ class Vet360ProfileField extends React.Component {
 
   onCancel = () => {
     this.captureEvent('cancel-button');
+
+    // If has unsaved edits, then return early and show an alert
+    if (this.props.hasUnsavedEdits) {
+      this.setState({ showConfirmCancelModal: true });
+    }
+
     this.closeModal();
   };
 
@@ -222,6 +230,27 @@ class Vet360ProfileField extends React.Component {
 
     return (
       <div className="vet360-profile-field" data-field-name={fieldName}>
+        <Modal
+          title={'Are you sure you want to leave'}
+          status="warning"
+          visible={this.state.showConfirmCancelModal}
+          onClose={() => {
+            this.setState({ showConfirmCancelModal: false });
+          }}
+        >
+          <p>
+            Please go back and save or cancel your work before editing a new
+            section of your profile. If you cancel, your in-progress work won’t
+            be saved.
+          </p>
+          <button
+            onClick={() => {
+              this.setState({ showConfirmCancelModal: false });
+            }}
+          >
+            OK
+          </button>
+        </Modal>
         <Vet360ProfileFieldHeading
           onEditClick={this.isEditLinkVisible() ? this.onEdit : null}
           fieldName={fieldName}
@@ -280,6 +309,7 @@ export const mapStateToProps = (state, ownProps) => {
     selectCurrentlyOpenEditModal(state) === 'addressValidation';
 
   return {
+    hasUnsavedEdits: state.vet360.hasUnsavedEdits,
     analyticsSectionName: VET360.ANALYTICS_FIELD_MAP[fieldName],
     data,
     fieldName,
@@ -324,6 +354,7 @@ Vet360ProfileFieldContainer.propTypes = {
   title: PropTypes.string.isRequired,
   apiRoute: PropTypes.oneOf(Object.values(VET360.API_ROUTES)).isRequired,
   convertCleanDataToPayload: PropTypes.func,
+  hasUnsavedEdits: PropTypes.bool.isRequired,
 };
 
 export default Vet360ProfileFieldContainer;
