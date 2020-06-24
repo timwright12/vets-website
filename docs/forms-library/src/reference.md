@@ -1,17 +1,36 @@
-# Reference
+# Form System API Reference
 
-In this chapter, you'll find an exhaustive list of all options available in the
-forms library. If you find an option that isn't captured in this reference, please let
-us know or submit a PR to add the documentation!
+### Overview
+
+Building a form using the VA form system starts with a form configuration object (referred to as formConfig). The form configuration object is the file that the form system uses to build a form. Inside this configuration goes not only things like what URL you want your form to submit to or what Google Analytics Prefix you want to be added to the events that come off the shelf with the form system, but also all of the pages of your form as well as what fields and validation you want on those pages. 
+
+The form configuration is written in JSON and can include JavaScript as well as React components at certain times.
+
+This API reference begins with the larger formConfig object and then branches out into the details of each individual option inside the object.
+
+<hr>
+
+### Topics
+
+[chapters]()
+[formConfig]()
+[Pages]()
+[schema]()
+[uiSchema]()
+
+## 
+
+## Other topics
+[Redux]()
+[unit tests]()
+
+
+<hr>
 
 <!-- TODO: Add a link for how to let us know -->
 <!-- TODO: Link to the documentation repo to make it easier to submit a PR -->
 
-By this point, we assume you're already comfortable using the library and are
-coming here to find the exact API for the feature you're using.
 
-**If you already know what you're looking for,** you can navigate to the section
-directly.
 
 **If you're not sure where to find the configuration option you're looking
 for,** understanding what you're configuring will help. Configuration options
