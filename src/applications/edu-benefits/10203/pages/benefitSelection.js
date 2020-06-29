@@ -42,8 +42,9 @@ export const uiSchema = {
   'view:MGIBAlert': {
     'ui:description': MGIBAlert,
     'ui:options': {
-      expandUnder: 'view:benefit',
-      hideIf: 'view:benefit'.chapter30 === false,
+      hideIf: data =>
+        data['view:benefit'].chapter30 === undefined ||
+        data['view:benefit'].chapter30 === false,
     },
   },
 };
@@ -58,8 +59,9 @@ export const schema = {
         ...schemaCheckboxes(),
       },
     },
-  },
-  'view:MGIBAlert': {
-    type: 'boolean',
+    'view:MGIBAlert': {
+      type: 'object',
+      properties: {},
+    },
   },
 };
