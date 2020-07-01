@@ -1,0 +1,12 @@
+{
+  "name": "pilot-10417",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "csv-parse": "^4.10.1",
+    "install": "^0.13.0",
+    "lodash": "^4.17.15",
+    "tinyliquid": "^0.2.34"
+  }
+}
