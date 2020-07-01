@@ -1,0 +1,58 @@
+ID,Name,Machine name,X,Dev,QA,Description,Example(s),Mod.,Layout,Trns.,Migr.,Cmnt.,Meta,Sched.,Srch.,Type,URL alias pattern,Settings/notes,Valid proofing,Valid VA.gov preview,Valid content proofing or preview?,Valid content proofing or preview? March 2020: 11 out of 24,Valid content proofing or preview? June 2020: 15 / 28
+,Benefits detail page,page,x,,,"These pages hold all of the benefits overview content, such the detail pages linked to from va.gov/disability, va.gov/health-care, and va.gov/education.",-,y,n,,,n,y,y,,Content type,-,Lightning OOTB,No,Yes,Yes,Yes,Yes
+,Benefits hub landing page,landing_page,x,,,A special page for top-level Benefits content with its own one-off layout and content.,-,y,n,,,n,y,n,,Content type,-,Lightning OOTB,No,Yes,Yes,Yes,Yes
+,Detail Page,health_care_region_detail_page,x,,,For static pages where there's not another content type already available. ,,,,,,,,,,Content type,,,No,Yes,Yes,Yes,Yes
+,Documentation page,documentation_page,x,,,Help pages VA.gov CMS editors.,,,,,,,,,,Content type,,,Yes,No,Yes,Yes,Yes
+,Event,event,x,,,"For online or in-person events like support groups, outreach events, public lectures, and more.",,,,,,,,,,Content type,,,No,Yes,Yes,Yes,Yes
+,Event listing page,event_listing,x,,,A listing of events.,,,,,,,,,,Content type,,,Yes,No,Yes,No,Yes
+,Health services listing page,health_services_listing,x,,,A listing of health services.,,,,,,,,,,Content type,,,No,No,No,No,No
+,Leadership listing page,leadership_listing,x,,,A listing of staff members.,,,,,,,,,,Content type,,,No,No,No,No,No
+,Locations listing page,locations_listing,x,,,A listing of locations.,,,,,,,,,,Content type,,,No,No,No,No,No
+,NCA facility,nca_facility,x,,,A facility within National Cemetery Administration system.,,,,,,,,,,Content type,,Sprint 3,No,No,No,N/A,No
+,News release,press_release,x,,,Announcements directed at members of the media for the purpose of publicizing newsworthy events/happenings/programs at specific facilities or healthcare systems.,,,,,,,,,,Content type,,,No,Yes,Yes,Yes,Yes
+,News release listing page,press_releases_listing,x,,,A listing of news releases.,,,,,,,,,,Content type,,,No,No,No,No,No
+,Office,office,x,,,"An office at the VA, which may have contact info, events, news, and a leadership page in some cases.",,,,,,,,,,Content type,,,No,No,No,No,No
+,Publication,outreach_asset,x,,,"Contains a document, image, or video, for publication within a Publication library.",,,,,,,,,,Content type,,,No,No,No,No,No
+,Publication listing page,publication_listing,x,,,"This allows the listing of publication materials such as documents, videos, and images all in one place.",,,,,,,,,,Content type,,,No,No,No,No,No
+,Staff profile,person_profile,x,,,Profiles of staff members for display in various places around the site.,,,,,,,,,,Content type,,,No,Yes,Yes,Yes,Yes
+,Story,news_story,x,,,"Community stories highlight the role of a VA facility, program, or healthcare system in a Veteran's journey. They may be a case study of a specific patient, a description of a new or successful program, or a community-interest story.",,,,,,,,,,Content type,,,No,Yes,Yes,Yes,Yes
+,Story listing page,story_listing,x,,,A listing of stories.,,,,,,,,,,Content type,,,No,No,No,No,No
+,Support Service,support_service,x,,,"Help desks, hotlines, etc, to be contextually placed alongside relevant content.",,y,n,,,n,y,n,,Content type,,Sprint 4,No,No,No,No,No
+,VA form,va_form,x,,,VA forms available for download. Used to populate search results and also generate form landing pages,,y,n,,,,y,,,Content type,,,Yes,No,Yes,N/A,Yes
+,VAMC facility,health_care_local_facility,x,,,A clinic or hospital within a VAMC system.,,,,,,,,,,Content type,,,No,Yes,Yes,Yes,Yes
+,VAMC facility health service,health_care_local_health_service,x,,,"A facility specific description of a health care service, always embedded within a VAMC system description.",,,,,,,,,,Content type,,,Yes,No,Yes,No,Yes
+,VAMC system,health_care_region_page,x,,,"A VAMC system contains multiple VHA health facilities, including usually at least one VAMC, sometimes more.",,,,,,,,,,Content type,,,No,Yes,Yes,Yes,Yes
+,VAMC system banner alert with situation updates,full_width_banner_alert,x,,,"A full-width alert that will be added to a VAMC system, or multiple VAMC systems.",,,,,,,,,,Content type,,,No,No,No,No,No
+,VAMC system health service,regional_health_care_service_des,x,,,A description of a health service specific to a VAMC system.,,n,n,,,,,,,Content type,,,Yes,No,Yes,No,Yes
+,VAMC system operating status,vamc_operating_status_and_alerts,x,,,"Create one of these pages for each VAMC system. Then you can add banner alerts and update facilities' operating status, all from one place.",,,,,,,,,,Content type,,,No,Yes,Yes,Yes,Yes
+,VBA facility,vba_facility,x,,,A facility within Veterans Benefits Administration system.,,,,,,,,,,Content type,,Sprint 3,No,No,No,N/A,No
+,Vet Center,vet_center,x,,,A facility within Vet Centers system.,,,,,,,,,,Content type,,Sprint 3,No,No,No,N/A,No
+,Alert,alert,x,,,An alert box that can be added to individual pages.,,n,n,,,n,n,n,,Custom block type,,Sprint 4,,,,,
+,Promo,promo,x,,,"Promote a link with an image, title, and description.","VBA, VHA, etc",y,n,,,n,y,n,,Custom block type,,Sprint 5,,,,,
+,Document,document,x,,,"A locally hosted document, such as a PDF.",-,n,n,,,n,n,n,,Media type,-,Lightning OOTB,,,,,
+,Image,image,x,,,Locally hosted images.,-,n,n,,,n,n,n,,Media type,-,Lightning OOTB,,,,,
+,Video,video,x,,,"A video hosted by YouTube, Vimeo, or some other provider.",-,n,n,,,n,n,n,,Media type,-,Lightning OOTB,,,,,
+,Accordion group,collapsible_panel,x,,,A group of accordions.,,n,n,,,n,n,n,,Paragraph type,,Sprint 2,,,,,
+,Accordion Item,collapsible_panel_item,x,,,An individual accordion.,,n,n,,,n,n,n,,Paragraph type,,Sprint 2,,,,,
+,Additional information,spanish_translation_summary,x,,,Spanish summary to include a brief spanish-language summary of the content.,,,,,,,,,,Paragraph type,,,,,,,
+,Address,address,x,,,An address block.,,n,n,,,n,n,n,,Paragraph type,,Sprint 4,,,,,
+,Alert,alert,x,,,"A reusable or non-reusable alert, either ""information status"" or ""warning status"".",,n,n,,,n,n,n,,Paragraph type,,Sprint 2,,,,,
+,Embedded image,media,x,,,For adding an image inline,,,,,,,,,,Paragraph type,,,,,,,
+,Expandable Text,expandable_text,x,,,Text that expands upon click.,,n,n,,,n,n,n,,Paragraph type,,Sprint 3ish,,,,,
+,Link teaser,link_teaser,x,,,"A link followed by a description. For building inline ""menus"" of content.",,n,n,,,n,n,n,,Paragraph type,,Sprint 3ish,,,,,
+,Link to file or video,downloadable_file,x,,,For image or document downloads.,,,,,,,,,,Paragraph type,,,,,,,
+,List of link teasers,list_of_link_teasers,x,,,A paragraph that contains only one type of paragraph: Link teaser.,,n,n,,,n,n,n,,Paragraph type,,Sprint 3ish,,,,,
+,Number callout,number_callout,x,,,"Number callouts can be used in the context of a question & answer, where the answer can be summarized in a short phrase that is number-oriented.",,,,,,,,,,Paragraph type,,,,,,,
+,Process list,process,x,,,"An ordered list (1, 2, 3, 4, N) of steps in a process.",,n,n,,,n,n,n,,Paragraph type,,Sprint 2/4,,,,,
+,Q&A,q_a,x,,,Question and Answer,,n,n,,,n,n,n,,Paragraph type,,Sprint 4,,,,,
+,Q&A Section,q_a_section,x,,,For content formatted as a series of questions and answers. Use this (instead of WYSIWYG) for better accessibility and easy rearranging.,,n,n,,,n,n,n,,Paragraph type,,Sprint 4,,,,,
+,React Widget,react_widget,x,,,Advanced editors can use this to place react widgets (like a form) on the page.,,n,n,,,n,n,n,,Paragraph type,,Sprint 4,,,,,
+,Situation update,situation_update,x,,,"A time-sensitive, added to a banner alert, and displayed on VAMC operating status pages.",,,,,,,,,,Paragraph type,,,,,,,
+,Staff profile,staff_profile,x,,,Add a profile of a staff person.,,,,,,,,,,Paragraph type,,,,,,,
+,Starred Horizontal Rule,starred_horizontal_rule,x,,,"Current an inactive paragraph type, not enabled within any fields.",,n,n,,,n,n,n,,Paragraph type,,Sprint 3ish,,,,,
+,Table,table,x,,,Add an HTML table with rows and columns.,,,,,,,,,,Paragraph type,,,,,,,
+,VAMC facility service (non-healthcare service),health_care_local_facility_servi,x,,,"A service available at a specific health care facility, like Parking, or Chaplaincy.",,,,,,,,,,Paragraph type,,,,,,,
+,WYSIWYG,wysiwyg,x,,,An open-ended text field.,,n,n,,,n,n,n,,Paragraph type,,Sprint 2,,,,,
+,Sections,administration,x,,,"Represents a hierarchy of the VA, partly for governance purposes.","VBA, VHA, etc",y,n,,,n,y,n,,Vocabulary,,Sprint 5,,,,,
+,Type of Redirect,type_of_redirect,x,,,,,,,,,,,,,Vocabulary,,,,,,,
+,VHA health service taxonomy,health_care_service_taxonomy,x,,,"Single source of truth for health service names, descriptions, patient-friendly names, and common conditions.",,,,,,,,,,Vocabulary,,,,,,,
