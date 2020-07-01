@@ -1,0 +1,1110 @@
+{
+  "entityBundle": "page",
+  "entityId": "3014",
+  "entityPublished": true,
+  "title": "Coronavirus FAQs: What Veterans need to know",
+  "entityUrl": {
+    "breadcrumb": [
+      {
+        "url": {
+          "path": "/",
+          "routed": true
+        },
+        "text": "Home"
+      },
+      {
+        "url": {
+          "path": "",
+          "routed": true
+        },
+        "text": "Coronavirus FAQs: What Veterans need to know"
+      }
+    ],
+    "path": "/coronavirus-veteran-frequently-asked-questions"
+  },
+  "entityMetatags": [
+    {
+      "__typename": "MetaValue",
+      "key": "title",
+      "value": "Coronavirus FAQs: What Veterans Need To Know | Veterans Affairs"
+    },
+    {
+      "__typename": "MetaValue",
+      "key": "twitter:card",
+      "value": "summary_large_image"
+    },
+    {
+      "__typename": "MetaProperty",
+      "key": "og:site_name",
+      "value": "Veterans Affairs"
+    },
+    {
+      "__typename": "MetaValue",
+      "key": "twitter:description",
+      "value": "Get answers to VA related Veteran questions about the coronavirus, your VA health appointments, health facility questions, and what Veterans and family members need to know."
+    },
+    {
+      "__typename": "MetaValue",
+      "key": "description",
+      "value": "Get answers to VA related Veteran questions about the coronavirus, your VA health appointments, health facility questions, and what Veterans and family members need to know."
+    },
+    {
+      "__typename": "MetaValue",
+      "key": "twitter:title",
+      "value": "Coronavirus FAQs: What Veterans need to know | Veterans Affairs"
+    },
+    {
+      "__typename": "MetaValue",
+      "key": "twitter:site",
+      "value": "@DeptVetAffairs"
+    },
+    {
+      "__typename": "MetaProperty",
+      "key": "og:title",
+      "value": "Coronavirus FAQs: What Veterans need to know | Veterans Affairs"
+    },
+    {
+      "__typename": "MetaProperty",
+      "key": "og:description",
+      "value": "Get answers to VA related Veteran questions about the coronavirus, your VA health appointments, health facility questions, and what Veterans and family members need to know."
+    }
+  ],
+  "fieldIntroText": "Our call centers and some VA health facilities are currently experiencing very high numbers of calls. To help us address the most urgent needs first, we ask that you use our online tools and frequently asked questions (FAQs) for routine or non-urgent questions. We’ll continue to update this page as the situation changes.",
+  "fieldDescription": "Get answers to VA related Veteran questions about the coronavirus, your VA health appointments, health facility questions, and what Veterans and family members need to know.",
+  "fieldFeaturedContent": [
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "wysiwyg",
+        "entityId": "10291",
+        "fieldWysiwyg": {
+          "processed": "<h3>VA coronavirus chatbot</h3>\n\n<p>You can also use our VA coronavirus chatbot to get answers to your questions.</p>\n\n<p><a class=\"usa-button\" href=\"https://www.va.gov/coronavirus-chatbot/\">Go to the chatbot</a></p>"
+        }
+      }
+    }
+  ],
+  "fieldContentBlock": [
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "alert",
+        "entityId": "10299",
+        "fieldAlertType": "information",
+        "fieldAlertHeading": null,
+        "fieldVaParagraphs": [],
+        "fieldAlertBlockReference": {
+          "entity": {
+            "entityId": "34",
+            "fieldAlertTitle": "Visit the CDC for general coronavirus questions",
+            "fieldAlertType": "information",
+            "fieldReusability": "reusable",
+            "fieldAlertContent": {
+              "entity": {
+                "entityId": "8882",
+                "entityBundle": "wysiwyg",
+                "fieldWysiwyg": {
+                  "processed": "<p>For general questions about COVID-19, such as symptoms, prevention steps, guidance for travelers, and more, <a href=\"https://www.cdc.gov/coronavirus/2019-ncov/index.html\">visit the </a><a href=\"https://www.cdc.gov/coronavirus/2019-ncov/index.html\">Centers for Disease Control and Prevention (CDC)</a>.</p>"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "wysiwyg",
+        "entityId": "9579",
+        "fieldWysiwyg": {
+          "processed": "<h2>On this page</h2>\n\n<p><a href=\"#coronavirus-specific-concerns\">Coronavirus-specific concerns</a></p>\n\n<p><a href=\"#health-care-appointments-and-m\">Health care, appointments, and more</a></p>\n\n<p><a href=\"#benefit-payments-claims-claim-\">Benefit payments, claims, claim exams, and other services</a></p>\n\n<p><a href=\"#debt-copays-appeals-and-other-\">Debt, copays, appeals, and other financial concerns</a></p>\n\n<p><a href=\"#status-of-va-national-cemeteri\">Status of VA national cemeteries and burials</a></p>\n\n<p><a href=\"#helpful-online-tools\">Helpful online tools</a></p>\n\n<p> </p>"
+        }
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "q_a_section",
+        "entityId": "10213",
+        "fieldSectionHeader": "Coronavirus-specific concerns",
+        "fieldSectionIntro": null,
+        "fieldAccordionDisplay": false,
+        "fieldQuestions": [
+          {
+            "entity": {
+              "entityId": "10204",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What's COVID-19?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10203",
+                    "fieldWysiwyg": {
+                      "processed": "<p>The CDC defines COVID-19 as a disease caused by a new type of coronavirus (or “novel coronavirus”). The virus that causes COVID-19 belongs to a large family of viruses that are common in people and different animal species. On rare occasions, animal coronaviruses can infect people, and then spread from person-to-person. This is how the COVID-19 virus started. People with COVID-19 can have a wide range of symptoms that can range from mild to severe.</p>\n\n<p>Symptoms may include:</p>\n\n<ul><li>Fever</li>\n\t<li>Cough</li>\n\t<li>Shortness of breath or difficulty breathing</li>\n\t<li>Chills or repeated shaking with chills</li>\n\t<li>Muscle pain</li>\n\t<li>Headache</li>\n\t<li>Sore throat</li>\n\t<li>New loss of taste or smell</li>\n</ul><p>To learn more about COVID-19, prevention steps, guidance for high-risk groups, travelers, and more, <a href=\"https://www.cdc.gov/coronavirus/2019-ncov/index.html\">visit the CDC website</a>.</p>\n\n<p>If you’d like to talk to someone about coronavirus concerns, like testing, exposure, and prevention at VA, you can also call VA311 at <a href=\"tel:+18446982311\">844-698-2311</a> (TTY: 711).</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10206",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What should I do if I have symptoms?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10205",
+                    "fieldWysiwyg": {
+                      "processed": "<p>If you have any of the symptoms listed above, call your VA medical center before going to a clinic, urgent care, or emergency room. You can also <a href=\"https://www.myhealth.va.gov/mhv-portal-web/user-login?redirect=/mhv-portal-web/home\">send your doctor a secure message</a> through My HealtheVet.</p>\n\n<p>Contacting us first helps us protect you, medical staff, and other patients.</p>\n\n<p>If you’re not sure about your symptoms, our Annie text messaging service can help you monitor them and advise you when to contact your VA care team or your facility’s advice nurse.</p>\n\n<p>The messages also provide general wellness tips and steps you can take to protect yourself. You can <a href=\"https://www.mobile.va.gov/app/annie-app-veterans\">subscribe to Annie coronavirus precautions messages</a> yourself, or ask your VA care team to assign it to you.</p>\n\n<p><a href=\"https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html\">Visit the CDC website</a> to learn more about the symptoms of COVID-19.</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10208",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What's VA doing to deal with COVID-19?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10207",
+                    "fieldWysiwyg": {
+                      "processed": "<p>We have activated VA’s emergency management coordination cell (EMCC), and have started clinical screenings at all VA facilities. <a href=\"https://www.publichealth.va.gov/n-coronavirus/\">Learn about VA’s public health response</a></p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10210",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Can I be tested for COVID-19?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10209",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Testing is based on many factors, including the severity of symptoms, other existing illnesses or conditions, possible exposure, and other criteria. VA health facilities have been testing Veterans who meet the <a href=\"https://www.cdc.gov/coronavirus/2019-nCoV/hcp/clinical-criteria.html\">testing criteria provided by the CDC</a>. There’s no charge for testing.</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10212",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "I don’t have symptoms, but I feel anxious and overwhelmed. What can I do?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10211",
+                    "fieldWysiwyg": {
+                      "processed": "<p>First, it's important to know you're not alone, and we're here for you. Concerns about COVID-19 can be stressful for many people. You can take steps to manage stress and get support.</p>\n\n<ul><li><strong>Stay connected and healthy.</strong> Stay in touch with friends and family by phone and social media. Follow your normal routine as much as possible, and get enough sleep and exercise. </li>\n\t<li><strong>Keep your existing mental health appointments.</strong> If you currently have regular sessions, you can change them to telehealth (phone or video) appointments by sending your provider a<a href=\"https://www.myhealth.va.gov/mhv-portal-web/user-login\"> secure message through My HealtheVet</a>.</li>\n\t<li><strong>Ask for a new mental health appointment.</strong> If you need same-day mental health care—or want to request a new appointment—call your local VA health facility. <a href=\"https://www.va.gov/find-locations\">Find a VA location</a></li>\n</ul><p><a href=\"https://www.mentalhealth.va.gov/coronavirus/\">Get more VA tips for maintaining your mental health</a></p>\n\n<p><a href=\"https://www.cdc.gov/coronavirus/2019-ncov/prepare/managing-stress-anxiety.html\">Visit the CDC to learn more about managing COVID-19 stress and anxiety</a></p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "q_a_section",
+        "entityId": "9604",
+        "fieldSectionHeader": "Health care, appointments, and more",
+        "fieldSectionIntro": null,
+        "fieldAccordionDisplay": false,
+        "fieldQuestions": [
+          {
+            "entity": {
+              "entityId": "9612",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What should I do if I have an upcoming VA health appointment?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9611",
+                    "fieldWysiwyg": {
+                      "processed": "<p>For routine appointments, we recommend<strong> </strong>using telehealth (phone or video) for your scheduled appointment. You can also cancel and reschedule your appointment for a later date. But if you need care, please don’t delay. We’re here and can provide safe care to meet your needs.</p>\n\n<p>If you have a non-urgent elective procedure scheduled, we may contact you to cancel or reschedule for a later date. <strong>Note:</strong> Urgent and emergent procedures will continue as scheduled.</p>\n\n<p><strong>To change your in-person appointment to a telehealth visit:</strong></p>\n\n<ul><li><a href=\"https://www.myhealth.va.gov/mhv-portal-web/user-login?redirect=/mhv-portal-web/home\">Use Secure Messaging </a>through My HealtheVet to send a  message to your provider.</li>\n\t<li><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"4578cb13-d680-426f-8f2d-ff000e990cb3\" href=\"/health-care/schedule-view-va-appointments\" title=\"Schedule and view VA appointments online\">Use the VA appointments tool </a>to request a telehealth appointment online. (Available only for some types of health services.)</li>\n</ul><p>Once your provider schedules a telehealth appointment, you’ll receive a VA Video Connect link (or another approved video meeting tool). <a href=\"https://mobile.va.gov/app/va-video-connect\">Learn more about VA Video Connect</a></p>\n\n<p><a href=\"#more-health-care-questions\">Learn about our requirements for cloth face coverings</a></p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9614",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What should I do if I have a community care appointment, or need a referral?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9613",
+                    "fieldWysiwyg": {
+                      "processed": "<p><strong>If you have a scheduled community care appointment</strong></p>\n\n<p>Please contact your community care (non-VA) provider directly before going to your appointment. Some providers' hours or services may be affected by current CDC and local health department guidelines.</p>\n\n<p><strong>If your community care provider cancels your appointment</strong></p>\n\n<p>Work with the provider to reschedule. We're extending VA authorizations for community care referrals for many types of care during this time.</p>\n\n<p>If you have concerns about rescheduling your appointment, <a href=\"https://www.myhealth.va.gov/mhv-portal-web/web/myhealthevet/secure-messaging-spotlight\">send a secure message</a> to your VA provider.</p>\n\n<p><strong>If you need a referral</strong></p>\n\n<p>We'll work with you to assess your needs. We’re continuing to make community care referrals. But we’re prioritizing referrals for urgent or other medically necessary care.</p>\n\n<p><strong>Please remember: </strong>You need VA approval for all community care appointments, except for emergency and urgent care needs. Getting a referral depends on eligibility, type of care, and other factors. At this time, community care eligibility requirements haven't changed.</p>\n\n<p><a href=\"https://www.va.gov/COMMUNITYCARE/programs/veterans/index.asp\">Learn about eligibility for community care</a></p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9618",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "How do I reschedule or cancel my upcoming VA appointment?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9617",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Sign in to your VA.gov account to reschedule or cancel your appointments online.</p>\n\n<p><strong>Note:</strong> Some clinics are advising patients to not reschedule or schedule new appointments for some types of routine care, as they develop more guidance on safely providing care to protect patients and staff. Because this is a rapidly changing situation, the best way to get the most up-to-date facility information is to check your local VA health facility’s website. <a href=\"https://www.va.gov/find-locations\">Find a VA location</a> </p>\n\n<h3>View, schedule, or cancel a VA appointment online</h3>"
+                    }
+                  }
+                },
+                {
+                  "entity": {
+                    "entityBundle": "react_widget",
+                    "entityId": "9633",
+                    "fieldTimeout": 20,
+                    "fieldCtaWidget": true,
+                    "fieldWidgetType": "appointments",
+                    "fieldDefaultLink": null,
+                    "fieldButtonFormat": false,
+                    "fieldErrorMessage": {
+                      "value": "<strong>We’re sorry. Something went wrong when we tried to load your saved application.</strong><br/>Please try refreshing your browser in a few minutes."
+                    },
+                    "fieldLoadingMessage": null
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9623",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What should I do if I need to refill my prescription?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9622",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Please request refills as soon as possible, but no later than 10 days before you run out of your current prescription. And please check that we have your current mailing address on file in your <a href=\"https://www.va.gov/?next=%2Fprofile%2F\">VA.gov profile</a> so we send your prescriptions to the right address. If you need to, you can sign in to <a href=\"https://www.va.gov/change-address/\">change your address online</a>.</p>\n\n<p><strong>Note:</strong> If you currently get your prescription sent to you by mail, you’ll continue to receive your refill requests as normal.</p>\n\n<p><strong>You'll need to actively request your refill in one of these ways:</strong></p>\n\n<ul><li><strong>Online</strong> with the <a href=\"https://www.myhealth.va.gov/mhv-portal-web/user-login?redirect=/mhv-portal-web/home\">My HealtheVet prescription refill and tracking tool</a>.</li>\n\t<li><strong>Through your mobile device</strong> with our new <a href=\"https://www.mobile.va.gov/app/rx-refill\">Rx Refill mobile app</a>.</li>\n\t<li><strong>By phone.</strong> Call the number on your <a href=\"https://veteran.mobile.va.gov/aap-web/#PillBottle\">prescription label</a> for your VA pharmacy's automated refill line or to speak to a pharmacy representative. Be sure to have your Rx number from the prescription label and Social Security number ready.</li>\n\t<li><strong>By mail.</strong> Complete the prescription refill form that came with your medication. Mail the form to the VA pharmacy address listed on your medication paperwork.</li>\n</ul><p>For questions about your prescriptions, send a <a href=\"https://www.myhealth.va.gov/mhv-portal-web/user-login?redirect=/mhv-portal-web/home\">secure message to your health care team</a> through My HealtheVet or call your local VA medical center.</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10510",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Is my VA health facility now open for appointments or same-day care?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10509",
+                    "fieldWysiwyg": {
+                      "processed": "<p>This depends on the facility. We’re moving forward with expanding select services at VA facilities that were reduced due to COVID-19 across the country. Because the safety of our Veterans and staff is paramount, VA facilities may not expand to a full spectrum of care immediately. In expanding services, VA facilities will consider unique circumstances of their state and local markets, environmental safety preparedness, and clinical risk assessments.</p>\n\n<p>Based on these considerations, 20 facilities were the first to expand select services beginning the week of May 18, 2020. <a href=\"https://www.va.gov/opa/pressrel/pressrelease.cfm?id=5454\">Review the list of lead sites</a></p>\n\n<p>To find out what services your facility is now offering, you can:</p>\n\n<ul><li><a href=\"https://www.myhealth.va.gov/mhv-portal-web/user-login?redirect=/mhv-portal-web/home\">Send your provider a secure message</a> through My HealtheVet, or</li>\n\t<li><a href=\"https://www.va.gov/find-locations/\">Contact your VA health facility</a></li>\n</ul><p>Even if your facility now offers expanded services, your provider may still recommend telehealth appointments by phone or video for your safety.</p>\n\n<p><strong>If you do go for care, please <a href=\"https://www.va.gov/find-locations/\">contact your care team</a> first.</strong> This helps us keep you safe. And please know that you’ll need to wear a cloth face covering and complete our symptom screening before entering the facility.</p>"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "wysiwyg",
+        "entityId": "10240",
+        "fieldWysiwyg": {
+          "processed": "<h3>More health care questions</h3>"
+        }
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "q_a_section",
+        "entityId": "10227",
+        "fieldSectionHeader": null,
+        "fieldSectionIntro": null,
+        "fieldAccordionDisplay": true,
+        "fieldQuestions": [
+          {
+            "entity": {
+              "entityId": "10220",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What should I do if I run out of refills on my prescription?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10219",
+                    "fieldWysiwyg": {
+                      "processed": "<p><strong>You can request a prescription renewal in one of these ways:</strong></p>\n\n<ul><li><strong>Call the number on your prescription label.</strong> Be sure to have your Rx number from the <a href=\"https://veteran.mobile.va.gov/aap-web/#PillBottle\">prescription label</a> and Social Security number ready. For some medications, your health care team may need to contact you before you can get more medication.</li>\n\t<li><strong>Send a <a href=\"https://www.myhealth.va.gov/mhv-portal-web/user-login?redirect=/mhv-portal-web/home\">secure message to your provider</a> </strong>through My HealtheVet.</li>\n\t<li><strong>Call your local VA medical center.</strong><br /><a href=\"https://www.va.gov/find-locations/\">Find a VA location</a></li>\n</ul><p><strong>If your prescription renewal requires an in-person evaluation</strong></p>\n\n<p>If you need to renew a prescription for a medication that requires an in-person evaluation, we've temporarily updated our policy to allow this type of evaluation through telehealth (phone or video) appointment.</p>\n\n<p>To request a telehealth appointment for a prescription renewal, <a href=\"https://www.myhealth.va.gov/mhv-portal-web/user-login?redirect=/mhv-portal-web/home\">send a secure message to your provider</a> through My HealtheVet.</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10336",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Do I need to wear a mask when I go to a VA hospital or other location?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10335",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Yes. To help us protect you, other patients, and our staff, we require everyone entering our facilities to wear a cloth face covering.</p>\n<p>Please bring your own face covering with you if you can. If you can’t, we’ll provide you with one to wear during your visit.</p> \n<p>If you wear an oxygen mask, you don’t need to wear a face covering. We’ll work with you to keep you and others safe, and may ask you to wait in a designated space until your appointment time.</p>\n<p>For more information on how to wear, sanitize, and make a cloth face covering, go to the <a href=\"https://www.cdc.gov/coronavirus/2019-ncov/prevent-getting-sick/diy-cloth-face-coverings.html\">CDC website</a>.</p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10222",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What if I tried to call my clinic, and I can’t get through?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10221",
+                    "fieldWysiwyg": {
+                      "processed": "<p>We apologize if you’re not able to get through or are experiencing long hold times. We’re currently experiencing very high numbers of calls. Our staff is working hard to handle the increase in calls.</p>\n\n<p>To help us address the most urgent needs first, we ask that you use one of our online tools for routine or non-urgent concerns. You can:</p>\n\n<ul><li><strong>Use Secure Messaging.</strong> You can <a href=\"https://www.myhealth.va.gov/mhv-portal-web/user-login?redirect=/mhv-portal-web/home\">send a secure message to your provider</a> about any health concern or question.</li>\n\t<li><strong>Try health chat (limited availability). </strong>You may be able to use our health chat if your primary VA health facility is part of the VA health chat pilot. <a href=\"https://mobile.va.gov/app/va-health-chat\">See if you're able to use health chat</a> </li>\n</ul>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10226",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Can I visit a patient at a VA facility?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10225",
+                    "fieldWysiwyg": {
+                      "processed": "<p>We're currently following CDC guidelines and limiting visitors for patients receiving care in a VA facility, including a hospital, nursing home, or spinal cord injury and disorder center. Limiting outside visitors helps us protect older Veterans and those who already have health issues.</p>\n\n<p>We do make an exception for Veterans who qualify as a \"compassionate case.\" This means the Veteran is in their last stage of life in a hospice unit and you can only visit that Veteran’s room. We know this is difficult for families, but we're taking these precautions to protect the most vulnerable patients from community spread of the coronavirus.</p>\n\n<p>Learn about the <a href=\"https://www.va.gov/opa/pressrel/pressrelease.cfm?id=5400\">steps we’re taking to protect Veterans in nursing homes</a>.</p>\n\n<p><a href=\"https://www.cdc.gov/coronavirus/2019-ncov/index.html\">Visit the CDC website</a> for more tips on stopping community spread.</p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10635",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Can I use emergency care?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10634",
+                    "fieldWysiwyg": {
+                      "processed": "<p>If you’re experiencing a life-threatening medical emergency, call 911 or go to your nearest ER.</p>\n\n<p>If you have an urgent care need, please don't delay seeking care. We're open and can provide safe care to meet your needs. </p>\n\n<p>To help us protect you, other patients, and our staff, we do ask that you contact us first. You can <a href=\"https://www.myhealth.va.gov/mhv-portal-web/user-login?redirect=/mhv-portal-web/home\">use secure messaging</a> or call your facility’s advice nurse before going to a clinic or walk-in urgent care facility. By not using the ER for nonmedical emergencies, you can help us protect you and others as well as help us address critical medical needs first during this period of COVID-19 outbreak. </p>\n\n<p><strong>Symptoms that may need emergency medical (immediate) attention include:</strong></p>\n\n<ul><li>Chest pain</li>\n\t<li>Numbness or tingling in your arms or on one side of your body</li>\n\t<li>Severe fever or violent vomiting</li>\n\t<li>Bleeding that doesn’t stop</li>\n</ul><p><strong>Symptoms that may need urgent care attention (within 24 to 48 hours) include:</strong></p>\n\n<ul><li>Sore throat, earache</li>\n\t<li>Sprains or strained muscles from sports or exercise</li>\n\t<li>Minor cuts and injuries</li>\n</ul><p><strong>Note: </strong>For emergencies, you don’t need a referral or approval from VA to go to an ER in your community (an ER that's not a VA facility).</p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10637",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "If I’ve lost my job or health insurance, can I get VA health care?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10636",
+                    "fieldWysiwyg": {
+                      "processed": "<p>We base eligibility for VA health care on several factors, like your military service, discharge status, and whether you have a service-connected disability.</p>\n\n<p>If you’ve lost your job or have a reduced income, you may qualify for enhanced eligibility status based on your income. This means we’ll place you in a higher priority group, which makes you more likely to get benefits and affects how much (if anything) you’ll need to pay for care.</p>\n\n<p><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"5e53e9ef-a4c5-498e-8e22-87bdc79f01d6\" href=\"/health-care/eligibility\" title=\"Eligibility for VA health care\">Learn about VA health care eligibility</a> </p>\n\n<p><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"f8323733-28cd-497d-b536-349005be9b71\" href=\"/health-care/how-to-apply\" title=\"How to apply for VA health care\">Find out how to apply for VA health care</a></p>\n\n<p><strong>If you’re not eligible for VA health care, you may still be able to get care for:</strong></p>\n\n<ul><li><a href=\"/health-care/health-needs-conditions/mental-health/ptsd/#no-benefits\">Posttraumatic stress disorder (PTSD)</a></li>\n\t<li><a href=\"/health-care/health-needs-conditions/mental-health/#no-benefits\">Other mental health problems (like depression or substance abuse)</a></li>\n\t<li><a href=\"/health-care/health-needs-conditions/military-sexual-trauma/#no-benefits\">Mental and physical health problems linked to military sexual trauma (MST)</a></li>\n</ul><p>Call us at <a href=\"tel:8008271000\">800-827-1000</a> to find out what your care options may be. We’re here Monday through Friday, 8:00 a.m. to 9:00 p.m. ET.<br />\n </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "q_a_section",
+        "entityId": "9601",
+        "fieldSectionHeader": "Benefit payments, claims, claim exams, and other services",
+        "fieldSectionIntro": null,
+        "fieldAccordionDisplay": false,
+        "fieldQuestions": [
+          {
+            "entity": {
+              "entityId": "9588",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Will my benefit payment be delayed because of COVID-19?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9587",
+                    "fieldWysiwyg": {
+                      "processed": "<p>No. We’re currently processing all benefit payments as normal. This includes payments for disability, pension, education payments to your school, and more.  </p>\n\n<p><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"d4e165b2-d7b9-44f0-af76-af5de58eaa5e\" href=\"/va-payment-history\" title=\"View your VA payment history\">View your VA benefit payments online</a></p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9590",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What happens to my GI Bill benefits if my school changes to online classes or temporarily closes?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9589",
+                    "fieldWysiwyg": {
+                      "processed": "<p>This depends on your school’s actions, and your attendance. Please be sure we have your current email address on file. We can send certain information only electronically, and some schools have shifted to only electronic communication during this time.</p>\n\n<p>You can sign in to update your email online through our <a href=\"https://gibill.custhelp.va.gov/\">\"Ask a question” tool</a>. Or call the Education Call Center toll-free at <a href=\"tel:+18884424551\">888-442-4551</a>, Monday through Friday, 8:00 a.m. to 7:00 p.m. ET.</p>\n\n<p><strong>If your school changes to online classes</strong></p>\n\n<p>If you’re currently receiving GI Bill benefits, payments will continue automatically. You don’t have to do anything. You’ll continue to receive the same monthly housing allowance payments you received for resident training until December 21, 2020, or until your school resumes normal operations.</p>\n\n<p>We’re working closely with schools to ensure enrollments are accurately certified and processed.</p>\n\n<p><strong>If your school temporarily closes</strong></p>\n\n<p>We’ll continue paying your benefits through the end of the terms or 28 days, whichever is sooner.</p>\n\n<p><strong>If your school is in session, but you can’t attend due to COVID-19</strong></p>\n\n<p>We can pay you through your last date of attendance, but not through the end of the term. This may result in debts and overpayment. If this happens, you can<a href=\"https://www.va.gov/debtman/Submit_A_Waiver_Request.asp\"> submit a waiver request</a>.</p>\n\n<p><a href=\"https://benefits.va.gov/gibill/covid19educationbenefits.asp\">Learn more about how COVID-19 may affect your education benefits</a></p>\n\n<p><a href=\"https://benefits.va.gov/gibill/covid19paperlessguidance.asp\">Learn more about electronic communication</a></p>\n\n<p><a href=\"#more-benefit-and-claim-questio\">Get more information about on-the-job training, apprenticeships, and work study</a></p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9596",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Can I still file a claim or get help from my regional office?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9595",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Yes. We’ve temporarily closed all of our 56 regional offices for in-person visits due to COVID-19.</p>\n\n<p>But you can still file a claim online, by mail, or with the help of a trained professional.  And we can still answer your questions by phone and through our online customer service tool. We’re also continuing to support services like educational counseling, collecting information for fiduciary claims, and specially adaptive housing assistance by phone or video conferencing tools like VA Video Connect.</p>\n\n<p>Learn how to file a claim online, by mail, or with the help of a trained professional for:</p>\n\n<ul><li><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"414c54b9-cd5c-4d86-8203-fc2489e4be8a\" href=\"/disability/how-to-file-claim\" title=\"How to file a VA disability claim\">Disability benefits</a></li>\n\t<li><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"17ab63a7-1b97-4587-8e54-6fae907af781\" href=\"/pension/how-to-apply\" title=\"How to apply for a VA pension as a Veteran\">Pension benefits</a></li>\n\t<li><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"35472cd9-a60a-4838-a911-1bd48df78270\" href=\"/education/how-to-apply\" title=\"How to apply for the GI Bill and related benefits\">GI Bill and related benefits</a></li>\n\t<li><a href=\"https://www.va.gov/\">Other benefits</a></li>\n</ul><p><strong>To get help with education benefits,</strong> call <a href=\"tel:+18884424551\">888-442-4551</a> toll-free. We’re here Monday through Friday, 8:00 a.m. to 7:00 p.m. ET. If you have hearing loss, call TTY 711.</p>\n\n<p><strong>To get help with other benefits,</strong> call <a href=\"tel:+18008271000\">800-827-1000</a> toll-free. We’re here Monday through Friday, 8:00 a.m. to 9:00 p.m. ET. If you have hearing loss, call TTY 711.</p>\n\n<p><strong>To check on the status of your claim or appeal,</strong> <a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"2ba48b5f-a92c-4775-9cfd-9530d1c87347\" href=\"/claim-or-appeal-status\" title=\"Check your VA claim or appeal status\">use our online claim status tool</a>.</p>\n\n<p><strong>For other benefit questions,</strong> use our online customer service tool called <a href=\"https://iris.custhelp.va.gov/\">IRIS (Inquiry Routing &amp; Information System)</a>.</p>\n\n<p><strong>To stay updated on closures or service interruptions:</strong></p>\n\n<ul><li>Visit <a href=\"https://www.benefits.va.gov/benefits/news.asp\">the Veterans Benefits Administration (VBA) news page</a>.</li>\n\t<li>Call the benefits hotline toll-free at <a href=\"tel:+18008271000\">800-827-1000</a>.</li>\n\t<li>Follow us on social media.</li>\n</ul><p class=\"va-address-block\"><a href=\"https://www.facebook.com/VeteransBenefits\">VBA Facebook </a><br /><a href=\"https://twitter.com/VAVetBenefits\">VBA Twitter: @VAVetBenefits</a></p>\n\n<p><a href=\"#more-benefit-and-claim-questio\">Get more information about submitting paperwork and requesting extensions</a></p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9713",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Is VA still doing claim exams (also called compensation and pension, or C&P, exams)?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9712",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Yes. After temporary changes due to COVID-19, we’re starting to do in-person exams again in many locations. Our contract exam providers will conduct all in-person examinations.</p>\n\n<p><a href=\"https://benefits.va.gov/compensation/claimexam.asp\">Review locations where we’re now offering in-person exams</a></p>\n\n<p>We’re also still doing many telehealth exams by phone or video. And we’re doing more records’ reviews using Acceptable Clinical Evidence (ACE) exams. This means we’ll review your existing medical records and contact you for more information if needed, instead of requiring an in-person or telehealth exam.</p>\n\n<p><strong>If your claim requires an in-person exam and we can’t conduct the exam in person</strong></p>\n\n<p>Please make sure we have your up-to-date mailing address, phone number, and email address. </p>\n\n<p><a href=\"https://www.va.gov/change-address\" title=\"Change your address on file with VA\">Update your contact information online</a></p>\n\n<p>A contract medical exam provider will contact you to reschedule an in-person exam for a later date when in-person exams are available in your area. You don’t need to do anything else at this time.</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9715",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What if I had or need an in-person appointment for VA benefits or services?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9714",
+                    "fieldWysiwyg": {
+                      "processed": "<p>We’ve temporarily closed our regional offices to the public and stopped in-person appointments. But we’re using virtual services to hold appointments for some benefit activities by telephone or online video through <a href=\"https://www.mobile.va.gov/app/va-video-connect\">VA Video Connect</a> or other approved video meeting tools. Once your video appointment is scheduled, you’ll receive a VA Video Connect link.</p>\n\n<p>We’ll work with you to change your in-person appointment to a virtual appointment for benefits and services such as:</p>\n\n<ul><li>\n\t<p><strong>Vocational Rehabilitation and Employment (VR&amp;E)</strong></p>\n\t</li>\n\t<li>\n\t<p><strong>Chapter 36 educational and career counseling</strong></p>\n\t</li>\n\t<li>\n\t<p><strong>Military service coordinators</strong></p>\n\t</li>\n\t<li>\n\t<p><strong>Home loans: </strong>We’re working with lenders and appraisers to offer temporary options to continue processing and closing loans remotely. You can continue to work with your lender to follow state and local laws for notarizing documents. And you can designate an attorney-in-fact to use a Power of Attorney to sign documents on your behalf at closing.</p>\n\t</li>\n\t<li>\n\t<p><strong>Specially Adapted Housing grants: </strong>Our staff can help you complete the grant application process by phone, video, and email.</p>\n\t</li>\n\t<li>\n\t<p><strong>Fiduciary claims: </strong>We can conduct many field exams by phone. In cases where a phone exam isn’t appropriate, we may do a field exam through VA Video Connect. Our staff will contact you to set up a phone or video exam.</p>\n\t</li>\n\t<li>\n\t<p><strong>Transition assistance: </strong>You can follow the VA Transition and Assistance Program (TAP) curriculum and other learning modules online. Use your Common Access Card- (CAC-)enabled device to access the course (number TGPS-US006) through the Department of Defense’s <a href=\"https://jkodirect.jten.mil/Atlas2/page/login/Login.jsf\">Joint Knowledge Online</a>. You can also explore <a href=\"https://www.va.gov/service-member-benefits/\">VA benefits and services online.</a> For more help by phone, ask your DOD TAP manager to connect you with a VA benefits adviser.<br />\n\t </p>\n\t</li>\n</ul><p>Please work with your VA representative to reschedule appointments. If you have questions, you can also call us at <a href=\"tel:+18008271000\">800-827-1000</a>. We’re here Monday through Friday, 8:00 a.m. to 9:00 p.m. ET.</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "wysiwyg",
+        "entityId": "10241",
+        "fieldWysiwyg": {
+          "processed": "<h3>More benefit and claim questions</h3>"
+        }
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "q_a_section",
+        "entityId": "10230",
+        "fieldSectionHeader": null,
+        "fieldSectionIntro": null,
+        "fieldAccordionDisplay": true,
+        "fieldQuestions": [
+          {
+            "entity": {
+              "entityId": "10229",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What about on-the-job training, apprenticeships, and work study?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10228",
+                    "fieldWysiwyg": {
+                      "processed": "<p>As of right now, we can’t pay you for hours you haven’t worked. But we understand the impact this pandemic is having on students. We’re working to follow both established and new, temporary guidance specific to COVID-19 to continue benefits for as many students as possible.</p>\n\n<p><strong>For on-the-job training and apprenticeships</strong></p>\n\n<p>If your training facility:</p>\n\n<ul><li><strong>Changes to an online format,</strong> you’ll continue to receive your regular monthly housing payments.</li>\n\t<li><strong>Remains open, but you stop training due to furlough, illness, or other reasons,</strong> you’ll continue to receive your payments through the last day of your training.</li>\n\t<li><strong>Temporarily closes,</strong> you’ll receive your payments through the end of the program or 28 days, whichever is sooner.</li>\n</ul><p><strong>For work-study students</strong></p>\n\n<p>If:</p>\n\n<ul><li><strong>We’ve processed a new contract and you requested advanced payment, </strong>we’ll still process your advancement as long as we’ve received your signed agreement.</li>\n\t<li><strong>Your work-study facility temporarily closes,</strong> you can switch your contract location as long as the new site supervisor accepts you and we receive a new application for the new site.</li>\n\t<li><strong>Your school can offer you temporary off-campus remote work, </strong>we’ll continue to pay for submitted hours as long as the work satisfies your work-study requirements.</li>\n\t<li><strong>Your school cancels classes completely and you won’t be enrolled at that or any other facility or taking online classes paid for by VA, </strong>we’ll pay you for the hours you worked until the end of your contract term or until 4 weeks after the date the school closed, whichever comes first.</li>\n</ul><p><a href=\"https://benefits.va.gov/gibill/covid19educationbenefits.asp\">Learn more about how COVID-19 may affect your education benefits</a></p>\n\n<p><a href=\"https://benefits.va.gov/gibill/covid19paperlessguidance.asp\">Learn more about electronic communication</a></p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10239",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What if I need to turn in or sign paperwork for my claim or appeal?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10238",
+                    "fieldWysiwyg": {
+                      "processed": "<p>We’re currently granting extensions under good cause provisions for any claim or appeal paperwork deadlines if:</p>\n\n<ul><li>You or your authorized representative requests an extension due to the COVID-19 pandemic, <strong>and</strong></li>\n\t<li>The time limit on your claim or appeal expires on or after March 1, 2020</li>\n</ul><p><strong>To request an extension for filing a claim or appeal</strong></p>\n\n<p>Simply add a note to your late-filed application that you’re requesting an exemption for timely filing due to COVID-19.</p>\n\n<p><strong>If you’ve already filed a claim and need more time to submit evidence or other documents</strong></p>\n\n<p>Continue to submit your requests for exemptions due to COVID-19 in writing or by phone at <a href=\"tel:+18008271000\">800-827-1000</a>.</p>\n\n<p>Please tell us how much extra time you need. We won’t take final action on your claim until you’ve submitted your additional evidence or other documents to support your claim, or the extension period ends.</p>\n\n<p><strong>If you need to sign paperwork</strong></p>\n\n<p>We don’t require physical or wet signatures (meaning signed in ink) on claims applications or other documents, as long as your claim information and signature show no irregularities. Please work with your VA representative to find out which type of signature you’ll need for a specific benefit or service.</p>\n\n<p>If you have any questions, please call us at <a href=\"tel:+18008271000\">800-827-1000</a>. We’re here Monday through Friday, 8:00 a.m. to 9:00 p.m. ET.</p>"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "q_a_section",
+        "entityId": "9734",
+        "fieldSectionHeader": "Debt, copays, appeals, and other financial concerns",
+        "fieldSectionIntro": null,
+        "fieldAccordionDisplay": false,
+        "fieldQuestions": [
+          {
+            "entity": {
+              "entityId": "10216",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Is VA helping to make sure I get my stimulus check? ",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10215",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Yes. If you receive VA disability or pension benefits, you’ll automatically receive a $1,200 stimulus check from the IRS, even if you don’t file tax returns. You don’t need to do anything to receive your check. </p>\n\n<p>We’re working with the Internal Revenue Service (IRS) and U.S. Department of the Treasury to make sure you receive your payment as soon as possible. You’ll soon be able to <a href=\"https://www.irs.gov/coronavirus/get-my-payment\">track your payment on IRS.gov</a>.</p>\n\n<p><strong>If you have 1 or more dependent children under the age of 17</strong></p>\n\n<p>You may qualify for an extra $500 per child.</p>\n<p>If you filed a tax return for 2018 or 2019, or if you <a href=\"https://www.irs.gov/coronavirus/non-filers-enter-payment-info-here\">registered as a non-filer on IRS.gov</a> by May 5, 2020, you’ll receive this added amount in your automatic stimulus check.</p> \n<p>If you missed this deadline, you can get this added amount when you file your tax return for 2020.</p>\n<p>\n</p><p><strong>If you’ve already started using the IRS’s Economic Impact Payments (EIP) portal</strong></p>\n\n<p>You can continue using the portal to give the IRS your information and track your stimulus check. This won’t cause any problems with getting your check.</p>\n\n<p><strong>Note:</strong> Use only IRS.gov to register or get information about your stimulus check. Be careful of scams. Unless you’ve asked to be contacted, the IRS will never contact you by email, phone, or text to ask for personal or financial information or to open an attachment or visit a website link.</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9721",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": " Will my COVID-19 stimulus check lower my VA payments?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9720",
+                    "fieldWysiwyg": {
+                      "processed": "<p>No. We won’t count any money received as part of the COVID-19 stimulus package as income for VA disability compensation, individual unemployability (TDIU), VA pension, or parent Dependency and Indemnity Compensation (DIC) beneficiaries. This means your payments will stay the same.</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9729",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What if I can’t pay my existing VA debt?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9728",
+                    "fieldWysiwyg": {
+                      "processed": "<p>As of April 3, 2020, we’ve taken action to stop collection on newly established Veteran debt and make it easier for Veterans to request extended repayment plans and address other needs during this time. Please check back regularly for updates.</p>\n\n<p><strong>If you have VA debt that we’ve already transferred to the U.S. Department of the Treasury </strong></p>\n\n<p>The U.S. Department of the Treasury won’t take any more action on your debt during this time. This means they won’t add more fees or interest, reduce or withhold part of your federal or state payments or job wages to pay your debt, or refer your account to a private collection agency.</p>\n\n<p><strong>If you have VA debt being managed by VA</strong></p>\n\n<p>We’ll work with you to decide whether you’d prefer us to temporarily stop collection action, including stopping the addition of fees and interest, during this time or extend your repayment terms.</p>\n\n<ul><li>\n\t<p><strong>If you have debt related to VA benefits,</strong> please contact the VA Debt Management Center at <a href=\"tel:+18008270648\">800-827-0648</a> to make arrangements. We’re here Monday through Friday, 7:30 a.m. to 7:00 p.m. ET.</p>\n\t</li>\n\t<li>\n\t<p><strong>If you have debt related to VA health care,</strong> please contact the Health Resource Center at <a href=\"tel:+18888274817\">888-827-4817</a> to make arrangements.  Be sure to have your account number ready.</p>\n\t</li>\n</ul><p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9723",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "What if I’m having trouble paying my VA direct or VA-backed home loan during this time?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9722",
+                    "fieldWysiwyg": {
+                      "processed": "<p>If you’re experiencing financial hardship due directly or indirectly to COVID-19, call your loan servicer right away to request a forbearance plan. Your loan servicer is the company that collects your mortgage payments.</p>\n\n<p>Forbearance lets you pause or reduce your loan payments for a period of time, without paying late fees or other penalties. Under a recent law, you may be able to request up to 12 months of mortgage forbearance on a VA direct or VA-backed home loan.</p>\n\n<p><strong>Note:</strong> Forbearance doesn’t lower or forgive the amount of money you owe on your loan. You’ll need to work with your servicer at the end of the forbearance period to set up a repayment plan.</p>\n\n<p><strong>If you have a VA-backed home loan</strong></p>\n\n<p>Call <a href=\"tel:+18778273702\">877-827-3702</a> to talk with a VA home loan representative to request a forbearance plan or other help. We’re here Monday through Friday, 8:00 a.m. to 6:00 p.m. ET.</p>\n\n<p><strong>If you have a Native American Direct Loan (NADL)</strong></p>\n\n<p>Your loan servicer is BSI Financial Services. To request a forbearance plan, contact the BSI default resolution team at <a href=\"tel:+18003277861\">800-327-7861</a> or <a href=\"mailto:customercare@bsifinancial.com\">customercare@bsifinancial.com</a>. <br /><br />\nYou can also call <a href=\"tel:+18778273702\">877-827-3702</a> to talk with a VA home loan representative about other ways we can help you. </p>\n\n<p><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"8c3bf33b-d7ec-4868-ab5d-84cd6db01c8b\" href=\"/housing-assistance/home-loans/trouble-making-payments\" title=\"VA help to avoid foreclosure\">Learn more about how we can help you avoid foreclosure</a></p>\n\n<p><strong>Get more help from the Consumer Financial Protection Bureau (CFPB):</strong></p>\n\n<ul><li><a href=\"https://www.consumerfinance.gov/find-a-housing-counselor/\">Find a government-approved housing counselor near you</a> </li>\n\t<li><a href=\"https://www.consumerfinance.gov/coronavirus/\">Get COVID-19 specific resources</a></li>\n\t<li>Call the 24/7 HOPE™ Hotline at <a href=\"tel:+18889954673\">888-995-4673</a> </li>\n</ul><p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9725",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Will I still have to pay my VA copays during the pandemic?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9724",
+                    "fieldWysiwyg": {
+                      "processed": "<p>As of April 6, 2020, we’ve stopped sending monthly copay billing statements for all Veterans. This means you won’t receive a bill for any copays during this time. Please check back regularly for updates.</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "wysiwyg",
+        "entityId": "10242",
+        "fieldWysiwyg": {
+          "processed": "<h3>More financial questions</h3>"
+        }
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "q_a_section",
+        "entityId": "10237",
+        "fieldSectionHeader": null,
+        "fieldSectionIntro": null,
+        "fieldAccordionDisplay": true,
+        "fieldQuestions": [
+          {
+            "entity": {
+              "entityId": "10232",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "If I’ve lost my job, can I get help with my VA copays over time?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10231",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Yes. If you're struggling because of life situations like losing your job, having a sudden decrease in income, or having an increase in out-of-pocket family health care expenses, we can help. You can request financial hardship assistance to manage your current VA copay debt or request an exemption from future copays. </p>\n\n<p><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"a8a5bfeb-9940-4ed8-80ae-9c2858a7b3d1\" href=\"/health-care/pay-copay-bill/financial-hardship\" title=\"Request VA financial hardship assistance\">Learn more about requesting financial hardship assistance</a></p>\n\n<p><a href=\"https://www.youtube.com/watch?v=3Pa_EUA0Qy0\">Watch a video about financial hardship options (YouTube)</a></p>\n\n<p>You can also call our Health Resource Center at <a href=\"tel:+18664001238\">866-400-1238</a> to talk to someone about your options.</p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10234",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": " What if I’ve been diagnosed with COVID-19 and need immediate action on my VA appeal?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10233",
+                    "fieldWysiwyg": {
+                      "processed": "<p>The Board of Veterans' Appeals will offer you a priority review to move your appeal to the front of the line. This is called “Advanced on the Board of Veterans’ Appeals Docket” (or AOD). </p>\n\n<p><a href=\"https://www.bva.va.gov/CustomerService.asp\">Find out how to file for AOD and required documents</a></p>\n\n<p><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"2ba48b5f-a92c-4775-9cfd-9530d1c87347\" href=\"/claim-or-appeal-status\" title=\"Check your VA claim or appeal status\">Check your VA claim or appeal status online</a></p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10639",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "If I’ve lost my job or health insurance, can I get VA health care?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10638",
+                    "fieldWysiwyg": {
+                      "processed": "<p>We base eligibility for VA health care on several factors, like your military service, discharge status, and whether you have a service-connected disability.</p>\n\n<p>If you’ve lost your job or have a reduced income, you may qualify for enhanced eligibility status based on your income. This means we’ll place you in a higher priority group, which makes you more likely to get benefits and affects how much (if anything) you’ll need to pay for care.</p>\n\n<p><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"5e53e9ef-a4c5-498e-8e22-87bdc79f01d6\" href=\"/health-care/eligibility\" title=\"Eligibility for VA health care\">Learn about VA health care eligibility </a></p>\n\n<p><a data-entity-substitution=\"canonical\" data-entity-type=\"node\" data-entity-uuid=\"f8323733-28cd-497d-b536-349005be9b71\" href=\"/health-care/how-to-apply\" title=\"How to apply for VA health care\">Find out how to apply for VA health care</a></p>\n\n<p><strong>If you’re not eligible for VA health care, you may still be able to get care for:</strong></p>\n\n<ul><li><a href=\"/health-care/health-needs-conditions/mental-health/ptsd/#no-benefits\">Posttraumatic stress disorder (PTSD)</a></li>\n\t<li><a href=\"/health-care/health-needs-conditions/mental-health/#no-benefits\">Other mental health problems (like depression or substance abuse)</a></li>\n\t<li><a href=\"/health-care/health-needs-conditions/military-sexual-trauma/#no-benefits\">Mental and physical health problems linked to military sexual trauma (MST)</a></li>\n</ul><p>Call us at <a href=\"tel:8008271000\">800-827-1000</a> to find out what your care options may be. We’re here Monday through Friday, 8:00 a.m. to 9:00 p.m. ET.</p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10236",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "How do I get help if I'm homeless or at risk of becoming homeless?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10235",
+                    "fieldWysiwyg": {
+                      "processed": "<p>We offer many programs and services that may help—including free health care and, in some cases, free limited dental care. We can also help you connect with resources in your community, like homeless shelters or faith-based organizations.</p>\n\n<p><strong>Find the support you need:</strong></p>\n\n<ul><li>Call the National Call Center for Homeless Veterans at <a href=\"tel:+18774243838\">877-424-3838</a> for help 24 hours a day, 7 days a week. You’ll talk privately with a trained VA counselor for free.</li>\n\t<li>Contact your nearest VA medical center and ask to talk with a VA social worker. If you're a female Veteran, ask for the Women Veterans Program Manager.<br /><a href=\"https://www.va.gov/find-locations/\">Find the nearest VA medical center</a><br />\n\t </li>\n</ul>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "10641",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "How can I protect myself against coronavirus-related scams?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "10640",
+                    "fieldWysiwyg": {
+                      "processed": "<p>The coronavirus pandemic has brought new scams, including those that target stimulus checks, online tools, promises of new treatments, and charity donations.<br /><br /><strong>You can take these steps to protect your identity and finances during this time:</strong></p>\n\n<ul><li><strong>Use only IRS.gov to register for or get information about your stimulus check (also called an economic impact payment). </strong>Remember, unless you’ve asked to be contacted, the IRS will never contact you to ask for personal or financial information or ask you to open an attachment or visit a website link. For more information, go to the <a href=\"https://www.irs.gov/coronavirus/economic-impact-payment-information-center\">IRS website</a>.</li>\n\t<li><strong>Protect your information when using online tools and mobile applications.</strong> For step-by-step instructions on how to securely access and manage your VA health care and other benefits, visit our videos for <a href=\"https://www.youtube.com/watch?v=OLT-HOUwbh4\">privacy best practices for Veterans (YouTube)</a> and <a href=\"https://www.youtube.com/watch?v=jmnH42Qse48\">authentication methods for signing in to mobile apps and VA.gov (YouTube)</a>.</li>\n\t<li><strong>Stay aware of the latest scams.</strong> Go the <a href=\"https://www.ftc.gov/coronavirus/scams-consumer-advice\">Federal Trade Commission (FTC) website</a> for tips on how to avoid coronavirus-related scams.</li>\n\t<li><strong>Protect your identity at all times.</strong> Research shows scammers and identity thieves often target Veterans. Visit our <a href=\"https://www.va.gov/identitytheft/\">identity theft prevention website</a> for tips and resources to help you protect your identity.</li>\n</ul>"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "q_a_section",
+        "entityId": "9586",
+        "fieldSectionHeader": "Status of VA national cemeteries and burials",
+        "fieldSectionIntro": null,
+        "fieldAccordionDisplay": false,
+        "fieldQuestions": [
+          {
+            "entity": {
+              "entityId": "9581",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Are VA national cemeteries open?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9580",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Yes. VA national cemeteries remain open but, for the safety of employees and visitors, we ask that visitors follow physical distancing and travel restrictions based on CDC and local health department guidelines.</p>\n\n<p>Some cemetery areas may be closed to the public. You should contact the cemetery for more information.</p>\n\n<p><a href=\"https://www.cem.va.gov/alerts.asp\">Find updates on the operating status of individual national cemeteries</a> </p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9583",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Can I still schedule a burial at a national cemetery? ",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9582",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Yes. To schedule an interment, contact the National Cemetery Scheduling Office at <a href=\"tel:+18005351117\">800-535-1117</a>. VA national cemeteries remain open for direct interments of Veterans and eligible dependents. Immediate family members (limited to 10 individuals) of the deceased can witness the interment, if requested and approved by the cemetery. </p>\n\n<p>If you would like to cancel or postpone an interment that’s already scheduled, please contact the cemetery directly to cancel the service and to reschedule future services when ready.</p>\n\n<p> </p>"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9585",
+              "parentFieldName": "field_questions",
+              "entityBundle": "q_a",
+              "fieldQuestion": "Can I schedule a committal service or a military funeral honors service?",
+              "fieldAnswer": [
+                {
+                  "entity": {
+                    "entityBundle": "wysiwyg",
+                    "entityId": "9584",
+                    "fieldWysiwyg": {
+                      "processed": "<p>Not at this time. For the safety of volunteers, families, and staff, national cemeteries won’t be conducting committal services or rendering military funeral honors until further notice. Families are welcomed to proceed with a direct interment at this time and schedule a committal service and military honors for a later date once normal operations resume.</p>"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entity": {
+        "entityType": "paragraph",
+        "entityBundle": "list_of_link_teasers",
+        "parentFieldName": "field_content_block",
+        "fieldTitle": "Helpful online tools",
+        "entityId": "9741",
+        "fieldVaParagraphs": [
+          {
+            "entity": {
+              "entityId": "9735",
+              "fieldLink": {
+                "url": {
+                  "path": "https://www.myhealth.va.gov/mhv-portal-web/user-login"
+                },
+                "title": "Send a secure message",
+                "options": []
+              },
+              "fieldLinkSummary": "Sign in to My HealtheVet to send a message to your VA provider."
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9736",
+              "fieldLink": {
+                "url": {
+                  "path": "https://www.myhealth.va.gov/mhv-portal-web/user-login"
+                },
+                "title": "Refill your VA prescriptions online",
+                "options": []
+              },
+              "fieldLinkSummary": "Refill your prescriptions online through My HealtheVet and track delivery of your medicines."
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9737",
+              "fieldLink": {
+                "url": {
+                  "path": "/va-payment-history"
+                },
+                "title": "View your VA payments",
+                "options": []
+              },
+              "fieldLinkSummary": "View your past payment information for benefits like disability, pension, education payments, and more."
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9738",
+              "fieldLink": {
+                "url": {
+                  "path": "/claim-or-appeal-status"
+                },
+                "title": "Check your VA claim or appeal status",
+                "options": []
+              },
+              "fieldLinkSummary": "Check the status of a VA claim or appeal for benefits, including disability compensation, pension, VA health care, and more."
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9739",
+              "fieldLink": {
+                "url": {
+                  "path": "/change-address"
+                },
+                "title": "Change your address on file with VA",
+                "options": []
+              },
+              "fieldLinkSummary": "Update your address and other contact information for VA benefits and services."
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9740",
+              "fieldLink": {
+                "url": {
+                  "path": "/health-care/schedule-view-va-appointments"
+                },
+                "title": "Reschedule, cancel, or view your VA appointment",
+                "options": []
+              },
+              "fieldLinkSummary": "Request, reschedule, or cancel your VA health care appointments online."
+            }
+          },
+          {
+            "entity": {
+              "entityId": "9939",
+              "fieldLink": {
+                "url": {
+                  "path": "/change-direct-deposit"
+                },
+                "title": "Change your VA direct deposit information",
+                "options": []
+              },
+              "fieldLinkSummary": "Find out how to change your direct deposit information online"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "fieldAlert": null,
+  "fieldRelatedLinks": {
+    "entity": {
+      "parentFieldName": "field_related_links",
+      "fieldTitle": "More information",
+      "entityId": "8954",
+      "fieldVaParagraphs": [
+        {
+          "entity": {
+            "entityId": "9302",
+            "fieldLink": {
+              "url": {
+                "path": "/health-care/how-to-apply"
+              },
+              "title": "How to apply for VA health care",
+              "options": []
+            },
+            "fieldLinkSummary": "Find out how to prepare and apply for VA health care online, by phone, or by mail."
+          }
+        },
+        {
+          "entity": {
+            "entityId": "8953",
+            "fieldLink": {
+              "url": {
+                "path": "https://www.cdc.gov/coronavirus/2019-nCoV/index.html"
+              },
+              "title": "Visit the CDC's COVID-19 website",
+              "options": []
+            },
+            "fieldLinkSummary": "Get guidance for high-risk groups, travelers, COVID-19 resources for the community, and more at the CDC."
+          }
+        },
+        {
+          "entity": {
+            "entityId": "9340",
+            "fieldLink": {
+              "url": {
+                "path": "https://www.youtube.com/watch?v=6TKRU0nm8qo&feature=youtu.be"
+              },
+              "title": "Watch Dr. Stone's YouTube message for Veterans",
+              "options": []
+            },
+            "fieldLinkSummary": "Dr. Richard Stone, VHA Executive in Charge, speaks about how VA is here for Veterans during COVID-19. "
+          }
+        }
+      ]
+    }
+  },
+  "fieldAdministration": {
+    "entity": {
+      "name": "Root pages"
+    }
+  },
+  "fieldPageLastBuilt": {
+    "date": "2020-05-07 20:38:49 UTC"
+  },
+  "changed": 1591987229
+},
