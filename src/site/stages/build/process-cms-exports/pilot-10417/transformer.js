@@ -12,24 +12,30 @@ class Transformer {
   /**
    * Create a Transformer.
    * @param {String} nodeName - The name of the node's file
-*/
+   * 1. loads the node file
+   * 2. gets the corresponding schema from the bundles
+   * 3. Applies the schema, populates the fields
+   * 4. Recursively gets the references (includes) for the node
+   * 5. Saves the json file
+   */
 
   constructor(nodeFile) {
-    this.nodeFile = nodeFile;
+    this.nodeFile = nodeFile; // the node file we're processing
     this.nodeSchema = {}; // The schema for the current node
     this.outJson = {}; // The JSON output goes in here
     this.loadSchema();
-    this.loadNode();
-    if(this.nodeType === 'node_type') {
-      this.getMetaTags();
-      this.populateNode();
-    } else {
-      const nodeType = this.node.type[0].target_id;
-      this.nodeSchema = this.schema[nodeType];
+    const currentNode = this.loadNode();
+    if (currentNode) {
+      if(this.nodeType === 'content_type') {
+        this.getMetaTags();
+        this.populateNode();
+      } else {
+        this.nodeSchema = this.schema[this.fullBundleName];
+      }
+      this.populateFields();
+      this.populateReferences();
+      this.prettyOutJson = JSON.stringify(this.outJson, null, 2);
     }
-    this.populateFields();
-    this.populateReferences();
-    this.prettyOutJson = JSON.stringify(this.outJson, null, 2);
   }
 
   loadSchema() {
@@ -42,8 +48,32 @@ class Transformer {
     const nodePath = `${nodeDir}/${this.nodeFile}.json`;
     const rawContent = fs.readFileSync(nodePath);
     this.node = JSON.parse(rawContent);
+    if(!this.node.type) {
+      console.error('Unknown file type:');
+      return(false); // TODO doesn't work for taxonomy. Anything else?
+    }
     this.nodeType = this.node.type[0].target_type;
+    // switch from the name in the file to 
+    // what we use in the schema
+    // TODO understand better the relationship between these
+    switch (this.nodeType) {
+      case 'paragraphs_type':
+        this.nodeType = 'paragraph_type'; 
+      break;
+      case 'node_type':
+        this.nodeType = 'content_type'; 
+      break;
+      case 'block_content_type':
+        this.nodeType = 'custom_block_type'; 
+      break;
+      default:
+        console.error('Unknown node type:', this.nodeType);
+      return (false);
+    }
+    this.bundleType = this.node.type[0].target_id;
+    this.fullBundleName = `${this.nodeType}.${this.bundleType}`;  
     console.log('---- loaded:', this.nodeType, `${this.nodeFile}.json`);
+    return(true);
   }
 
   getMetaTags() {
@@ -68,20 +98,19 @@ class Transformer {
 
   populateNode() {
     const node = this.node
-    const nodeType = node.type[0].target_id;
-    this.nodeSchema = this.schema[nodeType];
+    this.bundleType = node.type[0].target_id;
+    this.fullBundleName = `${this.nodeType}.${this.bundleType}`;  
+    this.nodeSchema = this.schema[this.fullBundleName];
+    console.log(this.fullBundleName, this.nodeSchema)
     const jsonSchema = JSON.stringify(this.nodeSchema, null, 2);
     this.outJson = {
-      "entityBundle": nodeType,
+      "entityBundle": this.bundleType,
       "entityId": node.nid[0].value.toString(),
       "entityPublished": node.moderation_state[0].value === 'published',
       "title": node.title[0].value,
       "entityUrl": node.entityUrl,
       "entityMetatags": this.metaTags,
       // TODO "entityMetatags": 
-      // TODO "fieldFeaturedContent": reference
-      // TODO "fieldContentBlock": reference
-      // TODO 
     };
 
   }
@@ -90,14 +119,15 @@ class Transformer {
     _.map(this.nodeSchema.fields, (value, key) => {
       const fieldName = value['Machine name'];
       const fieldType = value['Field type'];
-      const fieldValue = this.getFieldValue(fieldType, fieldName);
+      const fieldValue = this.populateFieldValue(fieldType, fieldName);
     });
   }
 
-  getFieldValue(type, fieldName) {
+  populateFieldValue(type, fieldName) {
     const field = this.node[fieldName];
-    //console.log(type, fieldName);
-    if(!field) {
+    console.log(type, fieldName);
+    console.log(field);
+    if(field === undefined) {
       console.error('empty', fieldName);
       return (null);
     }
@@ -107,8 +137,7 @@ class Transformer {
       return (null);
     }
 
-
-    if (type.startsWith('Text')) {
+    if (type.startsWith('Text') || type === 'List (text)') {
       if(field && field[0]) {
         this.outJson[_.camelCase(fieldName)] = field[0].value;
         return;
@@ -123,12 +152,14 @@ class Transformer {
       break;
       case 'Date':
         if (field[0]) {
-        this.outJson[_.camelCase(fieldName)] = field[0].value;
+        this.outJson[_.camelCase(fieldName)] = { 
+          date: field[0].value
+        }
       }
       break;
       default:
         console.log('unhandled type -' + type + '-');
-        console.log( this.node[fieldName]);
+      console.log( this.node[fieldName]);
       return(null);
     }
   }
@@ -137,7 +168,8 @@ class Transformer {
     _.map(this.nodeSchema.fields, (value, key) => {
       const fieldName = value['Machine name'];
       const fieldType = value['Field type'];
-      if (fieldType.startsWith('Entity reference ')) {
+      if (fieldType.startsWith('Entity reference') || 
+          (fieldType.startsWith('Custom block type'))) {
         if(!this.node[fieldName] || !this.node[fieldName][0]) {
           return;
         }
@@ -147,17 +179,35 @@ class Transformer {
         const referenceName = `${targetType}.${targetUuid}`;
         console.log(fieldName, fieldType, referenceName);
         const reference = new Transformer(referenceName);
-        const output = reference.getJson();
-        console.log(output);
-        return;
+        const refNode = reference.getNode();
+        if(refNode.type) { // TODO skip taxonomy
+          const refOutField = [
+            {
+            "entity": {
+              "entityType": targetType,
+              "entityBundle": refNode.type[0].target_id,
+              "entityId": refNode.id[0].value,
+            }
+          }
+          ];
+          const refNodeFields = reference.getJson();
+          _.map(refNodeFields, (value, key) => {
+            refOutField[0].entity[key] = value;
+          });
+          this.outJson[_.camelCase(fieldName)] = refOutField;
+          return;
+        }
       }
     });
   }
 
   getJson() {
-    return (this.prettyOutJson);
+    return (this.outJson);
   }
 
+  getNode() {
+    return (this.node);
+  }
 }
 
 module.exports = Transformer;
