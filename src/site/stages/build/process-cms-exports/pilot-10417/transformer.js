@@ -3,10 +3,11 @@
 const _ = require('lodash');
 const fs = require('fs');
 
-
 const schemaDir = '.';
 const schemaName  = 'bundles.json';
 const nodeDir = '../../../../../../../cms-export/content';
+
+const schema = loadSchema();
 
 class Transformer {
   /**
@@ -23,25 +24,18 @@ class Transformer {
     this.nodeFile = nodeFile; // the node file we're processing
     this.nodeSchema = {}; // The schema for the current node
     this.outJson = {}; // The JSON output goes in here
-    this.loadSchema();
     const currentNode = this.loadNode();
     if (currentNode) {
       if(this.nodeType === 'content_type') {
         this.getMetaTags();
         this.populateNode();
       } else {
-        this.nodeSchema = this.schema[this.fullBundleName];
+        this.nodeSchema = schema[this.fullBundleName];
       }
       this.populateFields();
       this.populateReferences();
       this.prettyOutJson = JSON.stringify(this.outJson, null, 2);
     }
-  }
-
-  loadSchema() {
-    const schemaPath = `${schemaDir}/${schemaName}`;
-    const rawContent = fs.readFileSync(schemaPath);
-    this.schema = JSON.parse(rawContent);
   }
 
   loadNode() {
@@ -100,7 +94,7 @@ class Transformer {
     const node = this.node
     this.bundleType = node.type[0].target_id;
     this.fullBundleName = `${this.nodeType}.${this.bundleType}`;  
-    this.nodeSchema = this.schema[this.fullBundleName];
+    this.nodeSchema = schema[this.fullBundleName];
     console.log(this.fullBundleName, this.nodeSchema)
     const jsonSchema = JSON.stringify(this.nodeSchema, null, 2);
     this.outJson = {
@@ -125,8 +119,6 @@ class Transformer {
 
   populateFieldValue(type, fieldName) {
     const field = this.node[fieldName];
-    console.log(type, fieldName);
-    console.log(field);
     if(field === undefined) {
       console.error('empty', fieldName);
       return (null);
@@ -139,7 +131,13 @@ class Transformer {
 
     if (type.startsWith('Text') || type === 'List (text)') {
       if(field && field[0]) {
-        this.outJson[_.camelCase(fieldName)] = field[0].value;
+        if (field[0].format === 'rich_text') {
+          this.outJson[_.camelCase(fieldName)] = {
+            'processed': field[0].value, //TODO process the HTML
+          }
+        } else {
+          this.outJson[_.camelCase(fieldName)] = field[0].value;
+        }
         return;
       } else {
         return (null);
@@ -173,30 +171,31 @@ class Transformer {
         if(!this.node[fieldName] || !this.node[fieldName][0]) {
           return;
         }
-        const field = this.node[fieldName][0];
-        const targetType = field.target_type;
-        const targetUuid = field.target_uuid;
-        const referenceName = `${targetType}.${targetUuid}`;
-        console.log(fieldName, fieldType, referenceName);
-        const reference = new Transformer(referenceName);
-        const refNode = reference.getNode();
-        if(refNode.type) { // TODO skip taxonomy
-          const refOutField = [
-            {
-            "entity": {
-              "entityType": targetType,
-              "entityBundle": refNode.type[0].target_id,
-              "entityId": refNode.id[0].value,
-            }
+        const refOutField = [];
+        _.map(this.node[fieldName], (value, key) => {
+          const field = value;
+          const targetType = field.target_type;
+          const targetUuid = field.target_uuid;
+          const referenceName = `${targetType}.${targetUuid}`;
+          console.log(fieldName, fieldType, referenceName);
+          const reference = new Transformer(referenceName);
+          const refNode = reference.getNode();
+          if(refNode.type) { // TODO skip taxonomy
+            const singleRefOutField = {
+              "entity": {
+                "entityType": targetType,
+                "entityBundle": refNode.type[0].target_id,
+                "entityId": refNode.id[0].value.toString(),
+              }
+            };
+            const refNodeFields = reference.getJson();
+            _.map(refNodeFields, (value, key) => {
+              singleRefOutField.entity[key] = value;
+            });
+            refOutField.push(singleRefOutField);
           }
-          ];
-          const refNodeFields = reference.getJson();
-          _.map(refNodeFields, (value, key) => {
-            refOutField[0].entity[key] = value;
-          });
-          this.outJson[_.camelCase(fieldName)] = refOutField;
-          return;
-        }
+        });
+        this.outJson[_.camelCase(fieldName)] = refOutField;
       }
     });
   }
@@ -208,6 +207,15 @@ class Transformer {
   getNode() {
     return (this.node);
   }
+}
+
+/*
+ * Loads the global schema for all bundles and fields
+ */
+function loadSchema() {
+  const schemaPath = `${schemaDir}/${schemaName}`;
+  const rawContent = fs.readFileSync(schemaPath);
+  return (JSON.parse(rawContent));
 }
 
 module.exports = Transformer;
