@@ -56,3 +56,4 @@ ID,Name,Machine name,X,Dev,QA,Description,Example(s),Mod.,Layout,Trns.,Migr.,Cmn
 ,Sections,administration,x,,,"Represents a hierarchy of the VA, partly for governance purposes.","VBA, VHA, etc",y,n,,,n,y,n,,Vocabulary,,Sprint 5,,,,,
 ,Type of Redirect,type_of_redirect,x,,,,,,,,,,,,,Vocabulary,,,,,,,
 ,VHA health service taxonomy,health_care_service_taxonomy,x,,,"Single source of truth for health service names, descriptions, patient-friendly names, and common conditions.",,,,,,,,,,Vocabulary,,,,,,,
+,Phone number,phone_number,x,,,,,,,,,,,,,Paragraph type,,,,,,,
