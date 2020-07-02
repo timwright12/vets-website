@@ -18,7 +18,7 @@ class Transformer {
    * 3. Applies the schema, populates the fields
    * 4. Recursively gets the references (includes) for the node
    * 5. Saves the json file
-   */
+*/
 
   constructor(nodeFile) {
     this.nodeFile = nodeFile; // the node file we're processing
@@ -43,8 +43,12 @@ class Transformer {
     const rawContent = fs.readFileSync(nodePath);
     this.node = JSON.parse(rawContent);
     if(!this.node.type) {
-      console.error('Unknown file type:');
-      return(false); // TODO doesn't work for taxonomy. Anything else?
+      if (this.node.vid) { // taxonomy
+        this.node.type = this.node.vid;
+      } else {
+        console.error('Unknown file type:', nodePath);
+        return(false); // TODO doesn't work for some file types
+      }
     }
     this.nodeType = this.node.type[0].target_type;
     // switch from the name in the file to 
@@ -56,6 +60,9 @@ class Transformer {
       break;
       case 'node_type':
         this.nodeType = 'content_type'; 
+      break;
+      case 'taxonomy_vocabulary':
+        this.nodeType = 'vocabulary';
       break;
       case 'block_content_type':
         this.nodeType = 'custom_block_type'; 
@@ -93,9 +100,8 @@ class Transformer {
   populateNode() {
     const node = this.node
     this.bundleType = node.type[0].target_id;
-    this.fullBundleName = `${this.nodeType}.${this.bundleType}`;  
     this.nodeSchema = schema[this.fullBundleName];
-    console.log(this.fullBundleName, this.nodeSchema)
+    // console.log(this.fullBundleName, this.nodeSchema)
     const jsonSchema = JSON.stringify(this.nodeSchema, null, 2);
     this.outJson = {
       "entityBundle": this.bundleType,
@@ -156,7 +162,7 @@ class Transformer {
       }
       break;
       default:
-        console.log('unhandled type -' + type + '-');
+        console.error('unhandled type -' + type + '- ' + fieldName);
       console.log( this.node[fieldName]);
       return(null);
     }
@@ -180,20 +186,24 @@ class Transformer {
           console.log(fieldName, fieldType, referenceName);
           const reference = new Transformer(referenceName);
           const refNode = reference.getNode();
-          if(refNode.type) { // TODO skip taxonomy
-            const singleRefOutField = {
-              "entity": {
-                "entityType": targetType,
-                "entityBundle": refNode.type[0].target_id,
-                "entityId": refNode.id[0].value.toString(),
-              }
-            };
-            const refNodeFields = reference.getJson();
-            _.map(refNodeFields, (value, key) => {
-              singleRefOutField.entity[key] = value;
-            });
-            refOutField.push(singleRefOutField);
+          let entityId;
+          if(refNode.id) {
+            entityId = refNode.id[0].value.toString(); //default
+          } else {
+            entityId = refNode.tid[0].value.toString(); // taxonomy
           }
+          const singleRefOutField = {
+            "entity": {
+              "entityType": targetType,
+              "entityBundle": refNode.type[0].target_id,
+              "entityId": entityId
+            }
+          };
+          const refNodeFields = reference.getJson();
+          _.map(refNodeFields, (value, key) => {
+            singleRefOutField.entity[key] = value;
+          });
+          refOutField.push(singleRefOutField);
         });
         this.outJson[_.camelCase(fieldName)] = refOutField;
       }
@@ -210,8 +220,8 @@ class Transformer {
 }
 
 /*
- * Loads the global schema for all bundles and fields
- */
+* Loads the global schema for all bundles and fields
+*/
 function loadSchema() {
   const schemaPath = `${schemaDir}/${schemaName}`;
   const rawContent = fs.readFileSync(schemaPath);
