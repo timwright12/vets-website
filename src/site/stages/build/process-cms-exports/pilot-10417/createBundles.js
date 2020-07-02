@@ -27,9 +27,15 @@ function parseCSV() {
   const bundles = parse(csvBundles, {columns:true});
   bundleObj = {};
   _.map(bundles, (value, key) => {
-    if(value['Name']) {
+    const bundleType = value['Type'];
+    const bundleName = value['Name'];
+    console.log(bundleName, bundleType);
+    if(bundleName) {
       value.fields = {}; // Bundle's fields will go in here
-      bundleObj[value['Name']] =  value;
+      // both paragaph type and contenet type can have the same bundle name such as "alert"
+      // so we prefix with type to differentiate them.
+      const fullName = `${bundleType}.${bundleName}`;
+      bundleObj[fullName] =  value;
     }
   });
 
@@ -38,7 +44,9 @@ function parseCSV() {
   const fields = parse(csvfields, {columns:true});
   _.map(fields, (value, key) => {
     const bundleName = value['Bundle'];
-    const fieldObj = bundleObj[bundleName];
+    const bundleType = value['#REF!'];
+    const fullName = `${bundleType}.${bundleName}`;
+    const fieldObj = bundleObj[fullName];
     if(fieldObj) {
       const machineName = value['Machine name'];
       fieldObj.fields[machineName] = value;
@@ -50,8 +58,10 @@ function parseCSV() {
   // We migrate to using machine name as the key for the bundle object
   _.map(bundleObj, (value, key) => {
     const machineName = value['Machine name'];
-    bundleObj[machineName] = value;
-    bundleObj[machineName].fields = _.sortBy(bundleObj[machineName].fields, 'Machine name');
+    const bundleType = _.snakeCase(value['Type']);
+    const fullName = `${bundleType}.${machineName}`;
+    bundleObj[fullName] = value;
+    bundleObj[fullName].fields = _.sortBy(bundleObj[fullName].fields, 'Machine name');
     delete bundleObj[key];
   });
 
