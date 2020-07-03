@@ -18,6 +18,7 @@ class Transformer {
    * 3. Applies the schema, populates the fields
    * 4. Recursively gets the references (includes) for the node
    * 5. Saves the json file
+   *
 */
 
   constructor(nodeFile) {
@@ -38,16 +39,21 @@ class Transformer {
     }
   }
 
+/*
+* Load the node file that was created in the tar file.
+*/
+
   loadNode() {
     const nodePath = `${nodeDir}/${this.nodeFile}.json`;
     const rawContent = fs.readFileSync(nodePath);
     this.node = JSON.parse(rawContent);
+    // Most node types will have a field "type"
     if(!this.node.type) {
-      if (this.node.vid) { // taxonomy
+      if (this.node.vid) { // taxonomy has vid instead of "type"
         this.node.type = this.node.vid;
       } else {
         console.error('Unknown file type:', nodePath);
-        return(false); // TODO doesn't work for some file types
+        return(false); // So we know which file/node types aren't working
       }
     }
     this.nodeType = this.node.type[0].target_type;
@@ -123,26 +129,35 @@ class Transformer {
     });
   }
 
+/*
+* Populate the different fields for the current node 
+* based on the bundle type
+* @param {String} type - field type
+* @param {String} fieldName - field name
+*/
   populateFieldValue(type, fieldName) {
     const field = this.node[fieldName];
+    const camelName = _.camelCase(fieldName);
     if(field === undefined) {
       console.error('empty', fieldName);
       return (null);
     }
 
-    if (type.startsWith('Entity reference') || (type === 'Link')  ||
-        (type === 'Meta tags')) {
+    // These are handled in their respective functions
+    if (type.startsWith('Entity reference') || (type === 'Meta tags')) {
       return (null);
     }
 
+    // Looks like the various Drupal text fields all start
+    // with "Text"
     if (type.startsWith('Text') || type === 'List (text)') {
       if(field && field[0]) {
         if (field[0].format === 'rich_text') {
-          this.outJson[_.camelCase(fieldName)] = {
+          this.outJson[camelName] = {
             'processed': field[0].value, //TODO process the HTML
           }
         } else {
-          this.outJson[_.camelCase(fieldName)] = field[0].value;
+          this.outJson[camelName] = field[0].value;
         }
         return;
       } else {
@@ -152,19 +167,35 @@ class Transformer {
 
     switch (type) {
       case 'Boolean':
-        return this.node[fieldName];
+        this.outJson[camelName] = field[0].value;
+      break;
+      case 'Number (integer)':
+        if (field[0]) {
+        this.outJson[camelName] = field[0].value;
+      }
       break;
       case 'Date':
         if (field[0]) {
-        this.outJson[_.camelCase(fieldName)] = { 
+        this.outJson[camelName] = { 
           date: field[0].value
         }
       }
       break;
+      case 'Link':
+        const linkField = field[0];
+      if (linkField) {
+        this.outJson[camelName] =  {
+          "options": linkField.options,
+          "title": linkField.title,
+          "url": {
+            "path": linkField.uri // notice url -> uri
+          }
+        }
+      }
+      break;
       default:
-        console.error('unhandled type -' + type + '- ' + fieldName);
-      console.log( this.node[fieldName]);
-      return(null);
+        console.error('unhandled type -' + type + '- ' + fieldName, JSON.stringify(field, 2, null));
+      break;
     }
   }
 
