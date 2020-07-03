@@ -8,11 +8,13 @@ const schemaName  = 'bundles.json';
 const nodeDir = '../../../../../../../cms-export/content';
 
 const schema = loadSchema();
+let stackDepth = 0; // how deep are we recursing
 
 class Transformer {
   /**
    * Create a Transformer.
    * @param {String} nodeName - The name of the node's file
+   * @param {boolean} rootNode - Is this a root node/a page?
    * 1. loads the node file
    * 2. gets the corresponding schema from the bundles
    * 3. Applies the schema, populates the fields
@@ -21,21 +23,28 @@ class Transformer {
    *
 */
 
-  constructor(nodeFile) {
+  constructor(nodeFile, rootNode) {
+    stackDepth++;
     this.nodeFile = nodeFile; // the node file we're processing
     this.nodeSchema = {}; // The schema for the current node
     this.outJson = {}; // The JSON output goes in here
     const currentNode = this.loadNode();
-    if (currentNode) {
-      if(this.nodeType === 'content_type') {
-        this.getMetaTags();
-        this.populateNode();
-      } else {
-        this.nodeSchema = schema[this.fullBundleName];
+    if (!rootNode || this.node.entityUrl) {
+    console.log(`=========== ${nodeFile} stackDepth: ${stackDepth} =================`)
+      if (currentNode) {
+        if(this.nodeType === 'content_type') {
+          this.getMetaTags();
+          this.populateNode();
+        } else {
+          this.nodeSchema = schema[this.fullBundleName];
+        }
+        this.populateFields();
+        this.populateReferences();
+        this.prettyOutJson = JSON.stringify(this.outJson, null, 2);
       }
-      this.populateFields();
-      this.populateReferences();
-      this.prettyOutJson = JSON.stringify(this.outJson, null, 2);
+    } else {
+      // only handle root nodes that have an entityUrl // TODO verify
+      this.prettyOutJson = {};
     }
   }
 
@@ -50,7 +59,8 @@ class Transformer {
     // Most node types will have a field "type"
     if(!this.node.type) {
       if (this.node.vid) { // taxonomy has vid instead of "type"
-        this.node.type = this.node.vid;
+        // this.node.type = this.node.vid; 
+        return(false); // Ignore taxonomy node types. That what graphQL does
       } else {
         console.error('Unknown file type:', nodePath);
         return(false); // So we know which file/node types aren't working
@@ -67,9 +77,11 @@ class Transformer {
       case 'node_type':
         this.nodeType = 'content_type'; 
       break;
+      /*
       case 'taxonomy_vocabulary':
         this.nodeType = 'vocabulary';
       break;
+      */
       case 'block_content_type':
         this.nodeType = 'custom_block_type'; 
       break;
@@ -116,7 +128,7 @@ class Transformer {
       "title": node.title[0].value,
       "entityUrl": node.entityUrl,
       "entityMetatags": this.metaTags,
-      // TODO "entityMetatags": 
+      // TODO clean entityMetatags: 
     };
 
   }
@@ -189,6 +201,10 @@ class Transformer {
           "title": linkField.title,
           "url": {
             "path": linkField.uri // notice url -> uri
+            //TODO We sometimes get 
+            //    "path": "entity:node/2ba48b5f-a92c-4775-9cfd-9530d1c87347"
+            //    instead of
+            //    "path": "/claim-or-appeal-status
           }
         }
       }
@@ -212,17 +228,18 @@ class Transformer {
         _.map(this.node[fieldName], (value, key) => {
           const field = value;
           const targetType = field.target_type;
+          if(targetType === 'taxonomy_term') {
+            // Don't inline these
+            return;
+          }
           const targetUuid = field.target_uuid;
           const referenceName = `${targetType}.${targetUuid}`;
           console.log(fieldName, fieldType, referenceName);
-          const reference = new Transformer(referenceName);
+          const reference = new Transformer(referenceName, false);
+          stackDepth--;
           const refNode = reference.getNode();
           let entityId;
-          if(refNode.id) {
-            entityId = refNode.id[0].value.toString(); //default
-          } else {
-            entityId = refNode.tid[0].value.toString(); // taxonomy
-          }
+          entityId = refNode.id[0].value.toString(); //default
           const singleRefOutField = {
             "entity": {
               "entityType": targetType,
@@ -248,6 +265,26 @@ class Transformer {
   getNode() {
     return (this.node);
   }
+
+  /*
+  * Load a bunch of nodes and process them
+   * @param {Number} number - The name of the node we'll process
+  */
+  static loadNodes(number) {
+    let files = fs.readdirSync(nodeDir).filter(file => file.startsWith('node.'));
+    files = files.slice(0,number);
+    for (let ii = 0; ii < files.length; ii++) {
+      const file = files[ii];
+      console.error('=====', file);
+      const fileName = file.replace('.json', '');
+      const transformer = new Transformer(fileName, true);
+      const outJson = transformer.getJson();
+      const prettyOutJson = JSON.stringify(outJson, null, 2);
+      console.log(prettyOutJson);
+    }
+      ;
+  }
+
 }
 
 /*
