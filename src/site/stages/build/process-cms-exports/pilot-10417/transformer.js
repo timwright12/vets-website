@@ -8,13 +8,13 @@ const schemaName  = 'bundles.json';
 const nodeDir = '../../../../../../../cms-export/content';
 
 const schema = loadSchema();
-let stackDepth = 0; // how deep are we recursing
+let stackDepth = 0; // how deep are we recursing when fetching references
 
 class Transformer {
   /**
    * Create a Transformer.
    * @param {String} nodeName - The name of the node's file
-   * @param {boolean} rootNode - Is this a root node/a page?
+   * @param {boolean} rootNode - Is this a root node that gets converted into HTML?
    * 1. loads the node file
    * 2. gets the corresponding schema from the bundles
    * 3. Applies the schema, populates the fields
@@ -24,25 +24,30 @@ class Transformer {
 */
 
   constructor(nodeFile, rootNode) {
-    stackDepth++;
+    if (rootNode) {
+      stackDepth = 0;
+    }
     this.nodeFile = nodeFile; // the node file we're processing
     this.nodeSchema = {}; // The schema for the current node
     this.outJson = {}; // The JSON output goes in here
     const currentNode = this.loadNode();
-    if (!rootNode || this.node.entityUrl) {
-    console.log(`=========== ${nodeFile} stackDepth: ${stackDepth} =================`)
-      if (currentNode) {
-        if(this.nodeType === 'content_type') {
-          this.getMetaTags();
-          this.populateNode();
-        } else {
-          this.nodeSchema = schema[this.fullBundleName];
+    if ((!rootNode || this.node.entityUrl) // A root node needs to have an entity URL
+          && this.node.status && this.node.status[0]
+          && (this.node.status[0].value === true)) // And status to indicate it's published
+        console.log(`=========== ${nodeFile} stackDepth: ${stackDepth} =================`)
+        stackDepth++;
+        if (currentNode) {
+          if(this.nodeType === 'content_type') {
+            this.getMetaTags();
+            this.populateNode();
+          } else {
+            this.nodeSchema = schema[this.fullBundleName];
+          }
+          this.populateFields();
+          this.populateReferences();
+          this.prettyOutJson = JSON.stringify(this.outJson, null, 2);
         }
-        this.populateFields();
-        this.populateReferences();
-        this.prettyOutJson = JSON.stringify(this.outJson, null, 2);
-      }
-    } else {
+      } else {
       // only handle root nodes that have an entityUrl // TODO verify
       this.prettyOutJson = {};
     }
@@ -58,8 +63,8 @@ class Transformer {
     this.node = JSON.parse(rawContent);
     // Most node types will have a field "type"
     if(!this.node.type) {
-      if (this.node.vid) { // taxonomy has vid instead of "type"
-        // this.node.type = this.node.vid; 
+      if (this.node.vid || this.node.mid) { // taxonomy has vid instead of "type"
+        // For now also ignore media nodes  //TODO
         return(false); // Ignore taxonomy node types. That what graphQL does
       } else {
         console.error('Unknown file type:', nodePath);
@@ -119,12 +124,13 @@ class Transformer {
     const node = this.node
     this.bundleType = node.type[0].target_id;
     this.nodeSchema = schema[this.fullBundleName];
-    // console.log(this.fullBundleName, this.nodeSchema)
     const jsonSchema = JSON.stringify(this.nodeSchema, null, 2);
+    const moderationState = node.moderation_state;
+    const published = moderationState.length > 0 && moderationState[0].value === 'published';
     this.outJson = {
       "entityBundle": this.bundleType,
       "entityId": node.nid[0].value.toString(),
-      "entityPublished": node.moderation_state[0].value === 'published',
+      "entityPublished": published,
       "title": node.title[0].value,
       "entityUrl": node.entityUrl,
       "entityMetatags": this.metaTags,
@@ -228,7 +234,12 @@ class Transformer {
         _.map(this.node[fieldName], (value, key) => {
           const field = value;
           const targetType = field.target_type;
-          if(targetType === 'taxonomy_term') {
+          if(
+            (!field) ||
+                (field.length === 0) ||
+                (targetType === 'taxonomy_term') ||
+                (targetType === 'media') //TODO
+          ) {
             // Don't inline these
             return;
           }
@@ -239,7 +250,12 @@ class Transformer {
           stackDepth--;
           const refNode = reference.getNode();
           let entityId;
-          entityId = refNode.id[0].value.toString(); //default
+          if(refNode.id) {
+            entityId = refNode.id[0].value.toString(); //default
+          } else {
+            // Node is included rather than paragraph or block
+            entityId = refNode.nid[0].value.toString(); 
+          }
           const singleRefOutField = {
             "entity": {
               "entityType": targetType,
@@ -280,9 +296,8 @@ class Transformer {
       const transformer = new Transformer(fileName, true);
       const outJson = transformer.getJson();
       const prettyOutJson = JSON.stringify(outJson, null, 2);
-      console.log(prettyOutJson);
+      fs.writeFileSync(`output/${ii}.json`, prettyOutJson);
     }
-      ;
   }
 
 }
