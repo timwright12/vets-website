@@ -5,10 +5,11 @@ const fs = require('fs');
 
 const schemaDir = '.';
 const schemaName  = 'bundles.json';
-const nodeDir = '../../../../../../../cms-export/content';
+const nodeDir = '../../../../../../../cms-export/content'; // Where to find the node files
 
 const schema = loadSchema();
 let stackDepth = 0; // how deep are we recursing when fetching references
+let loadedFiles = {}; // Keep track of the files we've already loaded
 
 class Transformer {
   /**
@@ -24,16 +25,31 @@ class Transformer {
 */
 
   constructor(nodeFile, rootNode) {
+    this.outJson = {}; // The JSON output goes in here
+    this.prettyOutJson = {}; // Pretty version of the above
+
     if (rootNode) {
       stackDepth = 0;
+      loadedFiles = {};
+    } else {
+      if(loadedFiles[nodeFile]) {
+        // Avoid circular references where one files includes the second and
+        // the second includes the first causing an infinite loop.
+        console.warn('circular reference, not loading node');
+        return;
+      }
     }
+
     this.nodeFile = nodeFile; // the node file we're processing
     this.nodeSchema = {}; // The schema for the current node
-    this.outJson = {}; // The JSON output goes in here
     const currentNode = this.loadNode();
-    if ((!rootNode || this.node.entityUrl) // A root node needs to have an entity URL
+    if (!currentNode) {
+      return; //Failed to load the current node
+    }
+    loadedFiles[nodeFile] = true;
+    if (!rootNode || this.node.entityUrl // A root node needs to have an entity URL
           && this.node.status && this.node.status[0]
-          && (this.node.status[0].value === true)) // And status to indicate it's published
+          && (this.node.status[0].value === true)) { // And status to indicate it's published
         console.log(`=========== ${nodeFile} stackDepth: ${stackDepth} =================`)
         stackDepth++;
         if (currentNode) {
@@ -47,10 +63,7 @@ class Transformer {
           this.populateReferences();
           this.prettyOutJson = JSON.stringify(this.outJson, null, 2);
         }
-      } else {
-      // only handle root nodes that have an entityUrl // TODO verify
-      this.prettyOutJson = {};
-    }
+      }
   }
 
 /*
@@ -59,7 +72,13 @@ class Transformer {
 
   loadNode() {
     const nodePath = `${nodeDir}/${this.nodeFile}.json`;
-    const rawContent = fs.readFileSync(nodePath);
+    let rawContent;
+    try {
+      rawContent = fs.readFileSync(nodePath);
+    } catch(err) {
+      console.error(err); // TODO shouldn't happen
+      return (false);
+    }
     this.node = JSON.parse(rawContent);
     // Most node types will have a field "type"
     if(!this.node.type) {
@@ -249,6 +268,7 @@ class Transformer {
           const reference = new Transformer(referenceName, false);
           stackDepth--;
           const refNode = reference.getNode();
+          if(refNode) { // If we loaded a node
           let entityId;
           if(refNode.id) {
             entityId = refNode.id[0].value.toString(); //default
@@ -268,6 +288,7 @@ class Transformer {
             singleRefOutField.entity[key] = value;
           });
           refOutField.push(singleRefOutField);
+          }
         });
         this.outJson[_.camelCase(fieldName)] = refOutField;
       }
@@ -290,13 +311,19 @@ class Transformer {
     let files = fs.readdirSync(nodeDir).filter(file => file.startsWith('node.'));
     files = files.slice(0,number);
     for (let ii = 0; ii < files.length; ii++) {
+      console.log(ii);
       const file = files[ii];
-      console.error('=====', file);
+      console.log('=====', file);
       const fileName = file.replace('.json', '');
       const transformer = new Transformer(fileName, true);
       const outJson = transformer.getJson();
+      const node = transformer.getNode();
+      let id = ii;;
+      if(node.nid) {
+        id = `node-${node.nid[0].value}`;
+      }
       const prettyOutJson = JSON.stringify(outJson, null, 2);
-      fs.writeFileSync(`output/${ii}.json`, prettyOutJson);
+      fs.writeFileSync(`output/${id}.json`, prettyOutJson);
     }
   }
 

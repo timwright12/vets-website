@@ -4,10 +4,10 @@ const fs = require('fs');
 
 const Transformer = require('./transformer');
 // const testNode = 'node.fda9b503-6548-46b5-985b-22aef50f063a'; // coronavirus faq
-const testNode = 'node.18ca8756-9f78-43ef-95ea-04bd106063c5';
+//const testNode = 'node.18ca8756-9f78-43ef-95ea-04bd106063c5';
 // const testNode = 'node.002a617c-a548-4bca-8788-d97f2771f217';
-// const testNode = 'paragraph.3a76cbda-2e99-4c2a-b417-ce837646d19b';
-// const testNode = 'node.2bddb1a7-6fb1-4503-838d-9c2fcb51c46a.json';
+// const testNode = 'node.1e11ce74-b312-49d0-aedc-ee9ea1999fac';
+const testNode = 'node.530e8eb3-ff6e-4669-9118-cdd71d251660';
 
 function loadOne() {
   const transformer = new Transformer(testNode, true);
@@ -19,7 +19,7 @@ function loadOne() {
 }
 
 function loadMany() {
-  Transformer.loadNodes(800);
+  Transformer.loadNodes(5000);
 }
 
 // loadOne();
