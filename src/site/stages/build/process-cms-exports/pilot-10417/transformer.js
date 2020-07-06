@@ -48,8 +48,9 @@ class Transformer {
     }
     loadedFiles[nodeFile] = true;
     if (!rootNode || this.node.entityUrl // A root node needs to have an entity URL
-          && this.node.status && this.node.status[0]
-          && (this.node.status[0].value === true)) { // And status to indicate it's published
+          // this.node.status && this.node.status[0]
+          // && (this.node.status[0].value === true)
+       ) { // And status to indicate it's published
         console.log(`=========== ${nodeFile} stackDepth: ${stackDepth} =================`)
         stackDepth++;
         if (currentNode) {
@@ -305,11 +306,13 @@ class Transformer {
 
   /*
   * Load a bunch of nodes and process them
-   * @param {Number} number - The name of the node we'll process
+   * @param {Number} number - The number of files we process. When empty, we process all
   */
   static loadNodes(number) {
     let files = fs.readdirSync(nodeDir).filter(file => file.startsWith('node.'));
-    files = files.slice(0,number);
+    if (number) {
+      files = files.slice(0,number);
+    }
     for (let ii = 0; ii < files.length; ii++) {
       console.log(ii);
       const file = files[ii];
@@ -318,15 +321,18 @@ class Transformer {
       const transformer = new Transformer(fileName, true);
       const outJson = transformer.getJson();
       const node = transformer.getNode();
-      let id = ii;;
-      if(node.nid) {
-        id = `node-${node.nid[0].value}`;
+      if(outJson.entityId) {
+        const id = `node.${node.nid[0].value}`;
+        Transformer.saveFile(`output/${id}.json`, outJson);
       }
-      const prettyOutJson = JSON.stringify(outJson, null, 2);
-      fs.writeFileSync(`output/${id}.json`, prettyOutJson);
     }
   }
 
+  static saveFile(fileName, str) {
+    let prettyOutJson = JSON.stringify(str, null, 2);
+    // prettyOutJson = prettyOutJson.replace(/&nbsp;/gi, ' ');
+    fs.writeFileSync(fileName, prettyOutJson);
+  }
 }
 
 /*
