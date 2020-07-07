@@ -1,0 +1,6 @@
+{
+  "appName": "apply-wizards",
+  "entryFile": "./app-entry.jsx",
+  "entryName": "apply-wizards",
+  "rootUrl": "/apply-wizards"
+}

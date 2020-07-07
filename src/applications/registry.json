@@ -868,5 +868,14 @@
       "vagovprod": false,
       "layout": "page-react.html"
     }
+  },
+  {
+    "appName": "apply-wizards",
+    "entryName": "apply-wizards",
+    "rootUrl": "/apply-wizards",
+    "template": {
+      "vagovprod": false,
+      "layout": "page-react.html"
+    }
   }
 ]
