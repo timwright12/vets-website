@@ -111,4 +111,13 @@ describe('VAOS integration: VA facility page', () => {
       'Bozeman VA medical center (Bozeman, MT)',
     );
   });
+  it('should show past visits eligibility alert', () => {});
+  it('should show request limit eligibility alert', () => {});
+  it('should show unsupported facilities alert', () => {});
+  it('should show correct facility list when changing sites', () => {});
+  it('should use appropriate eligibility criteria when choosing different faciliites', () => {});
+  it('should start direct schedule flow when eligible', () => {});
+  it('should start request flow when eligible', () => {});
+  it('should display error message when requests fail', () => {});
+  it('should display previous user choices when returning to page', () => {});
 });

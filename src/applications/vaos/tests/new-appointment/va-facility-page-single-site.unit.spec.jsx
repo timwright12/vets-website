@@ -163,4 +163,12 @@ describe('VAOS integration: VA facility page, single-site users', () => {
       ),
     );
   });
+  it('should show eligibility alert for single unsupported facility users', () => {});
+  it('should show past visits eligibility alert', () => {});
+  it('should show request limit eligibility alert', () => {});
+  it('should use appropriate eligibility criteria when choosing different faciliites', () => {});
+  it('should start direct schedule flow when eligible', () => {});
+  it('should start request flow when eligible', () => {});
+  it('should display error message when requests fail', () => {});
+  it('should display previous user choices when returning to page', () => {});
 });
