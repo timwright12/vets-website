@@ -70,6 +70,40 @@ export function mockFacilitesFetch(ids, facilities) {
   );
 }
 
+export function mockFacilityFetch(id, facility) {
+  setFetchJSONResponse(
+    global.fetch.withArgs(`${environment.API_URL}/v1/facilities/va/${id}`),
+    { data: facility },
+  );
+}
+
+export function mockParentSites(ids, data) {
+  setFetchJSONResponse(
+    global.fetch.withArgs(
+      `${environment.API_URL}/vaos/v0/facilities?${ids
+        .map(id => `facility_codes[]=${id}`)
+        .join('&')}`,
+    ),
+    { data },
+  );
+}
+
+export function mockSupportedFacilities({
+  siteId,
+  parentId,
+  typeOfCareId,
+  data,
+}) {
+  setFetchJSONResponse(
+    global.fetch.withArgs(
+      `${
+        environment.API_URL
+      }/vaos/v0/systems/${siteId}/direct_scheduling_facilities?type_of_care_id=${typeOfCareId}&parent_code=${parentId}`,
+    ),
+    { data },
+  );
+}
+
 export function mockEligibilityFetches({
   siteId,
   facilityId,
@@ -140,10 +174,9 @@ export function mockEligibilityFetches({
   appointment.attributes = {
     ...appointment.attributes,
     startDate: moment().format(),
-    clinicFriendlyName: 'C&P BEV AUDIO FTC1',
-    facilityId: '983',
-    sta6aid: '983GC',
-    clinicId: clinics?.[0].id,
+    facilityId: siteId,
+    sta6aid: facilityId,
+    clinicId: clinics[0]?.id,
   };
   appointment.attributes.vdsAppointments[0].currentStatus = 'FUTURE';
   setFetchJSONResponse(
