@@ -29,9 +29,9 @@ class IntroductionPage extends React.Component {
       .reduce((state, field) => Object.assign(state, { [field]: null }), {
         open: false,
         educationBenefitSelected:
-          localStorage.getItem('educationBenefitSelected') || 'false',
-        hasWizardBeenCompleted:
-          localStorage.getItem('isEduWizardCompleted') || 'false',
+          localStorage.getItem('educationBenefitSelected') || 'none selected',
+        wizardCompletionStatus:
+          localStorage.getItem('EduWizardStatus') || 'not complete',
       });
   }
 
@@ -45,43 +45,62 @@ class IntroductionPage extends React.Component {
       sponsorTransferredBenefits,
       vetTecBenefit,
       applyForScholarship,
-      hasWizardBeenCompleted,
+      wizardCompletionStatus,
     } = this.state;
-    if (hasWizardBeenCompleted === 'false') {
+    const { showSTEMScholarship } = this.props;
+    const form1995 = showSTEMScholarship ? '10203' : '1995';
+    if (wizardCompletionStatus === 'pending') {
       if (
         newBenefit === 'yes' &&
         nationalCallToService === 'no' &&
         vetTecBenefit === 'no'
       ) {
-        this.setWizardComplete();
         this.setEduBenefitFormSelected('1990');
+        this.setWizardCompletionStatus('complete');
       } else if (
         newBenefit === 'yes' &&
         nationalCallToService === 'no' &&
         vetTecBenefit === 'yes'
       ) {
-        this.getButton('0994');
+        this.setEduBenefitFormSelected('0994');
+        this.setWizardCompletionStatus('complete');
       } else if (
         newBenefit === 'no' &&
         (transferredEduBenefits === 'transferred' ||
           transferredEduBenefits === 'own')
       ) {
-        this.getButton('1995');
+        this.setEduBenefitFormSelected('1995');
+        this.setWizardCompletionStatus('complete');
       } else if (newBenefit === 'no' && transferredEduBenefits === 'fry') {
-        this.getButton('5495');
+        this.setEduBenefitFormSelected('5495');
+        this.setWizardCompletionStatus('complete');
       } else if (
         newBenefit === 'yes' &&
         serviceBenefitBasedOn === 'other' &&
         sponsorDeceasedDisabledMIA === 'yes'
       ) {
-        this.getButton('5490');
+        this.setEduBenefitFormSelected('5490');
+        this.setWizardCompletionStatus('complete');
       } else if (
         newBenefit === 'yes' &&
         serviceBenefitBasedOn === 'other' &&
         sponsorDeceasedDisabledMIA === 'no' &&
         sponsorTransferredBenefits !== null
       ) {
-        this.getButton('1990E');
+        this.setEduBenefitFormSelected('1990E');
+        this.setWizardCompletionStatus('complete');
+      } else if (newBenefit === 'yes' && nationalCallToService === 'yes') {
+        this.setEduBenefitFormSelected('1990N');
+        this.setWizardCompletionStatus('complete');
+      } else if (applyForScholarship === 'yes') {
+        this.setEduBenefitFormSelected(form1995);
+        this.setWizardCompletionStatus('complete');
+      } else if (applyForScholarship === 'no' && newBenefit === 'extend') {
+        this.setEduBenefitFormSelected('none selected');
+        this.setWizardCompletionStatus('complete');
+      } else {
+        this.setWizardCompletionStatus('not complete');
+        this.setEduBenefitFormSelected('none selected');
       }
     }
   }
@@ -99,8 +118,6 @@ class IntroductionPage extends React.Component {
         className="usa-button va-button-primary"
         onClick={() => {
           this.recordWizardValues();
-          this.setWizardComplete();
-          this.setEduBenefitFormSelected(formId);
         }}
       >
         Apply now
@@ -109,7 +126,10 @@ class IntroductionPage extends React.Component {
   }
 
   answerQuestion = (field, answer) => {
-    const newState = Object.assign({}, { [field]: answer });
+    const newState = Object.assign(
+      {},
+      { [field]: answer, wizardCompletionStatus: 'pending' },
+    );
     if (field === 'newBenefit') {
       recordEvent({
         event: 'edu-howToApply-formChange',
@@ -177,13 +197,22 @@ class IntroductionPage extends React.Component {
       'edu-stemApplicant': this.state.applyForScholarship,
     });
   };
+  /**
+   *
+   * @param {string} value a string value to determine whether the wizard is in a complete status
+   */
 
-  setWizardComplete = () => {
-    localStorage.setItem('isEduWizardCompleted', 'true');
+  setWizardCompletionStatus = value => {
+    localStorage.setItem('EduWizardStatus', value);
     this.setState({
-      hasWizardBeenCompleted: localStorage.getItem('isEduWizardCompleted'),
+      wizardCompletionStatus: localStorage.getItem('EduWizardStatus'),
     });
   };
+
+  /**
+   *
+   * @param {string} formId a string value of the form id of the selected education benefit
+   */
 
   setEduBenefitFormSelected = formId => {
     localStorage.setItem('educationBenefitSelected', formId);
@@ -205,13 +234,9 @@ class IntroductionPage extends React.Component {
       vetTecBenefit,
       applyForScholarship,
       open,
-      hasWizardBeenCompleted,
+      wizardCompletionStatus,
       educationBenefitSelected,
     } = this.state;
-
-    const { showSTEMScholarship } = this.props;
-
-    const form1995 = showSTEMScholarship ? '10203' : '1995';
 
     const buttonClasses = classNames('usa-button-primary', 'wizard-button', {
       'va-button-primary': !this.state.open,
@@ -245,10 +270,14 @@ class IntroductionPage extends React.Component {
     ];
     return (
       <div>
-        <FormTitle title="apply-wizards" />
-        <p>Equal to VA Form (apply-wizards).</p>
-        {hasWizardBeenCompleted === 'false' && (
+        <FormTitle title="Apply Wizards Test App" />
+        <p>Equal to VA Form (Apply Wizards Test App).</p>
+        {educationBenefitSelected !== '1990' && (
           <div className="wizard-container">
+            <h3>
+              Let's find out which education benefits form would suit you the
+              most.
+            </h3>
             <button
               aria-expanded={this.state.open ? 'true' : 'false'}
               aria-controls="wizardOptions"
@@ -439,7 +468,6 @@ class IntroductionPage extends React.Component {
                             </ul>
                           </div>
                         </div>
-                        {this.getButton('1990N')}
                       </div>
                     )}
                   {newBenefit === 'extend' && (
@@ -515,28 +543,28 @@ class IntroductionPage extends React.Component {
                         label="Based on the eligibility requirements above, do you want to apply for this scholarship?"
                       />
                       <div className="vads-u-padding-top--2">
-                        {(applyForScholarship === 'yes' &&
-                          this.getButton(form1995)) ||
-                          (applyForScholarship === 'no' && (
-                            <p>
-                              Learn what other education benefits you may be
-                              eligible for on the{' '}
-                              <a href="../eligibility/">
-                                GI Bill eligibility page
-                              </a>
-                              .
-                            </p>
-                          ))}
+                        {applyForScholarship === 'no' && (
+                          <p>
+                            Learn what other education benefits you may be
+                            eligible for on the{' '}
+                            <a href="../eligibility/">
+                              GI Bill eligibility page
+                            </a>
+                            .
+                          </p>
+                        )}
                       </div>
                     </div>
                   )}
+                  {educationBenefitSelected !== 'none selected' &&
+                    this.getButton(educationBenefitSelected)}
                 </div>
               </div>
             )}
           </div>
         )}
         {educationBenefitSelected === '1990' &&
-          hasWizardBeenCompleted === 'true' && (
+          wizardCompletionStatus === 'complete' && (
             <div className="schemaform-intro">
               <SaveInProgressIntro
                 prefillEnabled={this.props.route.formConfig.prefillEnabled}
