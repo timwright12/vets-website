@@ -28,15 +28,69 @@ class IntroductionPage extends React.Component {
       .concat(...levels)
       .reduce((state, field) => Object.assign(state, { [field]: null }), {
         open: false,
-        displayIntroPageContentFor1990: false,
-        hasWizardBeenCompleted: localStorage.getItem('isEduWizardCompleted'),
+        educationBenefitSelected:
+          localStorage.getItem('educationBenefitSelected') || 'false',
+        hasWizardBeenCompleted:
+          localStorage.getItem('isEduWizardCompleted') || 'false',
       });
   }
-  getButton(form) {
+
+  componentDidUpdate() {
+    const {
+      newBenefit,
+      serviceBenefitBasedOn,
+      nationalCallToService,
+      transferredEduBenefits,
+      sponsorDeceasedDisabledMIA,
+      sponsorTransferredBenefits,
+      vetTecBenefit,
+      applyForScholarship,
+      hasWizardBeenCompleted,
+    } = this.state;
+    if (hasWizardBeenCompleted === 'false') {
+      if (
+        newBenefit === 'yes' &&
+        nationalCallToService === 'no' &&
+        vetTecBenefit === 'no'
+      ) {
+        this.setWizardComplete();
+        this.setEduBenefitFormSelected('1990');
+      } else if (
+        newBenefit === 'yes' &&
+        nationalCallToService === 'no' &&
+        vetTecBenefit === 'yes'
+      ) {
+        this.getButton('0994');
+      } else if (
+        newBenefit === 'no' &&
+        (transferredEduBenefits === 'transferred' ||
+          transferredEduBenefits === 'own')
+      ) {
+        this.getButton('1995');
+      } else if (newBenefit === 'no' && transferredEduBenefits === 'fry') {
+        this.getButton('5495');
+      } else if (
+        newBenefit === 'yes' &&
+        serviceBenefitBasedOn === 'other' &&
+        sponsorDeceasedDisabledMIA === 'yes'
+      ) {
+        this.getButton('5490');
+      } else if (
+        newBenefit === 'yes' &&
+        serviceBenefitBasedOn === 'other' &&
+        sponsorDeceasedDisabledMIA === 'no' &&
+        sponsorTransferredBenefits !== null
+      ) {
+        this.getButton('1990E');
+      }
+    }
+  }
+
+  getButton(formId) {
     const url =
-      form === '0994'
+      formId === '0994'
         ? `/education/about-gi-bill-benefits/how-to-use-benefits/vettec-high-tech-program/apply-for-vettec-form-22-0994`
-        : `/education/apply-for-education-benefits/application/${form}`;
+        : `/education/apply-for-education-benefits/application/${formId}`;
 
     return (
       <a
@@ -45,7 +99,8 @@ class IntroductionPage extends React.Component {
         className="usa-button va-button-primary"
         onClick={() => {
           this.recordWizardValues();
-          this.setCookie();
+          this.setWizardComplete();
+          this.setEduBenefitFormSelected(formId);
         }}
       >
         Apply now
@@ -123,10 +178,19 @@ class IntroductionPage extends React.Component {
     });
   };
 
-  setCookie = () => {
-    localStorage.setItem('isEduWizardCompleted', true);
+  setWizardComplete = () => {
+    localStorage.setItem('isEduWizardCompleted', 'true');
     this.setState({
       hasWizardBeenCompleted: localStorage.getItem('isEduWizardCompleted'),
+    });
+  };
+
+  setEduBenefitFormSelected = formId => {
+    localStorage.setItem('educationBenefitSelected', formId);
+    this.setState({
+      educationBenefitSelected: localStorage.getItem(
+        'educationBenefitSelected',
+      ),
     });
   };
 
@@ -140,6 +204,9 @@ class IntroductionPage extends React.Component {
       sponsorTransferredBenefits,
       vetTecBenefit,
       applyForScholarship,
+      open,
+      hasWizardBeenCompleted,
+      educationBenefitSelected,
     } = this.state;
 
     const { showSTEMScholarship } = this.props;
@@ -180,7 +247,7 @@ class IntroductionPage extends React.Component {
       <div>
         <FormTitle title="apply-wizards" />
         <p>Equal to VA Form (apply-wizards).</p>
-        {!this.state.displayIntroPageContentFor1990 && (
+        {hasWizardBeenCompleted === 'false' && (
           <div className="wizard-container">
             <button
               aria-expanded={this.state.open ? 'true' : 'false'}
@@ -190,7 +257,7 @@ class IntroductionPage extends React.Component {
             >
               Find your education benefits form
             </button>
-            {this.state.open && (
+            {open && (
               <div className={contentClasses} id="wizardOptions">
                 <div className="wizard-content-inner">
                   <ErrorableRadioButtons
@@ -463,104 +530,81 @@ class IntroductionPage extends React.Component {
                       </div>
                     </div>
                   )}
-                  {newBenefit === 'yes' &&
-                    nationalCallToService === 'no' &&
-                    vetTecBenefit === 'no' &&
-                    this.setState({
-                      displayIntroPageContentFor1990: true,
-                    })}
-                  {newBenefit === 'yes' &&
-                    nationalCallToService === 'no' &&
-                    vetTecBenefit === 'yes' &&
-                    this.getButton('0994')}
-                  {newBenefit === 'no' &&
-                    (transferredEduBenefits === 'transferred' ||
-                      transferredEduBenefits === 'own') &&
-                    this.getButton('1995')}
-                  {newBenefit === 'no' &&
-                    transferredEduBenefits === 'fry' &&
-                    this.getButton('5495')}
-                  {newBenefit === 'yes' &&
-                    serviceBenefitBasedOn === 'other' &&
-                    sponsorDeceasedDisabledMIA === 'yes' &&
-                    this.getButton('5490')}
-                  {newBenefit === 'yes' &&
-                    serviceBenefitBasedOn === 'other' &&
-                    sponsorDeceasedDisabledMIA === 'no' &&
-                    sponsorTransferredBenefits !== null &&
-                    this.getButton('1990E')}
                 </div>
               </div>
             )}
           </div>
         )}
-        {this.state.displayIntroPageContentFor1990 && (
-          <div className="schemaform-intro">
-            {/* <Wizard pages={pages} expander buttonText="Let's get started" /> */}
-            <SaveInProgressIntro
-              prefillEnabled={this.props.route.formConfig.prefillEnabled}
-              messages={this.props.route.formConfig.savedFormMessages}
-              pageList={this.props.route.pageList}
-              startText="Start the Application"
-            >
-              Please complete the form to apply for benefits.
-            </SaveInProgressIntro>
-            <h4>Follow the steps below to apply for benefits.</h4>
-            <div className="process schemaform-process">
-              <ol>
-                <li className="process-step list-one">
-                  <h5>Prepare</h5>
-                  <h6>To fill out this application, you’ll need your:</h6>
-                  <ul>
-                    <li>Social Security number (required)</li>
-                  </ul>
-                  <p>
-                    <strong>
-                      What if I need help filling out my application?
-                    </strong>{' '}
-                    An accredited representative, like a Veterans Service
-                    Officer (VSO), can help you fill out your claim.{' '}
-                    <a href="/disability-benefits/apply/help/index.html">
-                      Get help filing your claim
-                    </a>
-                  </p>
-                </li>
-                <li className="process-step list-two">
-                  <h5>Apply</h5>
-                  <p>Complete this benefits form.</p>
-                  <p>
-                    After submitting the form, you’ll get a confirmation
-                    message. You can print this for your records.
-                  </p>
-                </li>
-                <li className="process-step list-three">
-                  <h5>VA Review</h5>
-                  <p>
-                    We process claims within a week. If more than a week has
-                    passed since you submitted your application and you haven’t
-                    heard back, please don’t apply again. Call us at.
-                  </p>
-                </li>
-                <li className="process-step list-four">
-                  <h5>Decision</h5>
-                  <p>
-                    Once we’ve processed your claim, you’ll get a notice in the
-                    mail with our decision.
-                  </p>
-                </li>
-              </ol>
+        {educationBenefitSelected === '1990' &&
+          hasWizardBeenCompleted === 'true' && (
+            <div className="schemaform-intro">
+              <SaveInProgressIntro
+                prefillEnabled={this.props.route.formConfig.prefillEnabled}
+                messages={this.props.route.formConfig.savedFormMessages}
+                pageList={this.props.route.pageList}
+                startText="Start the Application"
+              >
+                Please complete the form to apply for benefits.
+              </SaveInProgressIntro>
+              <h4>Follow the steps below to apply for benefits.</h4>
+              <div className="process schemaform-process">
+                <ol>
+                  <li className="process-step list-one">
+                    <h5>Prepare</h5>
+                    <h6>To fill out this application, you’ll need your:</h6>
+                    <ul>
+                      <li>Social Security number (required)</li>
+                    </ul>
+                    <p>
+                      <strong>
+                        What if I need help filling out my application?
+                      </strong>{' '}
+                      An accredited representative, like a Veterans Service
+                      Officer (VSO), can help you fill out your claim.{' '}
+                      <a href="/disability-benefits/apply/help/index.html">
+                        Get help filing your claim
+                      </a>
+                    </p>
+                  </li>
+                  <li className="process-step list-two">
+                    <h5>Apply</h5>
+                    <p>Complete this benefits form.</p>
+                    <p>
+                      After submitting the form, you’ll get a confirmation
+                      message. You can print this for your records.
+                    </p>
+                  </li>
+                  <li className="process-step list-three">
+                    <h5>VA Review</h5>
+                    <p>
+                      We process claims within a week. If more than a week has
+                      passed since you submitted your application and you
+                      haven’t heard back, please don’t apply again. Call us at.
+                    </p>
+                  </li>
+                  <li className="process-step list-four">
+                    <h5>Decision</h5>
+                    <p>
+                      Once we’ve processed your claim, you’ll get a notice in
+                      the mail with our decision.
+                    </p>
+                  </li>
+                </ol>
+              </div>
+              <SaveInProgressIntro
+                buttonOnly
+                messages={this.props.route.formConfig.savedFormMessages}
+                pageList={this.props.route.pageList}
+                startText="Start the Application"
+              />
+              <div
+                className="omb-info--container"
+                style={{ paddingLeft: '0px' }}
+              >
+                <OMBInfo resBurden={30} ombNumber="" expDate="12/31/2021" />
+              </div>
             </div>
-            <SaveInProgressIntro
-              buttonOnly
-              messages={this.props.route.formConfig.savedFormMessages}
-              pageList={this.props.route.pageList}
-              startText="Start the Application"
-            />
-            <div className="omb-info--container" style={{ paddingLeft: '0px' }}>
-              <OMBInfo resBurden={30} ombNumber="" expDate="12/31/2021" />
-            </div>
-          </div>
-        )}
+          )}
       </div>
     );
   }
