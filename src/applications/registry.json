@@ -870,9 +870,36 @@
     }
   },
   {
-    "appName": "apply-wizards",
-    "entryName": "apply-wizards",
-    "rootUrl": "/apply-wizards",
+    "appName": "apply-wizards-test-app1",
+    "entryName": "apply-wizards-test-app1",
+    "rootUrl": "/apply-wizards-test-app1",
+    "template": {
+      "vagovprod": false,
+      "layout": "page-react.html"
+    }
+  },
+  {
+    "appName": "apply-wizards-test-app2",
+    "entryName": "apply-wizards-test-app2",
+    "rootUrl": "/apply-wizards-test-app2",
+    "template": {
+      "vagovprod": false,
+      "layout": "page-react.html"
+    }
+  },
+  {
+    "appName": "apply-wizards-test-app3",
+    "entryName": "apply-wizards-test-app3",
+    "rootUrl": "/apply-wizards-test-app3",
+    "template": {
+      "vagovprod": false,
+      "layout": "page-react.html"
+    }
+  },
+  {
+    "appName": "apply-wizards-test-app4",
+    "entryName": "apply-wizards-test-app4",
+    "rootUrl": "/apply-wizards-test-app4",
     "template": {
       "vagovprod": false,
       "layout": "page-react.html"

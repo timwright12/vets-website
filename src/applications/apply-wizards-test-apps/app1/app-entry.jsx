@@ -1,5 +1,5 @@
 import 'platform/polyfills';
-import './sass/apply-wizards.scss';
+import '../sass/apply-wizards.scss';
 
 import startApp from 'platform/startup';
 

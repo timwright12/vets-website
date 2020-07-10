@@ -8,7 +8,7 @@ import _ from 'lodash/fp';
 import classNames from 'classnames';
 import recordEvent from 'platform/monitoring/record-event';
 import ErrorableRadioButtons from '@department-of-veterans-affairs/formation-react/ErrorableRadioButtons';
-import { educationWizard10203 } from '../selectors/educationWizard';
+import { educationWizard10203 } from '../../selectors/educationWizard';
 import { connect } from 'react-redux';
 import localStorage from 'platform/utilities/storage/localStorage';
 
@@ -47,56 +47,38 @@ class IntroductionPage extends React.Component {
       applyForScholarship,
       wizardCompletionStatus,
     } = this.state;
-    const { showSTEMScholarship } = this.props;
-    const form1995 = showSTEMScholarship ? '10203' : '1995';
     if (wizardCompletionStatus === 'pending') {
       if (
-        newBenefit === 'yes' &&
-        nationalCallToService === 'no' &&
-        vetTecBenefit === 'no'
+        (newBenefit === 'yes' &&
+          nationalCallToService === 'no' &&
+          vetTecBenefit === 'no') ||
+        (newBenefit === 'no' && transferredEduBenefits === 'fry') ||
+        (newBenefit === 'yes' && nationalCallToService === 'yes')
       ) {
-        this.setEduBenefitFormSelected('1990');
+        this.setEduBenefitFormSelected('app1');
         this.setWizardCompletionStatus('complete');
       } else if (
-        newBenefit === 'yes' &&
-        nationalCallToService === 'no' &&
-        vetTecBenefit === 'yes'
+        (newBenefit === 'yes' &&
+          nationalCallToService === 'no' &&
+          vetTecBenefit === 'yes') ||
+        (newBenefit === 'yes' &&
+          serviceBenefitBasedOn === 'other' &&
+          sponsorDeceasedDisabledMIA === 'yes') ||
+        applyForScholarship === 'yes'
       ) {
-        this.setEduBenefitFormSelected('0994');
+        this.setEduBenefitFormSelected('app2');
         this.setWizardCompletionStatus('complete');
       } else if (
-        newBenefit === 'no' &&
-        (transferredEduBenefits === 'transferred' ||
-          transferredEduBenefits === 'own')
+        (newBenefit === 'no' &&
+          (transferredEduBenefits === 'transferred' ||
+            transferredEduBenefits === 'own')) ||
+        (newBenefit === 'yes' &&
+          serviceBenefitBasedOn === 'other' &&
+          sponsorDeceasedDisabledMIA === 'no' &&
+          sponsorTransferredBenefits !== null) ||
+        (applyForScholarship === 'no' && newBenefit === 'extend')
       ) {
-        this.setEduBenefitFormSelected('1995');
-        this.setWizardCompletionStatus('complete');
-      } else if (newBenefit === 'no' && transferredEduBenefits === 'fry') {
-        this.setEduBenefitFormSelected('5495');
-        this.setWizardCompletionStatus('complete');
-      } else if (
-        newBenefit === 'yes' &&
-        serviceBenefitBasedOn === 'other' &&
-        sponsorDeceasedDisabledMIA === 'yes'
-      ) {
-        this.setEduBenefitFormSelected('5490');
-        this.setWizardCompletionStatus('complete');
-      } else if (
-        newBenefit === 'yes' &&
-        serviceBenefitBasedOn === 'other' &&
-        sponsorDeceasedDisabledMIA === 'no' &&
-        sponsorTransferredBenefits !== null
-      ) {
-        this.setEduBenefitFormSelected('1990E');
-        this.setWizardCompletionStatus('complete');
-      } else if (newBenefit === 'yes' && nationalCallToService === 'yes') {
-        this.setEduBenefitFormSelected('1990N');
-        this.setWizardCompletionStatus('complete');
-      } else if (applyForScholarship === 'yes') {
-        this.setEduBenefitFormSelected(form1995);
-        this.setWizardCompletionStatus('complete');
-      } else if (applyForScholarship === 'no' && newBenefit === 'extend') {
-        this.setEduBenefitFormSelected('none selected');
+        this.setEduBenefitFormSelected('app4');
         this.setWizardCompletionStatus('complete');
       } else {
         this.setWizardCompletionStatus('not complete');
@@ -106,10 +88,7 @@ class IntroductionPage extends React.Component {
   }
 
   getButton(formId) {
-    const url =
-      formId === '0994'
-        ? `/education/about-gi-bill-benefits/how-to-use-benefits/vettec-high-tech-program/apply-for-vettec-form-22-0994`
-        : `/education/apply-for-education-benefits/application/${formId}`;
+    const url = `/apply-wizards-test-${formId}`;
 
     return (
       <a
@@ -270,9 +249,9 @@ class IntroductionPage extends React.Component {
     ];
     return (
       <div>
-        <FormTitle title="Apply Wizards Test App" />
-        <p>Equal to VA Form (Apply Wizards Test App).</p>
-        {educationBenefitSelected !== '1990' && (
+        <FormTitle title="Apply Wizards Test App 3" />
+        <p>Equal to VA Form (Apply Wizards Test App 3).</p>
+        {educationBenefitSelected !== 'app3' && (
           <div className="wizard-container">
             <h3>
               Let's find out which education benefits form would suit you the
@@ -563,7 +542,7 @@ class IntroductionPage extends React.Component {
             )}
           </div>
         )}
-        {educationBenefitSelected === '1990' &&
+        {educationBenefitSelected === 'app3' &&
           wizardCompletionStatus === 'complete' && (
             <div className="schemaform-intro">
               <SaveInProgressIntro
