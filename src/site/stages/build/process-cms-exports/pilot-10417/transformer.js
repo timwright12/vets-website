@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const schemaDir = '.';
 const schemaName  = 'bundles.json';
-const nodeDir = '../../../../../../../cms-export/content'; // Where to find the node files
+const nodeDir = '../../../../../../.cache/localhost/cms-export-content'; // Where to find the node files
 
 const schema = loadSchema();
 let stackDepth = 0; // how deep are we recursing when fetching references
@@ -48,8 +48,8 @@ class Transformer {
     }
     loadedFiles[nodeFile] = true;
     if (!rootNode || this.node.entityUrl // A root node needs to have an entity URL
-          // this.node.status && this.node.status[0]
-          // && (this.node.status[0].value === true)
+          && this.node.status && this.node.status[0]
+          && (this.node.status[0].value === true)
        ) { // And status to indicate it's published
         console.log(`=========== ${nodeFile} stackDepth: ${stackDepth} =================`)
         stackDepth++;
@@ -176,7 +176,7 @@ class Transformer {
   populateFieldValue(type, fieldName) {
     const field = this.node[fieldName];
     const camelName = _.camelCase(fieldName);
-    if(field === undefined) {
+    if((field === undefined) || (!field[0])) {
       console.error('empty', fieldName);
       return (null);
     }
@@ -189,18 +189,14 @@ class Transformer {
     // Looks like the various Drupal text fields all start
     // with "Text"
     if (type.startsWith('Text') || type === 'List (text)') {
-      if(field && field[0]) {
-        if (field[0].format === 'rich_text') {
-          this.outJson[camelName] = {
-            'processed': field[0].value, //TODO process the HTML
-          }
-        } else {
-          this.outJson[camelName] = field[0].value;
+      if (field[0].format === 'rich_text') {
+        this.outJson[camelName] = {
+          'processed': field[0].value, //TODO process the HTML
         }
-        return;
       } else {
-        return (null);
+        this.outJson[camelName] = field[0].value;
       }
+      return;
     }
 
     switch (type) {
