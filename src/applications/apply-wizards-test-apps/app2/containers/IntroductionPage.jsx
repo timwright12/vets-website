@@ -29,11 +29,11 @@ class IntroductionPage extends React.Component {
       .reduce((state, field) => Object.assign(state, { [field]: null }), {
         open: false,
         educationBenefitSelected:
-          localStorage.getItem('educationBenefitSelected') || 'none selected',
+          sessionStorage.getItem('educationBenefitSelected') || 'none selected',
         wizardCompletionStatus:
-          localStorage.getItem('EduWizardStatus') || 'not complete',
+          sessionStorage.getItem('EduWizardStatus') || 'not complete',
         hasUserLeftLandingPage:
-          localStorage.getItem('hasUserLeftLandingPage') || 'false',
+          sessionStorage.getItem('hasUserLeftLandingPage') || 'false',
       });
   }
 
@@ -101,9 +101,9 @@ class IntroductionPage extends React.Component {
         className="usa-button va-button-primary"
         onClick={() => {
           this.recordWizardValues();
-          localStorage.setItem('hasUserLeftLandingPage', 'true');
+          sessionStorage.setItem('hasUserLeftLandingPage', 'true');
           this.setState({
-            userHasLeftLandingPage: localStorage.getItem(
+            userHasLeftLandingPage: sessionStorage.getItem(
               'hasUserLeftLandingPage',
             ),
           });
@@ -192,9 +192,9 @@ class IntroductionPage extends React.Component {
    */
 
   setWizardCompletionStatus = value => {
-    localStorage.setItem('EduWizardStatus', value);
+    sessionStorage.setItem('EduWizardStatus', value);
     this.setState({
-      wizardCompletionStatus: localStorage.getItem('EduWizardStatus'),
+      wizardCompletionStatus: sessionStorage.getItem('EduWizardStatus'),
     });
   };
 
@@ -204,9 +204,9 @@ class IntroductionPage extends React.Component {
    */
 
   setEduBenefitFormSelected = formId => {
-    localStorage.setItem('educationBenefitSelected', formId);
+    sessionStorage.setItem('educationBenefitSelected', formId);
     this.setState({
-      educationBenefitSelected: localStorage.getItem(
+      educationBenefitSelected: sessionStorage.getItem(
         'educationBenefitSelected',
       ),
     });
@@ -269,7 +269,7 @@ class IntroductionPage extends React.Component {
         {shouldWizardBeRendered && (
           <div className="wizard-container">
             <h3>
-              Let's find out which education benefits form would suit you the
+              Let's find out which education benefit form would suit you the
               most.
             </h3>
             <button
@@ -278,7 +278,7 @@ class IntroductionPage extends React.Component {
               className={buttonClasses}
               onClick={() => this.setState({ open: !this.state.open })}
             >
-              Find your education benefits form
+              Find your education benefit form
             </button>
             {open && (
               <div className={contentClasses} id="wizardOptions">
