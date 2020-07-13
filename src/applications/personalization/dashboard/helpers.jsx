@@ -25,6 +25,7 @@ import { DISABILITY_526_V2_ROOT_URL } from 'applications/disability-benefits/all
 import { BDD_FORM_ROOT_URL } from 'applications/disability-benefits/bdd/constants';
 import hlrManifest from 'applications/disability-benefits/996/manifest.json';
 import mdotManifest from 'applications/disability-benefits/2346/manifest.json';
+import tikiManifest from 'applications/tiki-room/manifest.json';
 
 import hcaConfig from 'applications/hca/config/form.js';
 import dependentStatusConfig from 'applications/disability-benefits/686/config/form';
@@ -44,6 +45,7 @@ import disability526Config from 'applications/disability-benefits/526EZ/config/f
 import bddConfig from 'applications/disability-benefits/bdd/config/form.js';
 import hlrConfig from 'applications/disability-benefits/996/config/form';
 import mdotConfig from 'applications/disability-benefits/2346/config/form';
+import tikiConfig from 'applications/tiki-room/config/form';
 
 export const formConfigs = {
   [VA_FORM_IDS.FORM_10_10EZ]: hcaConfig,
@@ -64,6 +66,7 @@ export const formConfigs = {
   [VA_FORM_IDS.FEEDBACK_TOOL]: feedbackConfig,
   [VA_FORM_IDS.FORM_20_0996]: hlrConfig,
   [VA_FORM_IDS.FORM_VA_2346A]: mdotConfig,
+  [VA_FORM_IDS.TIKI_ROOM]: tikiConfig,
 };
 
 export const formBenefits = {
@@ -87,6 +90,7 @@ export const formBenefits = {
   [VA_FORM_IDS.FORM_20_0996]: 'Higher-level review',
   [VA_FORM_IDS.FORM_VA_2346A]:
     'order for hearing aid batteries and accessories',
+  [VA_FORM_IDS.TIKI_ROOM]: 'Its thee tiki tiki tiki tiki room',
 };
 
 export const formTitles = Object.keys(formBenefits).reduce((titles, key) => {
@@ -143,6 +147,7 @@ export const formLinks = {
   [VA_FORM_IDS.FORM_21_686C]: `${dependentStatusManifest.rootUrl}/`,
   [VA_FORM_IDS.FORM_20_0996]: `${hlrManifest.rootUrl}/`,
   [VA_FORM_IDS.FORM_VA_2346A]: `${mdotManifest.rootUrl}/`,
+  [VA_FORM_IDS.TIKI_ROOM]: `${tikiManifest.rootUrl}/`,
 };
 
 export const trackingPrefixes = {
@@ -164,6 +169,7 @@ export const trackingPrefixes = {
   [VA_FORM_IDS.FORM_21_686C]: '686-',
   [VA_FORM_IDS.FORM_20_0996]: 'decision-reviews-va20-0996-',
   [VA_FORM_IDS.FORM_VA_2346A]: 'bam-2346a-',
+  [VA_FORM_IDS.TIKI_ROOM]: 'tiki-room-',
 };
 
 export const sipEnabledForms = new Set([
@@ -185,6 +191,7 @@ export const sipEnabledForms = new Set([
   VA_FORM_IDS.FEEDBACK_TOOL,
   VA_FORM_IDS.FORM_20_0996,
   VA_FORM_IDS.FORM_VA_2346A,
+  VA_FORM_IDS.TIKI_ROOM,
 ]);
 
 // A dict of presentable form IDs. Generally this is just the form ID itself

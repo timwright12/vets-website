@@ -2,6 +2,7 @@ import IntroductionPage from '../containers/IntroductionPage';
 import ConfirmationPage from '../containers/ConfirmationPage';
 
 import fullNameUISchema from 'platform/forms/definitions/fullName';
+import EmailWidget from '../components/EmailWidget';
 
 const formConfig = {
   urlPrefix: '/',
@@ -62,41 +63,58 @@ const formConfig = {
             },
           },
         },
-        authed: {},
+        auth: {
+          title: 'For your eyes only',
+          path: 'secret',
+          uiSchema: {
+            email: {
+              'ui:widget': EmailWidget,
+            },
+          },
+          schema: {
+            type: 'object',
+            properties: {
+              email: {
+                type: 'string',
+              },
+            },
+          },
+        },
         bonus: {
           path: 'bonus',
           title: 'You get a treat',
           depends: form => form.enjoyTheOpening && form.enjoyTheFlowers,
-        },
-        uiSchema: {
-          treatOptions: {
-            'ui:title': 'What kind treat do you want for enjoying the show?',
-          },
-        },
-        schema: {
-          type: 'object',
-          properties: {
+
+          uiSchema: {
             treatOptions: {
-              type: 'string',
-              enum: ['Ice cream', 'Churro', 'Turkey Leg', 'Dole whip'],
+              'ui:title': 'What kind treat do you want for enjoying the show?',
+            },
+          },
+          schema: {
+            type: 'object',
+            properties: {
+              treatOptions: {
+                type: 'string',
+                enum: ['Ice cream', 'Churro', 'Turkey Leg', 'Dole whip'],
+              },
             },
           },
         },
-      },
-      finale: {
-        path: 'finale',
-        title: 'Ready for the finale?!!',
-        uiSchema: {
-          areYouReady: {
-            'ui:title': 'Are you ready??',
-            'ui:widget': 'yesNo',
-          },
-        },
-        schema: {
-          type: 'object',
-          properties: {
+        finale: {
+          path: 'finale',
+          title: 'Ready for the finale?!!',
+          uiSchema: {
             areYouReady: {
-              type: 'boolean',
+              'ui:title': 'Are you ready??',
+              'ui:widget': 'yesNo',
+            },
+          },
+          schema: {
+            type: 'object',
+            properties: {
+              areYouReady: {
+                type: 'boolean',
+              },
             },
           },
         },
