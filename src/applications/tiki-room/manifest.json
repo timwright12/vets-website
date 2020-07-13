@@ -1,0 +1,6 @@
+{
+  "appName": "Tiki Room",
+  "entryFile": "./app-entry.jsx",
+  "entryName": "tiki-room",
+  "rootUrl": "/tiki-room"
+}

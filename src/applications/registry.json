@@ -868,5 +868,14 @@
       "vagovprod": false,
       "layout": "page-react.html"
     }
+  },
+  {
+    "appName": "Tiki Room",
+    "entryName": "tiki-room",
+    "rootUrl": "/tiki-room",
+    "template": {
+      "vagovprod": false,
+      "layout": "page-react.html"
+    }
   }
 ]
