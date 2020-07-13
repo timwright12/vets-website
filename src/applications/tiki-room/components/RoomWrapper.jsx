@@ -22,23 +22,24 @@ class RoomWrapper extends Component {
           <LoadingIndicator />
         </>
       );
-    } else if (isLoggedIn) {
+    } else {
       return (
         <>
           <App location={location}>{children}</App>
         </>
       );
-    } else {
-      return (
-        <>
-          <h1>
-            There is no way to tell if the user profile is being loaded or
-            not???
-          </h1>
-          <CallToActionWidget appId="tiki-room" />
-        </>
-      );
     }
+    // } else {
+    //   return (
+    //     <>
+    //       <h1>
+    //         There is no way to tell if the user profile is being loaded or
+    //         not???
+    //       </h1>
+    //       <CallToActionWidget appId="tiki-room" />
+    //     </>
+    //   );
+    // }
   }
 }
 
