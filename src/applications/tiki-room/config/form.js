@@ -70,7 +70,6 @@ const formConfig = {
           uiSchema: {
             emaily: {
               'ui:widget': EmailyWidget,
-              ''
             },
           },
           schema: {

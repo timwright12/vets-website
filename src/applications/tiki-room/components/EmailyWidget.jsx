@@ -8,7 +8,7 @@ import EmailWidget from 'platform/forms-system/src/js/widgets/EmailWidget';
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailyWidget extends Component {
   render() {
-    console.log({ props: this.props });
+    // console.log({ props: this.props });
     const _user = <div>{JSON.stringify(this.props.user)}</div>;
     const { isLoggedIn } = this.props;
     const { onReviewPage } = this.props.formContext;
