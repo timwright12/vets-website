@@ -3,7 +3,7 @@ import ConfirmationPage from '../containers/ConfirmationPage';
 
 import fullNameUISchema from 'platform/forms/definitions/fullName';
 import EmailyWidget from '../components/EmailyWidget';
-import EmailyConfirmation from '../components/EmailyConfirmation';
+import SavableWidget from '../components/SavableWidget';
 
 const formConfig = {
   urlPrefix: '/',
@@ -52,14 +52,14 @@ const formConfig = {
           uiSchema: {
             enjoyTheFlowers: {
               'ui:title': 'The orchids sound lovely??',
-              'ui:widget': 'yesNo',
+              'ui:widget': SavableWidget,
             },
           },
           schema: {
             type: 'object',
             properties: {
               enjoyTheFlowers: {
-                type: 'boolean',
+                type: 'string',
               },
             },
           },
