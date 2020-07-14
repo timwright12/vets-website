@@ -2,7 +2,8 @@ import IntroductionPage from '../containers/IntroductionPage';
 import ConfirmationPage from '../containers/ConfirmationPage';
 
 import fullNameUISchema from 'platform/forms/definitions/fullName';
-import EmailWidget from '../components/EmailWidget';
+import EmailyWidget from '../components/EmailyWidget';
+import EmailyConfirmation from '../components/EmailyConfirmation';
 
 const formConfig = {
   urlPrefix: '/',
@@ -67,14 +68,15 @@ const formConfig = {
           title: 'For your eyes only',
           path: 'secret',
           uiSchema: {
-            email: {
-              'ui:widget': EmailWidget,
+            emaily: {
+              'ui:widget': EmailyWidget,
+              ''
             },
           },
           schema: {
             type: 'object',
             properties: {
-              email: {
+              emaily: {
                 type: 'string',
               },
             },
