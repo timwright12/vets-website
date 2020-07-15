@@ -2,15 +2,27 @@ const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
 
-// FIND ALL AUTOMATED TEST FILES IN
+// FIND & COUNT ALL AUTOMATED TEST FILES IN
 // VETS-WEBSITE APPS
+
+// ---------------------------------------------------------------------------
+// OPTIONS:
+// --monthly lets you run this every month on a specified day:
+//   Examples:
+//     --monthly=last runs on the last day of the month;
+//     --monthly=1 runs on first day of the month;
+//     --monthly=15 runs on 15th of the month;
+// --verbose let's you log the 1st 100 file-paths found for each file-suffix.
 
 // ===========================================================================
 // CONFIGURATION
-// Your local vets-website applications folder [absolute path]
+// React apps directory [project-root-relative]
 const parentDir = './src/applications/';
 // File suffixes to find & count
-const fileSuffixes = ['.unit.spec.js', '.e2e.spec.js', '.cypress.spec.js'];
+const fileSuffixes = {
+  unit: ['.unit.spec.js'],
+  e2e: ['.e2e.spec.js', '.cypress.spec.js'],
+};
 // ===========================================================================
 
 const myArgs = process.argv.slice(2);
@@ -20,20 +32,19 @@ const mNow = moment();
 const startTime = mNow.valueOf();
 const niceDate = mNow.format('YYYY-MM-DD');
 const dateOfMonth = mNow.date();
-const filteredResults = {};
 
 let monthlyArgVal;
 
 /* eslint-disable no-console */
 
-// VERBOSE LOG FUNCTION
+// Verbose log function
 const verboseLog = msg => {
   if (verboseArg) {
     console.log(msg);
   }
 };
 
-// RECURSIVE FILE-READ FUNCTION
+// Recursive read-file function
 const getAllFiles = (dirPath, arrayOfFiles) => {
   let filesArr = arrayOfFiles || [];
 
@@ -59,69 +70,96 @@ const getAllFiles = (dirPath, arrayOfFiles) => {
   return filesArr;
 };
 
-console.log('\n\n====================================================');
+console.log('\n\n======================================================');
 console.log('\nFINDING ALL AUTOMATED TEST-FILES IN vets-website APPS');
 
 // EXIT if --monthly option's detected, and
 // today's not specified day of the month.
 if (monthlyArg) {
-  verboseLog('monthlyArg found.');
   monthlyArgVal = monthlyArg.split('=')[1];
   monthlyArgVal = monthlyArgVal || 1; // If no value, default to 1.
-  verboseLog(`monthlyArgVal: ${monthlyArgVal}`);
 
   if (monthlyArgVal === 'last') {
-    console.log('Running on last day of month...');
+    console.log('Running on last day of every month...');
     const niceEndOfMonth = moment(mNow)
       .endOf('month')
       .format('YYYY-MM-DD');
     if (niceDate !== niceEndOfMonth) {
       console.log(`\nEXITING -- Today (${niceDate}) is not last day of month.`);
-      console.log('\n====================================================\n\n');
+      console.log(
+        '\n======================================================\n\n',
+      );
       return;
     }
   } else {
     // date provided as number.
-    console.log(`Running on day ${monthlyArgVal} of month...`);
+    console.log(`Running on day ${monthlyArgVal} of every month...`);
     if (parseInt(monthlyArgVal, 10) !== dateOfMonth) {
       console.log(
         `\nEXITING -- Today (${niceDate}) is not day ${monthlyArgVal} of month.`,
       );
-      console.log('\n====================================================\n\n');
+      console.log(
+        '\n======================================================\n\n',
+      );
       return;
     }
   }
-} else {
-  verboseLog('monthlyArg NOT found.');
 }
 
 // Read all files under parentDir
 const allFilesResult = getAllFiles(parentDir);
 
 // Filter allFilesResult by fileSuffixes.
-// Log all files --verbose option is detected.
-for (const suffix of fileSuffixes) {
-  verboseLog('\n++++++++++++++++++++++++++++++++++++++++\n');
-  verboseLog(`ALL *${suffix} FILES UNDER ${parentDir} (recursive)...\n`);
+// Log all file-paths IF --verbose option is detected.
+const filteredResults = {};
 
-  filteredResults[suffix] = allFilesResult.filter(f => {
-    return f.includes(suffix);
-  });
-  verboseLog(filteredResults[suffix]);
-}
-
-// Log summary with total-count per file-suffix.
-console.log('\n++++++++++++++++++++++++++++++++++++++++');
-console.log(`\nAS OF ${niceDate}:\n`);
-
-for (const key of Object.keys(filteredResults)) {
-  if (Object.prototype.hasOwnProperty.call(filteredResults, key)) {
-    console.log(`*${key} files TOTAL COUNT: ${filteredResults[key].length}`);
+for (const testType of Object.keys(fileSuffixes)) {
+  if (Object.prototype.hasOwnProperty.call(fileSuffixes, testType)) {
+    filteredResults[testType] = {};
+    for (const suffix of fileSuffixes[testType]) {
+      verboseLog('\n++++++++++++++++++++++++++++++++++++++++\n');
+      verboseLog(`ALL *${suffix} FILES UNDER ${parentDir} (recursive)...\n`);
+      filteredResults[testType][suffix] = {};
+      filteredResults[testType][suffix].filePaths = allFilesResult.filter(f => {
+        return f.includes(suffix);
+      });
+      filteredResults[testType][suffix].fileCount =
+        filteredResults[testType][suffix].filePaths.length;
+      verboseLog(filteredResults[testType][suffix].filePaths);
+    }
   }
 }
 
+// SUMMARY: Log total-count per file-suffix.
+console.log('\n++++++++++++++++++++++++++++++++++++++++');
+console.log(`\nAS OF ${niceDate}:\n`);
+
+const testTypeKeys = Object.keys(filteredResults);
+
+for (const testType of testTypeKeys) {
+  for (const suffix of Object.keys(filteredResults[testType])) {
+    console.log(
+      `*${suffix} files total: ${filteredResults[testType][suffix].fileCount}`,
+    );
+  }
+}
+
+console.log('\n--------------------------------------------\n');
+
+for (const testType of testTypeKeys) {
+  let testTypeFileCount = 0;
+  for (const suffix of Object.keys(filteredResults[testType])) {
+    testTypeFileCount += filteredResults[testType][suffix].fileCount;
+  }
+  console.log(
+    `${testType.toUpperCase()}-TEST FILES TOTAL: ${testTypeFileCount}`,
+  );
+}
+
+console.log('\n--------------------------------------------');
+
 const duration = moment().valueOf() - startTime;
 console.log(`\nFinished in ${duration} msecs.`);
-console.log('\n====================================================\n\n');
+console.log('\n======================================================\n\n');
 
 /* eslint-enable no-console */
