@@ -34,7 +34,6 @@ class RoutedSavableFormPage extends React.Component {
       const data = form.data;
       const { formId, version } = form;
       const returnUrl = this.props.location.pathname;
-
       this.props.autoSaveForm(formId, data, version, returnUrl);
     }
   }

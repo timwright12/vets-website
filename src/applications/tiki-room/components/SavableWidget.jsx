@@ -30,12 +30,10 @@ class SavableWidget extends Component {
   };
 
   updateStateWithValue = value => {
-    console.log('updating value', { value });
-    if (value || value === '' || value === 0) {
-      this.setState({ value }, () => {
-        this.props.onChange(this.state.value);
-      });
-    }
+    console.log('updating value', { value, props: this.props });
+
+    this.props.onChange(value);
+    this.setState({ value });
   };
 
   componentDidMount() {
@@ -52,7 +50,7 @@ class SavableWidget extends Component {
       <div>
         <TextWidget
           {...this.props}
-          value={this.state.value}
+          value={this.state.value || ''}
           onChange={this.sessionOnSave}
         />
       </div>
@@ -60,9 +58,12 @@ class SavableWidget extends Component {
   };
 
   render() {
-    const { onReviewPage } = this.props.formContext;
-    if (onReviewPage) {
+    const { onReviewPage, reviewMode } = this.props.formContext;
+
+    if (onReviewPage && reviewMode) {
       return <>{this.state.value}</>;
+    } else if (onReviewPage && !reviewMode) {
+      return this.field();
     } else {
       return this.field();
     }

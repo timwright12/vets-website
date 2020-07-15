@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -36,7 +37,32 @@ class RoutedSavablePage extends React.Component {
       const data = form.data;
       const { formId, version } = form;
       const returnUrl = this.props.location.pathname;
+      const sessionForm = sessionStorage.getItem(formId)
+        ? JSON.parse(sessionStorage.getItem(formId))
+        : null;
 
+      console.log('Savable page?? page - before', {
+        formId,
+        data,
+        version,
+        returnUrl,
+        sessionForm,
+      });
+      if (sessionForm) {
+        Object.keys(sessionForm).forEach(property => {
+          const blah = property.replace('root_', '');
+          if (!data[blah]) {
+            data[blah] = sessionForm[property];
+          }
+        });
+      }
+      console.log('Savable page?? page - after', {
+        formId,
+        data,
+        version,
+        returnUrl,
+        sessionForm,
+      });
       this.props.autoSaveForm(formId, data, version, returnUrl);
     }
   }

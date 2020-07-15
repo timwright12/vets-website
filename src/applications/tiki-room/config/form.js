@@ -24,24 +24,20 @@ const formConfig = {
     chapter1: {
       title: 'Chapter 1',
       pages: {
-        first: {
-          path: 'opening',
-          title: 'First Page',
+        third: {
+          path: 'the-test',
+          title: 'Even the Flowers Sing!',
           uiSchema: {
-            fullName: fullNameUISchema.first,
-            enjoyTheOpening: {
-              'ui:title': 'Did you enjoy the opening?',
-              'ui:widget': 'yesNo',
+            third: {
+              'ui:title': 'Yo',
+              'ui:widget': SavableWidget,
             },
           },
           schema: {
             type: 'object',
             properties: {
-              fullName: {
+              third: {
                 type: 'string',
-              },
-              enjoyTheOpening: {
-                type: 'boolean',
               },
             },
           },
@@ -64,6 +60,32 @@ const formConfig = {
             },
           },
         },
+        first: {
+          path: 'opening',
+          title: 'First Page',
+          uiSchema: {
+            fullName: {
+              'ui:widget': SavableWidget,
+              'ui:title': 'What is your full name?',
+            },
+            enjoyTheOpening: {
+              'ui:title': 'What are your thoughts on the opening?',
+              'ui:widget': 'yesNo',
+            },
+          },
+          schema: {
+            type: 'object',
+            properties: {
+              fullName: {
+                type: 'string',
+              },
+              enjoyTheOpening: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+
         auth: {
           title: 'For your eyes only',
           path: 'secret',

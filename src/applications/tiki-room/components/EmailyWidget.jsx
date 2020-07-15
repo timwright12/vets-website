@@ -7,29 +7,33 @@ import EmailWidget from 'platform/forms-system/src/js/widgets/EmailWidget';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class EmailyWidget extends Component {
+  componentDidMount() {
+    const { user, onChange, isLoggedIn } = this.props;
+    onChange(user.profile.email);
+  }
+
+  // eslint-disable-next-line react/no-deprecated
+  componentWillReceiveProps(nextProps) {
+    const { user, onChange, isLoggedIn } = nextProps;
+    onChange(user.profile.email);
+  }
+
   render() {
     // console.log({ props: this.props });
     const _user = <div>{JSON.stringify(this.props.user)}</div>;
-    const { isLoggedIn } = this.props;
-    const { onReviewPage } = this.props.formContext;
+    const { user, onChange, isLoggedIn } = this.props;
 
-    if (onReviewPage) {
-      return (
-        <>
-          <h3>
-            you inputted ----
-            {this.props?.value}
-          </h3>
-        </>
-      );
+    const { onReviewPage, reviewMode } = this.props.formContext;
+
+    if (onReviewPage && reviewMode) {
+      return <>{this.props?.value}</>;
     }
 
     if (isLoggedIn) {
-      const { user, onChange } = this.props;
-
-      if (user.profile?.email) {
-        onChange(user.profile.email);
+      if (onReviewPage && !reviewMode) {
+        return <EmailWidget {...this.props} value={user.profile.email} />;
       }
+      // onChange(user.profile.email);
       return (
         <>
           {_user}
@@ -39,13 +43,20 @@ class EmailyWidget extends Component {
         </>
       );
     } else {
+      if (onReviewPage && !reviewMode) {
+        return <EmailWidget {...this.props} />;
+      }
+
       return (
         <>
           {_user}
           <br />
           not logged in!, but you should be!
           <EmailWidget {...this.props} />
-          <button onClick={() => this.props.toggleLoginModal(true, 'cta-form')}>
+          <button
+            type="button"
+            onClick={() => this.props.toggleLoginModal(true, 'cta-form')}
+          >
             LOGIN MORTAL
           </button>
         </>
