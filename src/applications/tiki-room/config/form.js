@@ -4,6 +4,8 @@ import ConfirmationPage from '../containers/ConfirmationPage';
 import fullNameUISchema from 'platform/forms/definitions/fullName';
 import EmailyWidget from '../components/EmailyWidget';
 import SavableWidget from '../components/SavableWidget';
+import SessionStorageWidget from '../components/SessionStorageWidget';
+import AuthRecommendedWidget from '../components/AuthRecommendedWidget';
 
 const formConfig = {
   urlPrefix: '/',
@@ -30,7 +32,7 @@ const formConfig = {
           uiSchema: {
             third: {
               'ui:title': 'Yo',
-              'ui:widget': SavableWidget,
+              'ui:widget': SessionStorageWidget,
             },
           },
           schema: {
@@ -91,7 +93,7 @@ const formConfig = {
           path: 'secret',
           uiSchema: {
             emaily: {
-              'ui:widget': EmailyWidget,
+              'ui:widget': AuthRecommendedWidget,
             },
           },
           schema: {

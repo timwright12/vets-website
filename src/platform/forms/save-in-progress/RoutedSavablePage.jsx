@@ -55,6 +55,7 @@ class RoutedSavablePage extends React.Component {
             data[blah] = sessionForm[property];
           }
         });
+        this.props.setData(data);
       }
       console.log('Savable page?? page - after', {
         formId,

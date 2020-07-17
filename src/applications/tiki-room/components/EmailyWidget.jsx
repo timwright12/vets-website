@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { satisfies } from 'semver';
+
 import { toggleLoginModal } from 'platform/site-wide/user-nav/actions';
 
 import EmailWidget from 'platform/forms-system/src/js/widgets/EmailWidget';
@@ -36,7 +36,6 @@ class EmailyWidget extends Component {
       // onChange(user.profile.email);
       return (
         <>
-          {_user}
           <br />
           <EmailWidget {...this.props} value={user.profile.email} />
           pre-popped email thing!!!
@@ -49,7 +48,6 @@ class EmailyWidget extends Component {
 
       return (
         <>
-          {_user}
           <br />
           not logged in!, but you should be!
           <EmailWidget {...this.props} />
