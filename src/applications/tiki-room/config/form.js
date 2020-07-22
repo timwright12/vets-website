@@ -6,6 +6,7 @@ import EmailyWidget from '../components/EmailyWidget';
 import SavableWidget from '../components/SavableWidget';
 import SessionStorageWidget from '../components/SessionStorageWidget';
 import AuthRecommendedWidget from '../components/AuthRecommendedWidget';
+import AuthRecommendedFullNameWidget from '../components/AuthRecommendedFullNameWidget';
 
 const formConfig = {
   urlPrefix: '/',
@@ -26,53 +27,35 @@ const formConfig = {
     chapter1: {
       title: 'Chapter 1',
       pages: {
-        third: {
-          path: 'the-test',
+        opening: {
+          path: 'opening',
           title: 'Even the Flowers Sing!',
           uiSchema: {
-            third: {
-              'ui:title': 'Yo',
+            primaryReason: {
+              'ui:title': 'What is the primary reason for your visit?',
               'ui:widget': SessionStorageWidget,
             },
           },
           schema: {
             type: 'object',
             properties: {
-              third: {
+              primaryReason: {
                 type: 'string',
               },
             },
           },
         },
-        flowers: {
-          path: 'the-orchids',
-          title: 'Even the Flowers Sing!',
-          uiSchema: {
-            enjoyTheFlowers: {
-              'ui:title': 'The orchids sound lovely??',
-              'ui:widget': SavableWidget,
-            },
-          },
-          schema: {
-            type: 'object',
-            properties: {
-              enjoyTheFlowers: {
-                type: 'string',
-              },
-            },
-          },
-        },
-        first: {
-          path: 'opening',
-          title: 'First Page',
+
+        who: {
+          title: 'For your eyes only',
+          path: 'identity',
           uiSchema: {
             fullName: {
-              'ui:widget': SavableWidget,
-              'ui:title': 'What is your full name?',
+              'ui:widget': AuthRecommendedFullNameWidget,
             },
-            enjoyTheOpening: {
-              'ui:title': 'What are your thoughts on the opening?',
-              'ui:widget': 'yesNo',
+            email: {
+              'ui:title': 'Email Address',
+              'ui:widget': AuthRecommendedWidget,
             },
           },
           schema: {
@@ -81,25 +64,7 @@ const formConfig = {
               fullName: {
                 type: 'string',
               },
-              enjoyTheOpening: {
-                type: 'boolean',
-              },
-            },
-          },
-        },
-
-        auth: {
-          title: 'For your eyes only',
-          path: 'secret',
-          uiSchema: {
-            emaily: {
-              'ui:widget': AuthRecommendedWidget,
-            },
-          },
-          schema: {
-            type: 'object',
-            properties: {
-              emaily: {
+              email: {
                 type: 'string',
               },
             },
@@ -129,16 +94,35 @@ const formConfig = {
           path: 'finale',
           title: 'Ready for the finale?!!',
           uiSchema: {
-            areYouReady: {
-              'ui:title': 'Are you ready??',
+            drinker: {
+              'ui:title': 'Do you ever drink alcohol?',
               'ui:widget': 'yesNo',
+            },
+            howMuchDrinks: {
+              'ui:title': 'How often do you consume drinks with alcohol?',
+              'ui:widget': 'radio',
+
+              'ui:options': {
+                hideIf: formData => !formData.drinker,
+                expandUnder: 'drinker',
+              },
             },
           },
           schema: {
             type: 'object',
             properties: {
-              areYouReady: {
+              drinker: {
                 type: 'boolean',
+              },
+              howMuchDrinks: {
+                type: 'string',
+                enum: [
+                  'Select one',
+                  '1-3 drinks a month',
+                  '1-3 drinks a week',
+                  '1 -3 drinks a day',
+                  '3+ drinks in a sitting',
+                ],
               },
             },
           },

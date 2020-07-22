@@ -14,7 +14,7 @@ const AuthRecommendedWidget = props => {
 
   useEffect(
     () => {
-      console.log('changed!', user.profile.email);
+      console.log('changed! - email', user.profile.email);
       onChange(user.profile.email);
     },
     [user.profile.email, onChange],
@@ -44,7 +44,7 @@ const AuthRecommendedWidget = props => {
         <br />
 
         <EmailWidget {...props} />
-        <em>
+        {/* <em>
           We noticed you are not logged in. Thats is okay, but if you do log in
           we might be able to fill out parts of this form for you.{' '}
         </em>
@@ -53,7 +53,7 @@ const AuthRecommendedWidget = props => {
           onClick={() => props.toggleLoginModal(true, 'cta-form')}
         >
           LOGIN now
-        </button>
+        </button> */}
       </>
     );
   }

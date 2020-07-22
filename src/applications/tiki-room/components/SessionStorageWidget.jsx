@@ -51,8 +51,7 @@ function SessionStorageWidget(props) {
   };
 
   if (onReviewPage && reviewMode) {
-    // return <>{this.state.value}</>;
-    return <>?????</>;
+    return <>{currentValue}</>;
   } else if (onReviewPage && !reviewMode) {
     return editField();
   } else {
