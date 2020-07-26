@@ -3,7 +3,7 @@ const path = require('path');
 const moment = require('moment');
 
 // FIND & COUNT ALL AUTOMATED TEST FILES IN
-// VETS-WEBSITE APPS
+// VETS-WEBSITE
 
 // ---------------------------------------------------------------------------
 // OPTIONS:
@@ -17,10 +17,10 @@ const moment = require('moment');
 // ===========================================================================
 // CONFIGURATION
 // React apps directory [project-root-relative]
-const parentDir = './src/applications/';
+const parentDir = './src/';
 // File suffixes to find & count
 const fileSuffixes = {
-  unit: ['.unit.spec.js'],
+  unit: ['.unit.spec.js', 'unit.spec.jsx'],
   e2e: ['.e2e.spec.js', '.cypress.spec.js'],
 };
 // ===========================================================================
