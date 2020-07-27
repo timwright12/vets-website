@@ -138,7 +138,7 @@ let grandTotal = 0;
 
 // Log file-suffix subtotals
 // Tally test-type subtotals
-console.log('\n++++++++++++++++++++++++++++++++++++++++');
+console.log('\n======================================================');
 console.log(`\nAS OF ${niceDate}:\n`);
 
 const testTypeKeys = Object.keys(filteredResults);
@@ -177,7 +177,7 @@ for (const testType of Object.keys(testTypeSubtotals)) {
 // Log grand total
 console.log('\n--------------------------------------------\n');
 
-console.log(`ALL test files GRAND TOTAL: ${grandTotal}`);
+console.log(`ALL TEST FILES GRAND TOTAL: ${grandTotal}`);
 
 const duration = moment().valueOf() - startTime;
 console.log(`\nFinished in ${duration} msecs.`);
