@@ -4,16 +4,21 @@ const req = require('request');
 // FIND & COUNT ALL VSA-PROJECT TEST CASES IN TESTRAIL
 
 // ---------------------------------------------------------------------------
-// REQUIRED PARAMS:
+// REQUIRED ARGUMENTS:
 // --user (your TestRail login username)
 // --password (your TestRail login password)
 
-// OPTIONS:
+// OPTIONAL ARGUMENTS:
 // --monthly lets you run this every month on a specified day:
 //   Examples:
 //     --monthly=last runs on the last day of the month;
 //     --monthly=1 runs on first day of the month;
 //     --monthly=15 runs on 15th of the month;
+// --project lets you count a specific VSA-Team TestRail Project's test-cases.
+//   For project-ID values, see vsaProjIds keys below.
+//   Examples:
+//     --project=AuthdExp
+//     --project=Facilities
 // --verbose let's you log the 1st 100 file-paths found for each file-suffix.
 
 // ===========================================================================
@@ -24,7 +29,7 @@ const hostname = 'dsvavsp.testrail.io';
 const apiPath = 'index.php?api/v2';
 // TestRail API call
 const apiCall = 'get_cases';
-// TestRail VSA Project IDs
+// TestRail VSA-Team-specific Project IDs
 const vsaProjIds = {
   /* eslint-disable prettier/prettier */
   AuthdExp: 4,
@@ -45,7 +50,9 @@ const myArgs = process.argv.slice(2);
 const userArg = myArgs.find(arg => arg.includes('u'));
 const passwordArg = myArgs.find(arg => arg.includes('pw'));
 const monthlyArg = myArgs.find(arg => arg.includes('monthly'));
+const projectArg = myArgs.find(arg => arg.includes('project'));
 const verboseArg = myArgs.find(arg => arg.includes('verbose'));
+const projectArgVal = projectArg ? projectArg.split('=')[1] : undefined;
 const mNow = moment();
 const startTime = mNow.valueOf();
 const niceDate = mNow.format('YYYY-MM-DD');
@@ -64,8 +71,10 @@ const verboseLog = msg => {
   }
 };
 
-console.log('\n\n======================================================');
-console.log('\nFINDING ALL VSA-PROJECTS TEST-CASES IN TESTRAIL');
+if (!projectArgVal) {
+  console.log('\n\n======================================================');
+  console.log('\nFINDING ALL VSA-PROJECTS TEST-CASES IN TESTRAIL');
+}
 
 // EXIT IF --u or --pw missing or missing value
 
@@ -138,6 +147,7 @@ const reqOptions = {
     'Content-Type': 'application/json',
   },
 };
+
 const allTestCases = {};
 
 // Get test-cases JSON for each TestRail Project
@@ -145,39 +155,62 @@ const allTestCases = {};
 const reportTestCases = testCases => {
   let grandTotal = 0;
 
-  for (const [key, value] of Object.entries(testCases).sort((a, b) =>
-    a[0].localeCompare(b[0]),
-  )) {
-    grandTotal += value;
-    verboseLog('\n+++++++++++++++++++++++++++++++++++++++++++++\n');
-    verboseLog(`VSA-${key} test-cases subtotal: ${value}`);
+  if (!projectArgVal) {
+    for (const [key, value] of Object.entries(testCases).sort((a, b) =>
+      a[0].localeCompare(b[0]),
+    )) {
+      grandTotal += value;
+      verboseLog('\n+++++++++++++++++++++++++++++++++++++++++++++\n');
+      verboseLog(`VSA-${key} test-cases subtotal: ${value}`);
+    }
+
+    console.log('\n======================================================');
+    console.log(`\nAS OF ${niceDate}:\n`);
+
+    console.log(`VSA TESTRAIL TEST-CASES GRAND TOTAL: ${grandTotal}`);
+  } else {
+    console.log('\n======================================================');
+    console.log(`\nAS OF ${niceDate}:\n`);
+
+    console.log(
+      `VSA-${projectArgVal} TestRail test-cases total: ${
+        testCases[projectArgVal]
+      }`,
+    );
   }
-
-  console.log('\n======================================================');
-  console.log(`\nAS OF ${niceDate}:\n`);
-
-  console.log(`VSA TESTRAIL TEST-CASES GRAND TOTAL: ${grandTotal}`);
 
   const duration = moment().valueOf() - startTime;
   console.log(`\nFinished in ${duration} msecs.`);
   console.log('\n======================================================\n\n');
 };
 
-for (const currProjKey of Object.keys(vsaProjIds)) {
-  if (Object.prototype.hasOwnProperty.call(vsaProjIds, currProjKey)) {
-    reqOptions.url = `https://${hostname}/${apiPath}/${apiCall}/${
-      vsaProjIds[currProjKey]
-    }`;
-    req(reqOptions, (err, res) => {
-      if (err) throw new Error(err);
-      const testCasesCount = JSON.parse(res.body).length;
-      allTestCases[currProjKey] = testCasesCount;
+const getTestCases = projectKey => {
+  reqOptions.url = `https://${hostname}/${apiPath}/${apiCall}/${
+    vsaProjIds[projectKey]
+  }`;
+  req(reqOptions, (err, res) => {
+    if (err) throw new Error(err);
+    const testCasesCount = JSON.parse(res.body).length;
+    allTestCases[projectKey] = testCasesCount;
 
+    if (!projectArgVal) {
       if (Object.keys(allTestCases).length === Object.keys(vsaProjIds).length) {
         verboseLog('\nDONE w/ AJAX calls! ++++++++++++++++++++++++++++');
         reportTestCases(allTestCases);
       }
-    });
+    } else {
+      reportTestCases(allTestCases);
+    }
+  });
+};
+
+if (projectArgVal) {
+  getTestCases(projectArgVal);
+} else {
+  for (const currProjKey of Object.keys(vsaProjIds)) {
+    if (Object.prototype.hasOwnProperty.call(vsaProjIds, currProjKey)) {
+      getTestCases(currProjKey);
+    }
   }
 }
 
