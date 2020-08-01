@@ -76,8 +76,8 @@
     "watch:css-sourcemaps": "node --max-old-space-size=8192 script/build-content.js --watch --local-css-sourcemaps",
     "watch:review": "node ./script/run-review-instance-api.js",
     "watch:static": "concurrently -n metalsmith,webpack \"npm:watch:content\" \"npm run watch -- --env.entry=static-pages --progress=false\"",
-    "countTestFiles": "node ./vsa-qa-find-apps-auto-tests.js",
-    "countTrTestCases": "node ./vsa-qa-find-testrail-test-cases.js"
+    "countTestFiles": "node ./qa-metrics/vsa-qa-find-apps-auto-tests.js",
+    "countTrTestCases": "node ./qa-metrics/vsa-qa-find-testrail-test-cases.js"
   },
   "repository": {
     "type": "git",
