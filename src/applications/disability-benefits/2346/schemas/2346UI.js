@@ -105,8 +105,7 @@ export default {
       },
     },
     emailUI: {
-      'ui:title': emailUITitle,
-      'ui:description': emailUIDescription,
+      'ui:title': <p className="vads-u-margin-bottom--1">Email address</p>,
       'ui:widget': 'email',
       'ui:errorMessages': {
         pattern: 'Please enter an email address using this format: X@X.com',

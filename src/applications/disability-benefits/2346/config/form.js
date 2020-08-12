@@ -1,3 +1,5 @@
+import React from 'react';
+
 import FormFooter from 'platform/forms/components/FormFooter';
 import { VA_FORM_IDS } from 'platform/forms/constants';
 import recordEvent from 'platform/monitoring/record-event';
@@ -197,8 +199,12 @@ const formConfig = {
           uiSchema: {
             [permanentAddressField]: permanentAddressUI,
             [temporaryAddressField]: temporaryAddressUI,
-            [vetEmailField]: emailUI,
-            [viewConfirmationEmailField]: confirmationEmailUI,
+            'view:emailInfo': {
+              'ui:title': <h4>Email address</h4>,
+              'ui:description': <p>We'll send an order confirmation email with a tracking number to this email address.</p>,
+              [vetEmailField]: emailUI,
+              [viewConfirmationEmailField]: confirmationEmailUI,
+            },
             [viewCurrentAddressField]: currentAddressUI,
           },
           schema: {
@@ -206,8 +212,13 @@ const formConfig = {
             properties: {
               [permanentAddressField]: addressWithIsMilitaryBase,
               [temporaryAddressField]: addressWithIsMilitaryBase,
-              [vetEmailField]: email,
-              [viewConfirmationEmailField]: email,
+              'view:emailInfo': {
+                type: 'object',
+                properties: {
+                  [vetEmailField]: email,
+                  [viewConfirmationEmailField]: email,
+                },
+              },
               [viewCurrentAddressField]: {
                 type: 'string',
                 enum: ['permanentAddress', 'temporaryAddress'],
