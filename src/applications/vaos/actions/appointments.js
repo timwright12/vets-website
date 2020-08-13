@@ -279,7 +279,7 @@ export function confirmCancelAppointment() {
           appointmentRequestDetailCode: ['DETCODE8'],
         });
       } else {
-        const facilityId = getVARFacilityId(appointment).replace('var', '');
+        const facilityId = getVARFacilityId(appointment);
 
         const cancelData = {
           appointmentTime: moment
