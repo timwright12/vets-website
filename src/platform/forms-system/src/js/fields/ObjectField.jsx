@@ -62,16 +62,6 @@ function orderAndFilterProperties(schema, uiSchema) {
 }
 
 class ObjectField extends React.Component {
-  static defaultProps = {
-    uiSchema: {},
-    errorSchema: {},
-    idSchema: {},
-    registry: getDefaultRegistry(),
-    required: false,
-    disabled: false,
-    readonly: false,
-  };
-
   constructor(props) {
     super(props);
     this.onPropertyChange = this.onPropertyChange.bind(this);
@@ -303,6 +293,16 @@ ObjectField.propTypes = {
     definitions: PropTypes.object.isRequired,
     formContext: PropTypes.object.isRequired,
   }),
+};
+
+ObjectField.defaultProps = {
+  uiSchema: {},
+  errorSchema: {},
+  idSchema: {},
+  registry: getDefaultRegistry(),
+  required: false,
+  disabled: false,
+  readonly: false,
 };
 
 export default ObjectField;
