@@ -284,31 +284,6 @@ describe('Schemaform: ObjectField', () => {
       test: 'value',
     });
   });
-  it('should handle blur', () => {
-    const onChange = sinon.spy();
-    const onBlur = sinon.spy();
-    const schema = {
-      type: 'object',
-      properties: {
-        test: {
-          type: 'string',
-        },
-      },
-    };
-    const tree = SkinDeep.shallowRender(
-      <ObjectField
-        schema={schema}
-        idSchema={{}}
-        onChange={onChange}
-        onBlur={onBlur}
-      />,
-    );
-
-    tree.getMountedInstance().onPropertyBlur('test')();
-
-    expect(onBlur.firstCall.args[0]).to.eql(['test']);
-  });
-
   it('should render non-unique IDs on regular pages', () => {
     const onChange = sinon.spy();
     const onBlur = sinon.spy();
