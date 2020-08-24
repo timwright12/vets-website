@@ -163,6 +163,12 @@ export default function formReducer(state = initialState, action) {
         },
       };
     }
+    case 'FORM_SET_DATA': {
+      return {
+        ...state,
+        data: action.data,
+      };
+    }
     case FORM_DATA_UPDATED: {
       let newPages = state.pages;
       let actionData = action.data;
