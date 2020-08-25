@@ -1,12 +1,13 @@
 import moment from 'moment';
 import dateRangeUI from 'platform/forms-system/src/js/definitions/dateRange';
 import fullSchema from 'vets-json-schema/dist/21-526EZ-ALLCLAIMS-schema.json';
-import environment from 'platform/utilities/environment';
 import AutosuggestField from 'platform/forms-system/src/js/fields/AutosuggestField';
 import * as autosuggest from 'platform/forms-system/src/js/definitions/autosuggest';
 
 import ValidatedServicePeriodView from '../components/ValidatedServicePeriodView';
-import { isBDD } from '../utils';
+import { showSeparationLocation } from '../utils';
+
+import ArrayField from '../components/ArrayField';
 import {
   SeparationLocationTitle,
   SeparationLocationDescription,
@@ -34,12 +35,20 @@ const validateAge = (
   }
 };
 
-const validateSeparationDate = (errors, dateString) => {
-  const isProduction = environment.isProduction();
-  if (isProduction && moment(dateString).isAfter(moment())) {
+const validateSeparationDate = (
+  errors,
+  dateString,
+  formData,
+  schema,
+  uiSchema,
+  currentIndex,
+  appStateData,
+) => {
+  const allowBDD = appStateData.allowBDD;
+  if (!allowBDD && moment(dateString).isAfter(moment())) {
     errors.addError('Your separation date must be in the past');
   } else if (
-    !isProduction &&
+    allowBDD &&
     moment(dateString).isAfter(moment().add(180, 'days'))
   ) {
     errors.addError('Your separation date must be before 180 days from today');
@@ -55,6 +64,7 @@ export const uiSchema = {
       'ui:title': 'Military service history',
       'ui:description':
         'Please add or update your military service history details below.',
+      'ui:field': ArrayField,
       'ui:options': {
         itemName: 'Service Period',
         viewField: ValidatedServicePeriodView,
@@ -74,17 +84,17 @@ export const uiSchema = {
       'ui:title': SeparationLocationTitle,
       'ui:description': SeparationLocationDescription,
       'ui:options': {
-        hideIf: formData => environment.isProduction() || !isBDD(formData),
+        hideIf: formData => !showSeparationLocation(formData),
       },
     },
     // Not using autosuggest.uiSchema; validations not set?
     separationLocation: {
       'ui:title': 'Enter a location',
       'ui:field': AutosuggestField,
-      'ui:required': formData => !environment.isProduction() && isBDD(formData),
+      'ui:required': formData => showSeparationLocation(formData),
       'ui:validations': [checkSeparationLocation],
       'ui:options': {
-        hideIf: formData => environment.isProduction() || !isBDD(formData),
+        hideIf: formData => !showSeparationLocation(formData),
         showFieldLabel: 'label',
         maxOptions: 20,
         getOptions: () =>

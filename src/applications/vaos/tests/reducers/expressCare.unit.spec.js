@@ -1,63 +1,55 @@
 import { expect } from 'chai';
-import moment from 'moment';
 
 import {
-  FETCH_EXPRESS_CARE_WINDOWS,
-  FETCH_EXPRESS_CARE_WINDOWS_SUCCEEDED,
-  FETCH_EXPRESS_CARE_WINDOWS_FAILED,
+  FORM_FETCH_REQUEST_LIMITS,
+  FORM_FETCH_REQUEST_LIMITS_SUCCEEDED,
+  FORM_FETCH_REQUEST_LIMITS_FAILED,
 } from '../../actions/expressCare';
 import expressCareReducer from '../../reducers/expressCare';
 import { FETCH_STATUS } from '../../utils/constants';
 
 const initialState = {
-  windowsStatus: FETCH_STATUS.notStarted,
   allowRequests: false,
   localWindowString: null,
   minStart: null,
   maxEnd: null,
 };
 
-describe('express care window', () => {
-  it('should set windowsStatus to loading', () => {
+describe('VAOS express care reducer', () => {
+  it('should set fetchRequestLimitsStatus to loading', () => {
     const action = {
-      type: FETCH_EXPRESS_CARE_WINDOWS,
+      type: FORM_FETCH_REQUEST_LIMITS,
     };
 
     const newState = expressCareReducer(initialState, action);
-    expect(newState.windowsStatus).to.equal(FETCH_STATUS.loading);
+    expect(newState.newRequest.fetchRequestLimitsStatus).to.equal(
+      FETCH_STATUS.loading,
+    );
   });
 
-  it('should fetch and format express care window and update windowsStatus', () => {
-    const window = {
-      start: '00:00',
-      end: '23:59',
-      timezone: 'MDT',
-      offsetUtc: '-06:00',
-    };
+  it('should set facilityId, siteId, and isUnderRequestLimit', () => {
     const action = {
-      type: FETCH_EXPRESS_CARE_WINDOWS_SUCCEEDED,
-      facilityData: [
-        [
-          {
-            expressTimes: window,
-          },
-        ],
-      ],
-      nowUtc: moment.utc(),
+      type: FORM_FETCH_REQUEST_LIMITS_SUCCEEDED,
+      facilityId: '983',
+      siteId: '983',
+      isUnderRequestLimit: true,
     };
 
-    const newState = expressCareReducer(initialState, action);
-    expect(newState.windowsStatus).to.equal(FETCH_STATUS.succeeded);
-    expect('allowRequests' in newState).to.equal(true);
-    expect(newState.localWindowString).to.equal('12:00 a.m. to 11:59 p.m. MT');
+    const newState = expressCareReducer(initialState, action).newRequest;
+    expect(newState.fetchRequestLimitsStatus).to.equal(FETCH_STATUS.succeeded);
+    expect(newState.facilityId).to.equal('983');
+    expect(newState.siteId).to.equal('983');
+    expect(newState.isUnderRequestLimit).to.equal(true);
   });
 
-  it('should set windowsStatus to failed', () => {
+  it('should set fetchRequestLimitsStatus to failed', () => {
     const action = {
-      type: FETCH_EXPRESS_CARE_WINDOWS_FAILED,
+      type: FORM_FETCH_REQUEST_LIMITS_FAILED,
     };
 
     const newState = expressCareReducer(initialState, action);
-    expect(newState.windowsStatus).to.equal(FETCH_STATUS.failed);
+    expect(newState.newRequest.fetchRequestLimitsStatus).to.equal(
+      FETCH_STATUS.failed,
+    );
   });
 });

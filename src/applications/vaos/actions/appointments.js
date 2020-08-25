@@ -1,27 +1,17 @@
 import moment from 'moment';
 import * as Sentry from '@sentry/browser';
-import {
-  FETCH_STATUS,
-  GA_PREFIX,
-  APPOINTMENT_TYPES,
-  EXPRESS_CARE,
-} from '../utils/constants';
+import { GA_PREFIX, APPOINTMENT_TYPES } from '../utils/constants';
 import recordEvent from 'platform/monitoring/record-event';
 import { resetDataLayer } from '../utils/events';
+import { selectSystemIds } from '../utils/selectors';
 
 import {
   getCancelReasons,
-  getFacilitiesBySystemAndTypeOfCare,
+  getRequestEligibilityCriteria,
   getRequestMessages,
   updateAppointment,
   updateRequest,
 } from '../api';
-
-import {
-  getOrganizations,
-  getRootOrganization,
-  getSiteIdFromOrganization,
-} from '../services/organization';
 
 import { getLocations } from '../services/location';
 
@@ -35,12 +25,14 @@ import {
   isVideoAppointment,
 } from '../services/appointment';
 
-import { selectSystemIds, vaosVSPAppointmentNew } from '../utils/selectors';
-
 import { captureError, getErrorCodes } from '../utils/error';
 import { STARTED_NEW_APPOINTMENT_FLOW } from './sitewide';
 
 export const FETCH_FUTURE_APPOINTMENTS = 'vaos/FETCH_FUTURE_APPOINTMENTS';
+export const FETCH_PENDING_APPOINTMENTS_FAILED =
+  'vaos/FETCH_PENDING_APPOINTMENTS_FAILED';
+export const FETCH_PENDING_APPOINTMENTS_SUCCEEDED =
+  'vaos/FETCH_PENDING_APPOINTMENTS_SUCCEEDED';
 export const FETCH_FUTURE_APPOINTMENTS_FAILED =
   'vaos/FETCH_FUTURE_APPOINTMENTS_FAILED';
 export const FETCH_FUTURE_APPOINTMENTS_SUCCEEDED =
@@ -67,6 +59,12 @@ export const CANCEL_APPOINTMENT_CONFIRMED_FAILED =
 export const CANCEL_APPOINTMENT_CLOSED = 'vaos/CANCEL_APPOINTMENT_CLOSED';
 export const FETCH_FACILITY_LIST_DATA_SUCCEEDED =
   'vaos/FETCH_FACILITY_LIST_DATA_SUCCEEDED';
+
+export const FETCH_EXPRESS_CARE_WINDOWS = 'vaos/FETCH_EXPRESS_CARE_WINDOWS';
+export const FETCH_EXPRESS_CARE_WINDOWS_FAILED =
+  'vaos/FETCH_EXPRESS_CARE_WINDOWS_FAILED';
+export const FETCH_EXPRESS_CARE_WINDOWS_SUCCEEDED =
+  'vaos/FETCH_EXPRESS_CARE_WINDOWS_SUCCEEDED';
 
 export function fetchRequestMessages(requestId) {
   return async dispatch => {
@@ -136,54 +134,66 @@ async function getAdditionalFacilityInfo(futureAppointments) {
 }
 
 export function fetchFutureAppointments() {
-  return async (dispatch, getState) => {
-    if (getState().appointments.futureStatus === FETCH_STATUS.notStarted) {
+  return async dispatch => {
+    dispatch({
+      type: FETCH_FUTURE_APPOINTMENTS,
+    });
+
+    try {
+      const data = await Promise.all([
+        getBookedAppointments({
+          startDate: moment().format('YYYY-MM-DD'),
+          endDate: moment()
+            .add(13, 'months')
+            .format('YYYY-MM-DD'),
+        }),
+        getAppointmentRequests({
+          startDate: moment()
+            .subtract(30, 'days')
+            .format('YYYY-MM-DD'),
+          endDate: moment().format('YYYY-MM-DD'),
+        })
+          .then(requests => {
+            dispatch({
+              type: FETCH_PENDING_APPOINTMENTS_SUCCEEDED,
+              data: requests,
+            });
+            return requests;
+          })
+          .catch(resp => {
+            dispatch({
+              type: FETCH_PENDING_APPOINTMENTS_FAILED,
+            });
+
+            return Promise.reject(resp);
+          }),
+      ]);
+
       dispatch({
-        type: FETCH_FUTURE_APPOINTMENTS,
+        type: FETCH_FUTURE_APPOINTMENTS_SUCCEEDED,
+        data: data[0],
       });
 
       try {
-        const data = await Promise.all([
-          getBookedAppointments({
-            startDate: moment().format('YYYY-MM-DD'),
-            endDate: moment()
-              .add(13, 'months')
-              .format('YYYY-MM-DD'),
-          }),
-          getAppointmentRequests({
-            startDate: moment()
-              .subtract(30, 'days')
-              .format('YYYY-MM-DD'),
-            endDate: moment().format('YYYY-MM-DD'),
-          }),
-        ]);
+        const facilityData = await getAdditionalFacilityInfo(
+          [].concat(...data),
+        );
 
-        dispatch({
-          type: FETCH_FUTURE_APPOINTMENTS_SUCCEEDED,
-          data,
-        });
-
-        try {
-          const facilityData = await getAdditionalFacilityInfo(
-            getState().appointments.future,
-          );
-
-          if (facilityData) {
-            dispatch({
-              type: FETCH_FACILITY_LIST_DATA_SUCCEEDED,
-              facilityData,
-            });
-          }
-        } catch (error) {
-          captureError(error);
+        if (facilityData) {
+          dispatch({
+            type: FETCH_FACILITY_LIST_DATA_SUCCEEDED,
+            facilityData,
+          });
         }
       } catch (error) {
         captureError(error);
-        dispatch({
-          type: FETCH_FUTURE_APPOINTMENTS_FAILED,
-          error,
-        });
       }
+    } catch (error) {
+      captureError(error);
+      dispatch({
+        type: FETCH_FUTURE_APPOINTMENTS_FAILED,
+        error,
+      });
     }
   };
 }
@@ -277,7 +287,7 @@ export function confirmCancelAppointment() {
           appointmentRequestDetailCode: ['DETCODE8'],
         });
       } else {
-        const facilityId = getVARFacilityId(appointment).replace('var', '');
+        const facilityId = getVARFacilityId(appointment);
 
         const cancelData = {
           appointmentTime: moment
@@ -363,5 +373,30 @@ export function closeCancelAppointment() {
 export function startNewAppointmentFlow() {
   return {
     type: STARTED_NEW_APPOINTMENT_FLOW,
+  };
+}
+
+export function fetchExpressCareWindows() {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: FETCH_EXPRESS_CARE_WINDOWS,
+    });
+
+    const initialState = getState();
+    const userSiteIds = selectSystemIds(initialState);
+
+    try {
+      const settings = await getRequestEligibilityCriteria(userSiteIds);
+      dispatch({
+        type: FETCH_EXPRESS_CARE_WINDOWS_SUCCEEDED,
+        settings,
+        nowUtc: moment.utc(),
+      });
+    } catch (error) {
+      captureError(error);
+      dispatch({
+        type: FETCH_EXPRESS_CARE_WINDOWS_FAILED,
+      });
+    }
   };
 }

@@ -1,12 +1,13 @@
 import fullSchema from 'vets-json-schema/dist/686C-674-schema.json';
 import environment from 'platform/utilities/environment';
+import FormFooter from 'platform/forms/components/FormFooter';
+import { externalServices } from 'platform/monitoring/DowntimeNotification';
 import { VA_FORM_IDS } from 'platform/forms/constants';
 import { TASK_KEYS, MARRIAGE_TYPES } from './constants';
 import { isChapterFieldRequired } from './helpers';
 import { customTransformForSubmit } from './utilities';
 import IntroductionPage from '../containers/IntroductionPage';
 import ConfirmationPage from '../containers/ConfirmationPage';
-import FormFooter from 'platform/forms/components/FormFooter';
 import CustomPreSubmitInfo from '../components/CustomPreSubmitInfo';
 import GetFormHelp from '../components/GetFormHelp.jsx';
 
@@ -44,7 +45,7 @@ import {
   stepchildInformation,
 } from './chapters/stepchild-no-longer-part-of-household';
 import {
-  studentNameAndSSN,
+  studentNameAndSsn,
   studentAddressMarriageTuition,
   studentSchoolAddress,
   studentTermDates,
@@ -72,12 +73,15 @@ const formConfig = {
   prefillEnabled: true,
   footerContent: FormFooter,
   getHelp: GetFormHelp,
+  downtime: {
+    dependencies: [externalServices.bgs],
+  },
   savedFormMessages: {
     notFound: 'Please start over to apply for declare or remove a dependent.',
     noAuth:
       'Please sign in again to continue your application for declare or remove a dependent.',
   },
-  title: 'Add or remove dependents from your VA benefits',
+  title: 'Add or remove a dependent on your VA disability benefits',
   subTitle: 'VA Form 21-686c (and 21-674)',
   defaultDefinitions: { ...fullSchema.definitions },
   transformForSubmit: customTransformForSubmit,
@@ -236,13 +240,13 @@ const formConfig = {
     report674: {
       title: 'Information needed to add a student 18 to 23 years old',
       pages: {
-        studentNameAndSSN: {
+        studentNameAndSsn: {
           depends: formData =>
             isChapterFieldRequired(formData, TASK_KEYS.report674),
           title: 'Information needed to add a student 18 to 23 years old',
           path: 'report-674',
-          uiSchema: studentNameAndSSN.uiSchema,
-          schema: studentNameAndSSN.schema,
+          uiSchema: studentNameAndSsn.uiSchema,
+          schema: studentNameAndSsn.schema,
         },
         studentAddressMarriageTuition: {
           depends: formData =>

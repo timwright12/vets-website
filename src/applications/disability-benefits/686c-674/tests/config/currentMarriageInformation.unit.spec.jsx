@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import { changeDropdown } from '../helpers/index.js';
 import {
   DefinitionTester,
@@ -24,7 +24,7 @@ describe('686 current marriage information', () => {
     },
     currentMarriageInformation: {
       location: {
-        isOutsideUS: false,
+        isOutsideUs: false,
       },
     },
   };
@@ -106,7 +106,7 @@ describe('686 current marriage information', () => {
     fillData(form, 'input#root_currentMarriageInformation_dateYear', '2010');
     selectCheckbox(
       form,
-      'root_currentMarriageInformation_location_isOutsideUS',
+      'root_currentMarriageInformation_location_isOutsideUs',
       true,
     );
     changeDropdown(

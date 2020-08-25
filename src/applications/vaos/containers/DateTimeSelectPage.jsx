@@ -24,10 +24,17 @@ const pageTitle = 'Tell us the date and time you’d like your appointment';
 
 const missingDateError = 'Please select a preferred date for your appointment';
 
-export function getOptionsByDate(selectedDate, availableSlots = []) {
+export function getOptionsByDate(
+  selectedDate,
+  timezoneDescription,
+  availableSlots = [],
+) {
   return availableSlots.reduce((acc, slot) => {
     if (slot.start.split('T')[0] === selectedDate) {
-      const time = moment(slot.start);
+      let time = moment(slot.start);
+      if (slot.start.endsWith('Z')) {
+        time = time.tz(timezoneDescription);
+      }
       const meridiem = time.format('A');
       const screenReaderMeridiem = meridiem.replace(/\./g, '').toUpperCase();
       acc.push({
@@ -105,15 +112,15 @@ export class DateTimeSelectPage extends React.Component {
   }
 
   goBack = () => {
-    this.props.routeToPreviousAppointmentPage(this.props.router, pageKey);
+    this.props.routeToPreviousAppointmentPage(this.props.history, pageKey);
   };
 
   goForward = () => {
-    const { data, router } = this.props;
+    const { data, history } = this.props;
     const { calendarData } = data || {};
     this.validate(calendarData);
     if (this.userSelectedSlot(calendarData)) {
-      this.props.routeToNextAppointmentPage(router, pageKey);
+      this.props.routeToNextAppointmentPage(history, pageKey);
     } else if (this.state.submitted) {
       scrollAndFocus('.usa-input-error-message');
     } else {
@@ -122,7 +129,7 @@ export class DateTimeSelectPage extends React.Component {
   };
 
   startRequestFlow = () => {
-    this.props.requestAppointmentDateChoice(this.props.router);
+    this.props.requestAppointmentDateChoice(this.props.history);
   };
 
   validate = data => {
@@ -150,6 +157,7 @@ export class DateTimeSelectPage extends React.Component {
       pageChangeInProgress,
       preferredDate,
       timezone,
+      timezoneDescription,
       typeOfCareId,
     } = this.props;
 
@@ -169,14 +177,15 @@ export class DateTimeSelectPage extends React.Component {
             nextAvailableApptDate={availableSlots?.[0]?.start}
             onClickRequest={this.props.startRequestAppointmentFlow}
             preferredDate={preferredDate}
-            timezone={timezone}
+            timezone={timezoneDescription}
             typeOfCareId={typeOfCareId}
           />
         )}
         {appointmentSlotsStatus !== FETCH_STATUS.failed && (
           <p>
             Please select a desired date and time for your appointment.
-            {timezone && ` Appointment times are displayed in ${timezone}.`}
+            {timezone &&
+              ` Appointment times are displayed in ${timezoneDescription}.`}
           </p>
         )}
         <CalendarWidget
@@ -190,7 +199,7 @@ export class DateTimeSelectPage extends React.Component {
             required: true,
             maxSelections: 1,
             getOptionsByDate: selectedDate =>
-              getOptionsByDate(selectedDate, availableSlots),
+              getOptionsByDate(selectedDate, timezone, availableSlots),
           }}
           loadingStatus={appointmentSlotsStatus}
           loadingErrorMessage={

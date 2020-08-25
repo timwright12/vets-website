@@ -13,9 +13,12 @@ import PersonalInformation from '../../../components/personal-information/Person
 import {
   createBasicInitialState,
   renderWithProfileReducers,
+  wait,
 } from '../../unit-test-helpers';
 import { beforeEach } from 'mocha';
 
+const errorText =
+  'We’re sorry. We couldn’t update your email address. Please try again.';
 const newEmailAddress = 'new-address@domain.com';
 const ui = (
   <MemoryRouter>
@@ -58,7 +61,7 @@ function editEmailAddress() {
 
 // When the update happens while the Edit View is still active
 async function testQuickSuccess() {
-  server.use(...mocks.editEmailAddressTransactionSuccess);
+  server.use(...mocks.transactionSucceeded);
 
   const { emailAddressInput } = editEmailAddress();
 
@@ -77,7 +80,7 @@ async function testQuickSuccess() {
 // When the update happens but not until after the Edit View has exited and the
 // user returned to the read-only view
 async function testSlowSuccess() {
-  server.use(...mocks.editEmailAddressTransactionPending);
+  server.use(...mocks.transactionPending);
 
   const { emailAddressInput } = editEmailAddress();
 
@@ -90,7 +93,7 @@ async function testSlowSuccess() {
   );
   expect(savingMessage).to.exist;
 
-  server.use(...mocks.editEmailAddressTransactionSuccess);
+  server.use(...mocks.transactionSucceeded);
 
   await waitForElementToBeRemoved(savingMessage);
 
@@ -109,39 +112,42 @@ async function testSlowSuccess() {
 
 // When the initial transaction creation request fails
 async function testTransactionCreationFails() {
-  server.use(
-    ...mocks.updateEmailAddressCreateTransactionFailure,
-    ...mocks.addEmailAddressCreateTransactionFailure,
-  );
+  server.use(...mocks.createTransactionFailure);
 
   editEmailAddress();
 
   // expect an error to be shown
-  const alert = await view.findByRole('alert');
-  expect(alert).to.have.class('usa-alert-error');
-  expect(alert).to.contain.text(
-    'We’re sorry. We couldn’t update your email address. Please try again.',
-  );
+  const error = await view.findByText(errorText);
+  expect(error).to.exist;
+
+  // make sure that edit mode is not automatically exited
+  await wait(75);
+  expect(view.getByText(errorText)).to.exist;
+  const editButton = getEditButton();
+  expect(editButton).to.not.exist;
 }
 
 // When the update fails while the Edit View is still active
 async function testQuickFailure() {
-  server.use(...mocks.editEmailAddressTransactionFailure);
+  server.use(...mocks.transactionFailed);
 
   editEmailAddress();
 
   // expect an error to be shown
-  const alert = await view.findByRole('alert');
-  expect(alert).to.have.class('usa-alert-error');
-  expect(alert).to.contain.text(
-    'We’re sorry. We couldn’t update your email address. Please try again.',
-  );
+  const error = await view.findByText(errorText);
+  expect(error).to.exist;
+
+  // make sure that edit mode is not automatically exited
+  await wait(75);
+  expect(view.getByText(errorText)).to.exist;
+  const editButton = getEditButton();
+  expect(editButton).to.not.exist;
 }
 
 // When the update fails but not until after the Edit View has exited and the
 // user returned to the read-only view
 async function testSlowFailure() {
-  server.use(...mocks.editEmailAddressTransactionPending);
+  server.use(...mocks.transactionPending);
 
   const { emailAddressInput } = editEmailAddress();
 
@@ -154,7 +160,7 @@ async function testSlowFailure() {
   );
   expect(savingMessage).to.exist;
 
-  server.use(...mocks.editEmailAddressTransactionFailure);
+  server.use(...mocks.transactionFailed);
 
   await waitForElementToBeRemoved(savingMessage);
 
@@ -167,7 +173,7 @@ async function testSlowFailure() {
 
   // and the new email address should not exist in the DOM
   expect(view.queryByText(newEmailAddress)).not.to.exist;
-  // and the add email button should be back
+  // and the add/edit email button should be back
   expect(getEditButton()).to.exist;
 }
 
@@ -205,10 +211,10 @@ describe('Editing email address', () => {
     it('should handle a transaction that does not succeed until after the edit view exits', async () => {
       await testSlowSuccess();
     });
-    it('should show an error if the transaction cannot be created', async () => {
+    it('should show an error and not auto-exit edit mode if the transaction cannot be created', async () => {
       await testTransactionCreationFails();
     });
-    it('should show an error if the transaction fails quickly', async () => {
+    it('should show an error and not auto-exit edit mode if the transaction fails quickly', async () => {
       await testQuickFailure();
     });
     it('should show an error if the transaction fails after the edit view exits', async () => {
@@ -231,10 +237,10 @@ describe('Editing email address', () => {
     it('should handle a transaction that does not succeed until after the edit view exits', async () => {
       await testSlowSuccess();
     });
-    it('should show an error if the transaction cannot be created', async () => {
+    it('should show an error and not auto-exit edit mode if the transaction cannot be created', async () => {
       await testTransactionCreationFails();
     });
-    it('should show an error if the transaction fails quickly', async () => {
+    it('should show an error and not auto-exit edit mode if the transaction fails quickly', async () => {
       await testQuickFailure();
     });
     it('should show an error if the transaction fails after the edit view exits', async () => {

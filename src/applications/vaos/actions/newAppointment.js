@@ -465,9 +465,7 @@ export function updateFacilityPageData(page, uiSchema, data) {
           const eligibility = getEligibilityStatus(getState());
           if (!eligibility.direct && !eligibility.request) {
             // Remove parse function when converting this call to FHIR service
-            const thunk = fetchFacilityDetails(
-              parseFakeFHIRId(data.vaFacility),
-            );
+            const thunk = fetchFacilityDetails(data.vaFacility);
             await thunk(dispatch, getState);
           }
         } catch (e) {
@@ -509,7 +507,7 @@ export function openClinicPage(page, uiSchema, schema) {
 
     const formData = getFormData(getState());
     // Remove parse function when converting this call to FHIR service
-    await dispatch(fetchFacilityDetails(parseFakeFHIRId(formData.vaFacility)));
+    await dispatch(fetchFacilityDetails(formData.vaFacility));
 
     dispatch({
       type: FORM_CLINIC_PAGE_OPENED_SUCCEEDED,
@@ -523,9 +521,9 @@ export function openClinicPage(page, uiSchema, schema) {
 export function getAppointmentSlots(startDate, endDate, forceFetch = false) {
   return async (dispatch, getState) => {
     const state = getState();
+    const useVSP = vaosVSPAppointmentNew(state);
     const rootOrgId = getRootIdForChosenFacility(state);
     const newAppointment = getNewAppointment(state);
-    const availableSlots = newAppointment.availableSlots || [];
     const { data } = newAppointment;
 
     const startDateMonth = moment(startDate).format('YYYY-MM');
@@ -534,6 +532,7 @@ export function getAppointmentSlots(startDate, endDate, forceFetch = false) {
     let fetchedAppointmentSlotMonths = [];
     let fetchedStartMonth = false;
     let fetchedEndMonth = false;
+    let availableSlots = [];
 
     if (!forceFetch) {
       fetchedAppointmentSlotMonths = [
@@ -542,6 +541,7 @@ export function getAppointmentSlots(startDate, endDate, forceFetch = false) {
 
       fetchedStartMonth = fetchedAppointmentSlotMonths.includes(startDateMonth);
       fetchedEndMonth = fetchedAppointmentSlotMonths.includes(endDateMonth);
+      availableSlots = newAppointment.availableSlots || [];
     }
 
     if (!fetchedStartMonth || !fetchedEndMonth) {
@@ -566,6 +566,7 @@ export function getAppointmentSlots(startDate, endDate, forceFetch = false) {
           clinicId: data.clinicId,
           startDate: startDateString,
           endDate: endDateString,
+          useVSP,
         });
 
         const now = moment();
@@ -655,16 +656,13 @@ export function updateCCEligibility(isEligible) {
   };
 }
 
-async function buildPreferencesDataAndUpdate(newAppointment) {
+async function buildPreferencesDataAndUpdate(email) {
   const preferenceData = await getPreferences();
-  const preferenceBody = createPreferenceBody(
-    preferenceData,
-    newAppointment.data,
-  );
+  const preferenceBody = createPreferenceBody(preferenceData, email);
   return updatePreferences(preferenceBody);
 }
 
-export function submitAppointmentOrRequest(router) {
+export function submitAppointmentOrRequest(history) {
   return async (dispatch, getState) => {
     const state = getState();
     const newAppointment = getNewAppointment(state);
@@ -693,7 +691,7 @@ export function submitAppointmentOrRequest(router) {
         await submitAppointment(appointmentBody);
 
         try {
-          await buildPreferencesDataAndUpdate(newAppointment);
+          await buildPreferencesDataAndUpdate(data.email);
         } catch (error) {
           // These are ancillary updates, the request went through if the first submit
           // succeeded
@@ -710,7 +708,7 @@ export function submitAppointmentOrRequest(router) {
           ...additionalEventData,
         });
         resetDataLayer();
-        router.push('/new-appointment/confirmation');
+        history.push('/new-appointment/confirmation');
       } catch (error) {
         captureError(error, true);
         dispatch({
@@ -719,9 +717,7 @@ export function submitAppointmentOrRequest(router) {
         });
 
         // Remove parse function when converting this call to FHIR service
-        dispatch(
-          fetchFacilityDetails(parseFakeFHIRId(newAppointment.data.vaFacility)),
-        );
+        dispatch(fetchFacilityDetails(newAppointment.data.vaFacility));
 
         recordEvent({
           event: `${GA_PREFIX}-direct-submission-failed`,
@@ -754,11 +750,11 @@ export function submitAppointmentOrRequest(router) {
         }
 
         try {
-          const requestMessage = newAppointment.data.reasonAdditionalInfo;
+          const requestMessage = data.reasonAdditionalInfo;
           if (requestMessage) {
             await sendRequestMessage(requestData.id, requestMessage);
           }
-          await buildPreferencesDataAndUpdate(newAppointment);
+          await buildPreferencesDataAndUpdate(data.email);
         } catch (error) {
           // These are ancillary updates, the request went through if the first submit
           // succeeded
@@ -783,7 +779,7 @@ export function submitAppointmentOrRequest(router) {
           ...additionalEventData,
         });
         resetDataLayer();
-        router.push('/new-appointment/confirmation');
+        history.push('/new-appointment/confirmation');
       } catch (error) {
         let extraData = null;
         if (requestBody) {
@@ -805,11 +801,9 @@ export function submitAppointmentOrRequest(router) {
         // Remove parse function when converting this call to FHIR service
         dispatch(
           fetchFacilityDetails(
-            parseFakeFHIRId(
-              isCommunityCare
-                ? newAppointment.data.communityCareSystemId
-                : newAppointment.data.vaFacility,
-            ),
+            isCommunityCare
+              ? newAppointment.data.communityCareSystemId
+              : newAppointment.data.vaFacility,
           ),
         );
 
@@ -824,14 +818,14 @@ export function submitAppointmentOrRequest(router) {
   };
 }
 
-export function requestAppointmentDateChoice(router) {
+export function requestAppointmentDateChoice(history) {
   return dispatch => {
     dispatch(startRequestAppointmentFlow());
-    router.replace('/new-appointment/request-date');
+    history.replace('/new-appointment/request-date');
   };
 }
 
-export function routeToPageInFlow(flow, router, current, action) {
+export function routeToPageInFlow(flow, history, current, action) {
   return async (dispatch, getState) => {
     dispatch({
       type: FORM_PAGE_CHANGE_STARTED,
@@ -851,7 +845,7 @@ export function routeToPageInFlow(flow, router, current, action) {
       dispatch({
         type: FORM_PAGE_CHANGE_COMPLETED,
       });
-      router.push(nextPage.url);
+      history.push(nextPage.url);
     } else if (nextPage) {
       throw new Error(`Tried to route to a page without a url: ${nextPage}`);
     } else {
@@ -860,10 +854,10 @@ export function routeToPageInFlow(flow, router, current, action) {
   };
 }
 
-export function routeToNextAppointmentPage(router, current) {
-  return routeToPageInFlow(newAppointmentFlow, router, current, 'next');
+export function routeToNextAppointmentPage(history, current) {
+  return routeToPageInFlow(newAppointmentFlow, history, current, 'next');
 }
 
-export function routeToPreviousAppointmentPage(router, current) {
-  return routeToPageInFlow(newAppointmentFlow, router, current, 'previous');
+export function routeToPreviousAppointmentPage(history, current) {
+  return routeToPageInFlow(newAppointmentFlow, history, current, 'previous');
 }

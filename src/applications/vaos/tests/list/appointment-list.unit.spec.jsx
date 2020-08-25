@@ -1,23 +1,25 @@
 import React from 'react';
-import { Router, Route } from 'react-router';
 import { expect } from 'chai';
 import moment from 'moment';
-import { createMemoryHistory } from 'history';
-import { renderInReduxProvider } from 'platform/testing/unit/react-testing-library-helpers';
+import { fireEvent, waitFor } from '@testing-library/dom';
 import environment from 'platform/utilities/environment';
-import { setFetchJSONFailure } from 'platform/testing/unit/helpers';
+import {
+  setFetchJSONFailure,
+  mockFetch,
+  resetFetch,
+} from 'platform/testing/unit/helpers';
 import {
   getVARequestMock,
   getVideoAppointmentMock,
   getVAAppointmentMock,
   getCCAppointmentMock,
-  getParentSiteMock,
+  getExpressCareRequestCriteriaMock,
 } from '../mocks/v0';
 import {
   mockAppointmentInfo,
-  mockSupportedFacilities,
-  mockParentSites,
+  mockRequestEligibilityCriteria,
 } from '../mocks/helpers';
+import { renderWithStoreAndRouter } from '../mocks/setup';
 
 import reducers from '../../reducers';
 import FutureAppointmentsList from '../../components/FutureAppointmentsList';
@@ -28,10 +30,15 @@ const initialState = {
     vaOnlineSchedulingCancel: true,
     vaOnlineSchedulingRequests: true,
     vaOnlineSchedulingPast: true,
+    // eslint-disable-next-line camelcase
+    show_new_schedule_view_appointments_page: true,
   },
 };
 
 describe('VAOS integration: appointment list', () => {
+  beforeEach(() => mockFetch());
+  afterEach(() => resetFetch());
+
   it('should sort appointments by date, with requests at the end', async () => {
     const firstDate = moment().add(3, 'days');
     const secondDate = moment().add(4, 'days');
@@ -73,7 +80,7 @@ describe('VAOS integration: appointment list', () => {
       requests: [request],
     });
 
-    const { baseElement, findAllByRole } = renderInReduxProvider(
+    const { baseElement, findAllByRole } = renderWithStoreAndRouter(
       <FutureAppointmentsList />,
       {
         initialState,
@@ -125,7 +132,7 @@ describe('VAOS integration: appointment list', () => {
       requests,
     });
 
-    const { baseElement, findAllByRole } = renderInReduxProvider(
+    const { baseElement, findAllByRole } = renderWithStoreAndRouter(
       <FutureAppointmentsList />,
       {
         initialState,
@@ -149,10 +156,13 @@ describe('VAOS integration: appointment list', () => {
   it('should show no appointments message when there are no appointments', () => {
     mockAppointmentInfo({});
 
-    const { findByText } = renderInReduxProvider(<FutureAppointmentsList />, {
-      initialState,
-      reducers,
-    });
+    const { findByText } = renderWithStoreAndRouter(
+      <FutureAppointmentsList />,
+      {
+        initialState,
+        reducers,
+      },
+    );
 
     return expect(findByText(/You don’t have any appointments/i)).to.eventually
       .be.ok;
@@ -172,7 +182,7 @@ describe('VAOS integration: appointment list', () => {
       { errors: [] },
     );
 
-    const { baseElement, findByText } = renderInReduxProvider(
+    const { baseElement, findByText } = renderWithStoreAndRouter(
       <FutureAppointmentsList />,
       {
         initialState,
@@ -192,17 +202,6 @@ describe('VAOS integration: appointment list', () => {
     },
   };
 
-  const parentSite983 = {
-    id: '983',
-    attributes: {
-      ...getParentSiteMock().attributes,
-      institutionCode: '983',
-      authoritativeName: 'Some VA facility',
-      rootStationCode: '983',
-      parentStationCode: '983',
-    },
-  };
-
   it('should show express care button and tab when flag is on and within express care window', async () => {
     const request = getVARequestMock();
     request.attributes = {
@@ -213,48 +212,46 @@ describe('VAOS integration: appointment list', () => {
     mockAppointmentInfo({
       requests: [request],
     });
-    mockParentSites(['983'], [parentSite983]);
-    mockSupportedFacilities({
-      siteId: 983,
-      parentId: 983,
-      typeOfCareId: 'CR1',
-      data: [
-        {
-          attributes: {
-            expressTimes: {
-              start: '00:00',
-              end: '23:59',
-              timezone: 'MDT',
-              offsetUtc: '-06:00',
-            },
-          },
-        },
-      ],
-    });
+    const today = moment();
+    const requestCriteria = getExpressCareRequestCriteriaMock('983', [
+      {
+        day: today
+          .clone()
+          .tz('America/Denver')
+          .format('dddd')
+          .toUpperCase(),
+        canSchedule: true,
+        startTime: today
+          .clone()
+          .subtract('2', 'minutes')
+          .tz('America/Denver')
+          .format('HH:mm'),
+        endTime: today
+          .clone()
+          .add('1', 'minutes')
+          .tz('America/Denver')
+          .format('HH:mm'),
+      },
+    ]);
+    mockRequestEligibilityCriteria(['983'], requestCriteria);
     const initialStateWithExpressCare = {
       featureToggles: {
         ...initialState.featureToggles,
         vaOnlineSchedulingExpressCare: true,
+        vaOnlineSchedulingExpressCareNew: true,
       },
       user: userState,
     };
-    const memoryHistory = createMemoryHistory();
-
-    // Mocking a route here so that components using withRouter don't fail
     const {
       findByText,
       baseElement,
       getAllByRole,
       getByText,
-    } = renderInReduxProvider(
-      <Router history={memoryHistory}>
-        <Route path="/" component={AppointmentsPage} />
-      </Router>,
-      {
-        initialState: initialStateWithExpressCare,
-        reducers,
-      },
-    );
+      history,
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState: initialStateWithExpressCare,
+      reducers,
+    });
 
     const header = await findByText('Create a new Express Care request');
     const button = await findByText('Create an Express Care request');
@@ -263,10 +260,6 @@ describe('VAOS integration: appointment list', () => {
       'Talk to VA health care staff today about a condition',
     );
     expect(header).to.have.tagName('h2');
-    expect(button).to.have.attribute(
-      'href',
-      'https://veteran.apps-staging.va.gov/var/v4/#new-express-request',
-    );
     expect(getAllByRole('tab').length).to.equal(3);
     expect(getByText('Upcoming')).to.have.attribute('role', 'tab');
     expect(getByText('Past')).to.have.attribute('role', 'tab');
@@ -274,35 +267,50 @@ describe('VAOS integration: appointment list', () => {
     expect(
       getByText(/View your upcoming, past, and Express Care appointments/i),
     ).to.have.tagName('h2');
+
+    expect(
+      global.window.dataLayer.find(
+        ev => ev.event === 'vaos-express-care-request-button-clicked',
+      ),
+    ).not.to.exist;
+    fireEvent.click(button);
+
+    await waitFor(() =>
+      expect(history.push.lastCall.args[0]).to.equal(
+        '/new-express-care-request',
+      ),
+    );
+    expect(
+      global.window.dataLayer.find(
+        ev => ev.event === 'vaos-express-care-request-button-clicked',
+      ),
+    ).to.exist;
   });
 
   it('should not show express care action when outside of express care window', async () => {
     mockAppointmentInfo({});
-    const now = moment().utcOffset('-06:00');
-    mockParentSites(['983'], [parentSite983]);
-    mockSupportedFacilities({
-      siteId: 983,
-      parentId: 983,
-      typeOfCareId: 'CR1',
-      data: [
-        {
-          attributes: {
-            expressTimes: {
-              start: now
-                .clone()
-                .subtract(3, 'minutes')
-                .format('HH:mm'),
-              end: now
-                .clone()
-                .subtract(2, 'minutes')
-                .format('HH:mm'),
-              timezone: 'MDT',
-              offsetUtc: '-06:00',
-            },
-          },
-        },
-      ],
-    });
+    const today = moment();
+    const requestCriteria = getExpressCareRequestCriteriaMock('983', [
+      {
+        day: today
+          .clone()
+          .tz('America/Denver')
+          .format('dddd')
+          .toUpperCase(),
+        canSchedule: true,
+        startTime: today
+          .clone()
+          .subtract('2', 'minutes')
+          .tz('America/Denver')
+          .format('HH:mm'),
+        endTime: today
+          .clone()
+          .subtract('1', 'minutes')
+          .tz('America/Denver')
+          .format('HH:mm'),
+      },
+    ]);
+    mockRequestEligibilityCriteria(['983'], requestCriteria);
     const initialStateWithExpressCare = {
       featureToggles: {
         ...initialState.featureToggles,
@@ -310,13 +318,8 @@ describe('VAOS integration: appointment list', () => {
       },
       user: userState,
     };
-    const memoryHistory = createMemoryHistory();
-
-    // Mocking a route here so that components using withRouter don't fail
-    const { findByText, getByText } = renderInReduxProvider(
-      <Router history={memoryHistory}>
-        <Route path="/" component={AppointmentsPage} />
-      </Router>,
+    const { findByText, getByText } = renderWithStoreAndRouter(
+      <AppointmentsPage />,
       {
         initialState: initialStateWithExpressCare,
         reducers,
@@ -337,28 +340,24 @@ describe('VAOS integration: appointment list', () => {
         vaOnlineSchedulingExpressCare: false,
       },
     };
-    const memoryHistory = createMemoryHistory();
-
-    // Mocking a route here so that components using withRouter don't fail
     const {
       findByText,
       queryByText,
       getAllByRole,
       getByText,
-    } = renderInReduxProvider(
-      <Router history={memoryHistory}>
-        <Route path="/" component={AppointmentsPage} />
-      </Router>,
-      {
-        initialState: initialStateWithExpressCare,
-        reducers,
-      },
-    );
+      getAllByText,
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState: initialStateWithExpressCare,
+      reducers,
+    });
 
     await findByText('Create a new appointment');
     expect(queryByText(/request an express care screening/i)).to.not.be.ok;
     expect(getAllByRole('tab').length).to.equal(2);
-    expect(getByText('Upcoming appointments')).to.have.attribute('role', 'tab');
+    expect(getAllByText('Upcoming appointments')[0]).to.have.attribute(
+      'role',
+      'tab',
+    );
     expect(getByText('Past appointments')).to.have.attribute('role', 'tab');
     expect(
       queryByText(/View your upcoming, past, and Express Care appointments/i),
@@ -367,24 +366,28 @@ describe('VAOS integration: appointment list', () => {
 
   it('should show express care action but not tab when flag is on and no requests', async () => {
     mockAppointmentInfo({});
-    mockParentSites(['983'], [parentSite983]);
-    mockSupportedFacilities({
-      siteId: 983,
-      parentId: 983,
-      typeOfCareId: 'CR1',
-      data: [
-        {
-          attributes: {
-            expressTimes: {
-              start: '00:00',
-              end: '23:59',
-              timezone: 'MDT',
-              offsetUtc: '-06:00',
-            },
-          },
-        },
-      ],
-    });
+    const today = moment();
+    const requestCriteria = getExpressCareRequestCriteriaMock('983', [
+      {
+        day: today
+          .clone()
+          .tz('America/Denver')
+          .format('dddd')
+          .toUpperCase(),
+        canSchedule: true,
+        startTime: today
+          .clone()
+          .subtract('2', 'minutes')
+          .tz('America/Denver')
+          .format('HH:mm'),
+        endTime: today
+          .clone()
+          .add('1', 'minutes')
+          .tz('America/Denver')
+          .format('HH:mm'),
+      },
+    ]);
+    mockRequestEligibilityCriteria(['983'], requestCriteria);
     const initialStateWithExpressCare = {
       featureToggles: {
         ...initialState.featureToggles,
@@ -392,32 +395,77 @@ describe('VAOS integration: appointment list', () => {
       },
       user: userState,
     };
-    const memoryHistory = createMemoryHistory();
-
-    // Mocking a route here so that components using withRouter don't fail
     const {
       findByText,
       getAllByRole,
       getByText,
       findAllByText,
+      getAllByText,
       queryByText,
-    } = renderInReduxProvider(
-      <Router history={memoryHistory}>
-        <Route path="/" component={AppointmentsPage} />
-      </Router>,
-      {
-        initialState: initialStateWithExpressCare,
-        reducers,
-      },
-    );
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState: initialStateWithExpressCare,
+      reducers,
+    });
 
     await findByText('Create a new appointment');
     expect(await findAllByText('Create a new Express Care request')).to.be.ok;
     expect(getAllByRole('tab').length).to.equal(2);
-    expect(getByText('Upcoming appointments')).to.have.attribute('role', 'tab');
+    expect(getAllByText('Upcoming appointments')[0]).to.have.attribute(
+      'role',
+      'tab',
+    );
     expect(getByText('Past appointments')).to.have.attribute('role', 'tab');
     expect(
       queryByText(/View your upcoming, past, and Express Care appointments/i),
     ).not.to.exist;
+  });
+
+  it('should show Cerner portal link when user is only registered at Cerner sites', async () => {
+    mockAppointmentInfo({});
+    const today = moment();
+    const requestCriteria = getExpressCareRequestCriteriaMock('668', [
+      {
+        day: today
+          .clone()
+          .tz('America/Denver')
+          .format('dddd')
+          .toUpperCase(),
+        canSchedule: true,
+        startTime: today
+          .clone()
+          .subtract('2', 'minutes')
+          .tz('America/Denver')
+          .format('HH:mm'),
+        endTime: today
+          .clone()
+          .add('1', 'minutes')
+          .tz('America/Denver')
+          .format('HH:mm'),
+      },
+    ]);
+    mockRequestEligibilityCriteria(['668'], requestCriteria);
+    const initialStateWithExpressCare = {
+      featureToggles: {
+        ...initialState.featureToggles,
+        vaOnlineSchedulingExpressCare: true,
+      },
+      user: {
+        profile: {
+          facilities: [{ facilityId: '668', isCerner: true }],
+        },
+      },
+    };
+    const screen = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState: initialStateWithExpressCare,
+      reducers,
+    });
+
+    await screen.findByText(
+      'You can schedule a VA appointment through My VA Health.',
+    );
+    expect(screen.queryAllByText(/express care/i)).to.be.empty;
+    expect(screen.queryByText('Schedule an appointment')).to.not.exist;
+
+    expect(screen.getAllByText('Go to My VA Health')[0]).to.have.tagName('a');
   });
 });

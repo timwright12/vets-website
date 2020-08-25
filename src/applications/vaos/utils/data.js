@@ -16,14 +16,13 @@ import {
   getSiteIdForChosenFacility,
   getChosenParentInfo,
   getChosenSlot,
-  selectActiveExpressCareFacility,
   selectExpressCareFormData,
 } from './selectors';
 import { selectVet360ResidentialAddress } from 'platform/user/selectors';
 import { getFacilityIdFromLocation } from '../services/location';
 import {
   findCharacteristic,
-  getClinicIdentifier,
+  getClinicId,
   getSiteCode,
 } from '../services/healthcare-service/transformers';
 
@@ -102,12 +101,9 @@ export function transformFormToVARequest(state) {
   };
 }
 
-export function transformFormToExpressCareRequest(state) {
+export function transformFormToExpressCareRequest(state, facility) {
   const data = selectExpressCareFormData(state);
-  const { facilityId, siteId, name } = selectActiveExpressCareFacility(
-    state,
-    moment.utc(),
-  );
+  const { facilityId, siteId, name } = facility;
 
   return {
     typeOfCare: EXPRESS_CARE,
@@ -118,8 +114,8 @@ export function transformFormToExpressCareRequest(state) {
       facilityCode: facilityId,
       parentSiteCode: siteId,
     },
-    reasonForVisit: data.reasonForRequest.reason,
-    additionalInformation: data.reasonForRequest.additionalInformation,
+    reasonForVisit: data.reason,
+    additionalInformation: data.additionalInformation,
     phoneNumber: data.contactInfo.phoneNumber,
     verifyPhoneNumber: data.contactInfo.phoneNumber,
     emailPreferences: {
@@ -133,13 +129,21 @@ export function transformFormToExpressCareRequest(state) {
     email: data.contactInfo.email,
     // defaulted values
     status: 'Submitted',
+    purposeOfVisit: 'Express Care Request',
+    visitType: 'Express Care',
+    optionDate1: moment().format('MM/DD/YYYY'),
+    optionTime1: 'No Time Selected',
+    optionDate2: 'No Date Selected',
+    optionTime2: 'No Time Selected',
+    optionDate3: 'No Date Selected',
+    optionTime3: 'No Time Selected',
     schedulingMethod: 'clerk',
     requestedPhoneCall: false,
     providerId: '0',
     providerOption: '',
     // The bad camel casing here is intentional, to match downstream
     // system
-    bestTimetoCall: [],
+    bestTimetoCall: ['Morning', 'Afternoon', 'Evening'],
   };
 }
 
@@ -244,7 +248,7 @@ export function transformFormToAppointment(state) {
     appointmentType: getTypeOfCare(data).name,
     clinic: {
       siteCode: getSiteCode(clinic),
-      clinicId: getClinicIdentifier(clinic),
+      clinicId: getClinicId(clinic),
       clinicName: clinic.serviceName,
       clinicFriendlyLocationName: findCharacteristic(
         clinic,
@@ -276,10 +280,10 @@ export function transformFormToAppointment(state) {
   };
 }
 
-export function createPreferenceBody(preferences, data) {
+export function createPreferenceBody(preferences, emailAddress) {
   return {
     ...preferences,
-    emailAddress: data.email,
+    emailAddress,
     notificationFrequency: 'Each new message',
     emailAllowed: true,
   };

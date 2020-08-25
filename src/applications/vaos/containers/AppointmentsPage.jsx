@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Switch, Route } from 'react-router-dom';
 import LoadingIndicator from '@department-of-veterans-affairs/formation-react/LoadingIndicator';
-import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
 import recordEvent from 'platform/monitoring/record-event';
 
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -12,8 +12,9 @@ import {
   confirmCancelAppointment,
   startNewAppointmentFlow,
   fetchFutureAppointments,
+  fetchExpressCareWindows,
 } from '../actions/appointments';
-import { fetchExpressCareWindows } from '../actions/expressCare';
+import { startNewExpressCareFlow } from '../actions/expressCare';
 import CancelAppointmentModal from '../components/cancel/CancelAppointmentModal';
 import {
   getCancelInfo,
@@ -24,6 +25,7 @@ import {
   vaosExpressCare,
   isWelcomeModalDismissed,
   selectExpressCare,
+  selectFutureStatus,
 } from '../utils/selectors';
 import { selectIsCernerOnlyPatient } from 'platform/user/selectors';
 import { GA_PREFIX, FETCH_STATUS } from '../utils/constants';
@@ -31,6 +33,9 @@ import { scrollAndFocus } from '../utils/scrollAndFocus';
 import NeedHelp from '../components/NeedHelp';
 import TabNav from '../components/TabNav';
 import RequestExpressCare from '../components/RequestExpressCare';
+import FutureAppointmentsList from '../components/FutureAppointmentsList';
+import PastAppointmentsList from '../components/PastAppointmentsList';
+import ExpressCareList from '../components/ExpressCareList';
 
 const pageTitle = 'VA appointments';
 
@@ -72,11 +77,17 @@ export class AppointmentsPage extends Component {
     this.props.startNewAppointmentFlow();
   };
 
+  startNewExpressCareFlow = () => {
+    recordEvent({
+      event: `${GA_PREFIX}-express-care-request-button-clicked`,
+    });
+    this.props.startNewExpressCareFlow();
+  };
+
   render() {
     const {
       cancelInfo,
-      children,
-      futureStatus,
+      pendingStatus,
       showScheduleButton,
       showCommunityCare,
       expressCare,
@@ -85,11 +96,18 @@ export class AppointmentsPage extends Component {
       showPastAppointments,
     } = this.props;
     const isLoading =
-      futureStatus === FETCH_STATUS.loading ||
+      pendingStatus === FETCH_STATUS.loading ||
       expressCare.windowsStatus === FETCH_STATUS.loading ||
-      futureStatus === FETCH_STATUS.notStarted ||
+      pendingStatus === FETCH_STATUS.notStarted ||
       expressCare.windowsStatus === FETCH_STATUS.notStarted;
 
+    const routes = (
+      <Switch>
+        <Route component={PastAppointmentsList} path="/past" />
+        <Route component={ExpressCareList} path="/express-care" />
+        <Route path="/" component={FutureAppointmentsList} />
+      </Switch>
+    );
     return (
       <div className="vads-l-grid-container vads-u-padding-x--2p5 large-screen:vads-u-padding-x--0 vads-u-padding-bottom--2p5">
         <Breadcrumbs />
@@ -107,7 +125,7 @@ export class AppointmentsPage extends Component {
             {!expressCare.enabled && (
               <>
                 {showPastAppointments && <TabNav />}
-                {children}
+                {routes}
               </>
             )}
             {expressCare.enabled && (
@@ -117,14 +135,19 @@ export class AppointmentsPage extends Component {
                 )}
                 {!isLoading && (
                   <>
-                    <RequestExpressCare {...expressCare} />
+                    {!isCernerOnlyPatient && (
+                      <RequestExpressCare
+                        {...expressCare}
+                        startNewExpressCareFlow={this.startNewExpressCareFlow}
+                      />
+                    )}
                     {expressCare.hasRequests && (
                       <h2 className="vads-u-font-size--h3 vads-u-margin-y--3">
                         View your upcoming, past, and Express Care appointments
                       </h2>
                     )}
                     <TabNav hasExpressCareRequests={expressCare.hasRequests} />
-                    {children}
+                    {routes}
                   </>
                 )}
               </>
@@ -156,7 +179,8 @@ AppointmentsPage.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    futureStatus: state.appointments.futureStatus,
+    pendingStatus: state.appointments.pendingStatus,
+    futureStatus: selectFutureStatus(state),
     cancelInfo: getCancelInfo(state),
     showPastAppointments: vaosPastAppts(state),
     showScheduleButton: vaosRequests(state),
@@ -174,6 +198,7 @@ const mapDispatchToProps = {
   closeCancelAppointment,
   confirmCancelAppointment,
   startNewAppointmentFlow,
+  startNewExpressCareFlow,
   fetchFutureAppointments,
 };
 
