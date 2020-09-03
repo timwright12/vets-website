@@ -16,11 +16,14 @@ export const LegacyContent = () => (
       role="alert"
     >
       <div className="usa-alert-body">
-        <h3 className="usa-alert-heading" id="due-to-covid-19-you-can-only-r">
+        <h2
+          className="usa-alert-heading vads-u-font-size--h3 vads-u-margin-bottom--2"
+          id="due-to-covid-19-you-can-only-r"
+        >
           Due to COVID-19, we&apos;ll need to contact you to confirm your
           appointment
-        </h3>
-        <p>
+        </h2>
+        <p className="vads-u-margin--0">
           You can still use our online appointments tool to request an
           appointment. We&apos;ll then contact you to confirm the date, time,
           and location.
@@ -310,12 +313,16 @@ export const LegacyContent = () => (
                 appointment requests. You must receive prior approval from us
                 before getting care from a community provider.
               </p>
-              <a href="/communitycare/programs/veterans/index.asp">
-                Learn more about community care
-              </a>
-              <a href="/find-locations">
-                Find a community provider in the VA network
-              </a>
+              <p>
+                <a href="/communitycare/programs/veterans/index.asp">
+                  Learn more about community care
+                </a>
+              </p>
+              <p>
+                <a href="/find-locations">
+                  Find a community provider in the VA network
+                </a>
+              </p>
             </div>
           </div>
         </div>
@@ -397,14 +404,6 @@ export const LegacyContent = () => (
               <p>
                 If you print or download any messages, you’ll need to take
                 responsibility for protecting that information.
-                <br />
-                <a
-                  href="https://www.myhealth.va.gov/mhv-portal-web/web/myhealthevet/protecting-your-personal-health-information"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Get tips for protecting your personal health information
-                </a>
               </p>
             </div>
           </div>
@@ -441,53 +440,6 @@ export const LegacyContent = () => (
           <Telephone contact={CONTACTS['711']} pattern={PATTERNS['911']} />
           ). We’re here Monday through Saturday, 7:00 a.m. to 11:00 p.m. ET.
         </p>
-
-        <div
-          data-entity-id={3476}
-          itemProp="acceptedAnswer"
-          itemScope
-          itemType="http://schema.org/Answer"
-        >
-          <div itemProp="text">
-            <div
-              data-template="paragraphs/wysiwyg"
-              data-entity-id={3477}
-              className="processed-content"
-            >
-              <p>
-                You can get answers to your questions about these tools within
-                our My HealtheVet web portal.
-                <br />
-                <a
-                  href="https://www.myhealth.va.gov/mhv-portal-web/faqs#Appointments"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Read VA Appointments FAQs
-                </a>
-              </p>
-              <p>
-                You can also contact the My HealtheVet Help Desk.
-                <br />
-                <a
-                  href="https://www.myhealth.va.gov/mhv-portal-web/web/myhealthevet/contact-mhv"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Find out how to contact us online
-                </a>
-              </p>
-              <p>
-                Or call us at{' '}
-                <a aria-label="8 7 7. 3 2 7. 0 0 2 2." href="tel:18773270022">
-                  877-327-0022
-                </a>{' '}
-                (TTY: <Telephone contact={CONTACTS.HELP_TTY} />
-                ). We’re here Monday through Friday, 7:00 a.m. to 7:00 p.m. CT.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     <div className="row">
@@ -512,9 +464,9 @@ export const LegacyContent = () => (
                 data-links-list-section-header="More information about your benefits"
               >
                 <a href="/health-care/eligibility">
-                  <h4 className="va-nav-linkslist-title">
+                  <h3 className="va-nav-linkslist-title vads-u-font-size--h4">
                     Health care benefits eligibility
-                  </h4>
+                  </h3>
                   <p className="va-nav-linkslist-description">
                     Not sure if you qualify? Find out if you can get VA health
                     care benefits.
@@ -528,9 +480,9 @@ export const LegacyContent = () => (
                 data-links-list-section-header="More information about your benefits"
               >
                 <a href="/health-care/how-to-apply">
-                  <h4 className="va-nav-linkslist-title">
+                  <h3 className="va-nav-linkslist-title vads-u-font-size--h4">
                     How to apply for health care benefits
-                  </h4>
+                  </h3>
                   <p className="va-nav-linkslist-description">
                     Ready to apply? Get started now.
                   </p>
@@ -543,9 +495,9 @@ export const LegacyContent = () => (
                 data-links-list-section-header="More information about your benefits"
               >
                 <a href="/health-care/health-needs-conditions">
-                  <h4 className="va-nav-linkslist-title">
+                  <h3 className="va-nav-linkslist-title vads-u-font-size--h4">
                     Health needs and conditions
-                  </h4>
+                  </h3>
                   <p className="va-nav-linkslist-description">
                     Learn how to access VA services for mental health, women’s
                     health, and other specific needs.
@@ -559,9 +511,9 @@ export const LegacyContent = () => (
                 data-links-list-section-header="More information about your benefits"
               >
                 <a href="/disability">
-                  <h4 className="va-nav-linkslist-title">
+                  <h3 className="va-nav-linkslist-title vads-u-font-size--h4">
                     Disability benefits
-                  </h4>
+                  </h3>
                   <p className="va-nav-linkslist-description">
                     Have an illness or injury that was caused—or made worse—by
                     your active-duty service? Find out if you can get disability

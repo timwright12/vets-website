@@ -45,10 +45,10 @@ const IntroductionPage = ({ route, router }) => {
               <li>Address</li>
               <li>Telephone number</li>
               <li>Date of birth</li>
-              <li>Social Security Number or Tax Identification Number</li>
+              <li>Social Security number or Tax identification number</li>
             </ul>
 
-            <p>You will also need:</p>
+            <p>You’ll need:</p>
             <ul className="process-lists">
               <li>The VA medical center where the Veteran will receive care</li>
               <li>
@@ -88,8 +88,12 @@ const IntroductionPage = ({ route, router }) => {
                   to find a coordinator at your nearest VA health care facility
                 </li>
                 <li>
-                  Contact the National Caregiver Support Line at{' '}
-                  <Telephone contact={CONTACTS.CAREGIVER} /> or a
+                  Contact the National Caregiver Support Line at
+                  <Telephone
+                    className="vads-u-margin-x--0p5"
+                    contact={CONTACTS.CAREGIVER}
+                  />
+                  or a
                   <a
                     className="vads-u-margin-x--0p5"
                     href="https://www.va.gov/disability/get-help-filing-claim/"
@@ -165,7 +169,7 @@ const IntroductionPage = ({ route, router }) => {
               >
                 www.caregiver.va.gov
               </a>
-              or discuss these options with your local Caregiver Support
+              ,or discuss these options with your local Caregiver Support
               Coordinator.
             </p>
           </li>
@@ -210,7 +214,7 @@ const IntroductionPage = ({ route, router }) => {
         className="usa-button vads-u-margin-bottom--3"
         onClick={startForm}
       >
-        Start your Application
+        Start your application
       </button>
       <div className="omb-info--container vads-u-padding-left--0">
         <OMBInfo resBurden={15} ombNumber="2900-0091" expDate="09/30/2021" />

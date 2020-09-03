@@ -128,7 +128,7 @@ describe('VAOS <ReviewPage>', () => {
         .exists(),
     ).to.be.true;
     expect(alertBox.dive().text()).contain(
-      'We’re sorry. You can’t schedule your appointment on the VA appointments tool.',
+      'You can’t schedule your appointment on the VA appointments tool.',
     );
     tree.unmount();
   });
@@ -136,15 +136,15 @@ describe('VAOS <ReviewPage>', () => {
   it('return to new appt page when data is empty', () => {
     const flowType = FLOW_TYPES.REQUEST;
     const data = {};
-    const router = {
+    const history = {
       replace: sinon.spy(),
     };
 
     const tree = mount(
-      <ReviewPage flowType={flowType} data={data} router={router} />,
+      <ReviewPage flowType={flowType} data={data} history={history} />,
     );
 
-    expect(router.replace.called).to.be.true;
+    expect(history.replace.called).to.be.true;
 
     tree.unmount();
   });

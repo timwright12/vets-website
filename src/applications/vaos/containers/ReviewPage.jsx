@@ -17,7 +17,7 @@ import { scrollAndFocus } from '../utils/scrollAndFocus';
 import ReviewDirectScheduleInfo from '../components/review/ReviewDirectScheduleInfo';
 import ReviewRequestInfo from '../components/review/ReviewRequestInfo';
 import LoadingButton from 'platform/site-wide/loading-button/LoadingButton';
-import { submitAppointmentOrRequest } from '../actions/newAppointment';
+import { submitAppointmentOrRequest } from '../new-appointment/redux/actions';
 import FacilityAddress from '../components/FacilityAddress';
 
 const pageTitle = 'Review your appointment details';
@@ -26,10 +26,10 @@ export class ReviewPage extends React.Component {
   componentDidMount() {
     document.title = `${pageTitle} | Veterans Affairs`;
     scrollAndFocus();
-    const { data, router } = this.props;
+    const { data, history } = this.props;
     // Check formData for typeOfCareId. Reroute if empty
-    if (router && !data?.typeOfCareId) {
-      router.replace('/new-appointment');
+    if (history && !data?.typeOfCareId) {
+      history.replace('/new-appointment');
     }
   }
 
@@ -41,7 +41,7 @@ export class ReviewPage extends React.Component {
       clinic,
       vaCityState,
       flowType,
-      router,
+      history,
       submitStatus,
       submitStatusVaos400,
       systemId,
@@ -75,7 +75,7 @@ export class ReviewPage extends React.Component {
             }
             isLoading={submitStatus === FETCH_STATUS.loading}
             loadingText="Submission in progress"
-            onClick={() => this.props.submitAppointmentOrRequest(router)}
+            onClick={() => this.props.submitAppointmentOrRequest(history)}
             className="usa-button usa-button-primary"
           >
             {isDirectSchedule ? 'Confirm appointment' : 'Request appointment'}
@@ -86,8 +86,8 @@ export class ReviewPage extends React.Component {
             status="error"
             headline={
               submitStatusVaos400
-                ? 'We can’t schedule your appointment'
-                : `Your ${
+                ? 'We’re sorry. We can’t schedule your appointment'
+                : `We’re sorry. Your ${
                     isDirectSchedule ? 'appointment' : 'request'
                   } didn’t go through`
             }
@@ -95,9 +95,9 @@ export class ReviewPage extends React.Component {
               <>
                 {submitStatusVaos400 ? (
                   <p>
-                    We’re sorry. You can’t schedule your appointment on the VA
-                    appointments tool. Please contact your local VA medical
-                    center to schedule this appointment:
+                    You can’t schedule your appointment on the VA appointments
+                    tool. Please contact your local VA medical center to
+                    schedule this appointment:
                   </p>
                 ) : (
                   <p>
