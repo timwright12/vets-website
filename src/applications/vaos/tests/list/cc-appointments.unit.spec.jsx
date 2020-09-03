@@ -1,12 +1,11 @@
 import React from 'react';
 import { expect } from 'chai';
 import moment from 'moment';
-import reducers from '../../reducers';
 import { getCCAppointmentMock } from '../mocks/v0';
 import { mockAppointmentInfo } from '../mocks/helpers';
 import { renderWithStoreAndRouter } from '../mocks/setup';
 
-import FutureAppointmentsList from '../../components/FutureAppointmentsList';
+import FutureAppointmentsList from '../../appointment-list/components/FutureAppointmentsList';
 
 const initialState = {
   featureToggles: {
@@ -45,7 +44,6 @@ describe('VAOS integration: upcoming CC appointments', () => {
       queryByText,
     } = renderWithStoreAndRouter(<FutureAppointmentsList />, {
       initialState,
-      reducers,
     });
 
     const dateHeader = await findByText(
@@ -87,7 +85,6 @@ describe('VAOS integration: upcoming CC appointments', () => {
       <FutureAppointmentsList />,
       {
         initialState,
-        reducers,
       },
     );
 
@@ -109,7 +106,6 @@ describe('VAOS integration: upcoming CC appointments', () => {
       <FutureAppointmentsList />,
       {
         initialState,
-        reducers,
       },
     );
 

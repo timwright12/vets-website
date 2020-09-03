@@ -38,6 +38,8 @@ import {
   directToCorrectForm,
   DISABILITY_SHARED_CONFIG,
   isBDD,
+  showSeparationLocation,
+  getPageTitle,
 } from '../utils';
 
 import captureEvents from '../analytics-functions';
@@ -87,6 +89,7 @@ import {
   retirementPay,
   retirementPayWaiver,
   secondaryFinalIncident,
+  separationLocation,
   separationPay,
   servedInCombatZone,
   serviceTreatmentRecords,
@@ -155,7 +158,7 @@ const formConfig = {
   defaultDefinitions: {
     ...fullSchema.definitions,
   },
-  title: 'File for disability compensation',
+  title: ({ formData }) => getPageTitle(formData),
   subTitle: 'Form 21-526EZ',
   preSubmitInfo,
   chapters: {
@@ -185,6 +188,13 @@ const formConfig = {
             dob: state.user.profile.dob,
             allowBDD: form526BDDFeature(state),
           }),
+        },
+        separationLocation: {
+          title: 'Separation location',
+          path: 'review-veteran-details/separation-location',
+          depends: showSeparationLocation,
+          uiSchema: separationLocation.uiSchema,
+          schema: separationLocation.schema,
         },
         claimType: {
           title: 'Claim type',
