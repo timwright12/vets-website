@@ -12,6 +12,7 @@ import {
   clearSearchResults,
   fetchVAFacility,
   genBBoxFromAddress,
+  getMatchingLocations,
   searchWithBounds,
   updateSearchQuery,
 } from '../actions';
@@ -434,7 +435,11 @@ class VAMap extends Component {
   renderSearchControls = currentQuery => (
     <SearchControls
       currentQuery={currentQuery}
-      onChange={this.props.updateSearchQuery}
+      onChange={
+        this.props.usePredictiveGeolocation
+          ? this.props.getMatchingLocations
+          : this.props.updateSearchQuery
+      }
       onSubmit={this.handleSearch}
       suppressCCP={this.props.suppressCCP}
       suppressPharmacies={this.props.suppressPharmacies}
@@ -690,6 +695,7 @@ export default connect(
     fetchVAFacility,
     updateSearchQuery,
     genBBoxFromAddress,
+    getMatchingLocations,
     searchWithBounds,
     clearSearchResults,
   },

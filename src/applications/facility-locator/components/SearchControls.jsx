@@ -57,18 +57,39 @@ class SearchControls extends Component {
       <label htmlFor="street-city-state-zip" id="street-city-state-zip-label">
         City, state or postal code
       </label>
-      <input
-        id="street-city-state-zip"
-        name="street-city-state-zip"
-        style={{ fontWeight: 'bold' }}
-        type="text"
-        onChange={this.handleQueryChange}
-        value={currentQuery.searchString}
-        title="Your location: Street, City, State or Postal code"
-        required
-      />
+      {/* TODO: find a better way to do this! */}
+      {currentQuery.usePredictiveGeolocation ? (
+        <input
+          id="street-city-state-zip"
+          name="street-city-state-zip"
+          style={{ fontWeight: 'bold' }}
+          type="text"
+          onChange={this.handleQueryChange}
+          title="Your location: Street, City, State or Postal code"
+          required
+        />
+      ) : (
+        <input
+          id="street-city-state-zip"
+          name="street-city-state-zip"
+          style={{ fontWeight: 'bold' }}
+          type="text"
+          onChange={this.handleQueryChange}
+          value={currentQuery.searchString}
+          title="Your location: Street, City, State or Postal code"
+          required
+        />
+      )}
     </>
   );
+
+  renderMatchingLocations = currentQuery => {
+    return currentQuery.geocodeResults.map(geocodeResult => (
+      <div className="geocode_result" key={geocodeResult.placeName}>
+        {geocodeResult.placeName}
+      </div>
+    ));
+  };
 
   renderFacilityTypeDropdown = () => {
     const { suppressCCP, suppressPharmacies } = this.props;
@@ -167,6 +188,7 @@ class SearchControls extends Component {
         <form id="facility-search-controls" onSubmit={this.handleSubmit}>
           <div className={'columns'}>
             {this.renderLocationInputField(currentQuery)}
+            {this.renderMatchingLocations(currentQuery)}
             <div id="search-controls-bottom-row">
               {this.renderFacilityTypeDropdown()}
               {this.renderServiceTypeDropdown()}

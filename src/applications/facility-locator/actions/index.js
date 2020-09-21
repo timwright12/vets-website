@@ -297,6 +297,47 @@ export const genBBoxFromAddress = query => {
   };
 };
 
+export const getMatchingLocations = query => {
+  if (query.searchString.length > 3) {
+    return null;
+  }
+
+  return dispatch => {
+    dispatch({ type: GEOCODE_STARTED });
+
+    let types = ['place', 'region', 'postcode', 'locality', 'address'];
+    // check for postcode search
+    const isPostcode = query.searchString.match(/^\s*\d{5}\s*$/);
+
+    if (isPostcode) {
+      types = ['postcode'];
+    }
+
+    mbxClient
+      .forwardGeocode({
+        countries: ['us', 'pr', 'ph', 'gu', 'as', 'mp'],
+        types,
+        autocomplete: true,
+        query: query.searchString,
+      })
+      .send()
+      .then(({ body: { features } }) => {
+        dispatch({
+          type: GEOCODE_COMPLETE,
+          payload: features.map(feature => ({
+            placeName: feature.place_name,
+            placeType: feature.place_type[0],
+            bbox: feature.bbox,
+            center: feature.center,
+          })),
+        });
+      })
+      .catch(_ => {
+        dispatch({ type: GEOCODE_FAILED });
+      });
+  };
+};
+
 /**
  * Preloads all specialties available from CC Providers
  * for the type-ahead component.
