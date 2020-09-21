@@ -84,19 +84,19 @@ module.exports = env => {
     },
   };
 
-  const apps = getEntryPoints(buildOptions.entry);
+  const { buildtype, entry } = buildOptions;
+  const apps = getEntryPoints(entry);
   const entryFiles = Object.assign({}, apps, globalEntryFiles);
-  const isOptimizedBuild = [
-    ENVIRONMENTS.VAGOVSTAGING,
-    ENVIRONMENTS.VAGOVPROD,
-  ].includes(buildOptions.buildtype);
+  const { VAGOVSTAGING, VAGOVPROD, LOCALHOST } = ENVIRONMENTS;
+
+  const isOptimizedBuild = [VAGOVSTAGING, VAGOVPROD].includes(buildtype);
+
+  const isLocalhost = buildtype !== LOCALHOST;
 
   // enable css sourcemaps for all non-localhost builds
   // or if build options include local-css-sourcemaps or entry
   const enableCSSSourcemaps =
-    buildOptions.buildtype !== ENVIRONMENTS.LOCALHOST ||
-    buildOptions['local-css-sourcemaps'] ||
-    !!buildOptions.entry;
+    isLocalhost || buildOptions['local-css-sourcemaps'] || !!entry;
 
   const outputPath = `${buildOptions.destination}/generated`;
 
@@ -106,9 +106,11 @@ module.exports = env => {
     output: {
       path: outputPath,
       publicPath: '/generated/',
+      // https://webpack.js.org/configuration/output/#outputfilename
       filename: !isOptimizedBuild
         ? '[name].entry.js'
         : `[name].entry.[chunkhash]-${timestamp}.js`,
+      // https://webpack.js.org/configuration/output/#outputchunkfilename
       chunkFilename: !isOptimizedBuild
         ? '[name].entry.js'
         : `[name].entry.[chunkhash]-${timestamp}.js`,
@@ -142,9 +144,7 @@ module.exports = env => {
             },
             {
               loader: 'postcss-loader',
-              options: {
-                plugins: () => [require('autoprefixer')],
-              },
+              options: { plugins: () => [require('autoprefixer')] },
             },
             {
               loader: 'sass-loader',
@@ -158,9 +158,7 @@ module.exports = env => {
           test: /\.(jpe?g|png|gif)$/i,
           use: {
             loader: 'url-loader',
-            options: {
-              limit: 10000,
-            },
+            options: { limit: 10000 },
           },
         },
         {
@@ -184,17 +182,13 @@ module.exports = env => {
           test: /\.(ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
           use: {
             loader: 'file-loader',
-            options: {
-              name: '[name].[ext]',
-            },
+            options: { name: '[name].[ext]' },
           },
         },
         {
           test: /react-jsonschema-form\/lib\/components\/(widgets|fields\/ObjectField|fields\/ArrayField)/,
           exclude: [/widgets\/index\.js/, /widgets\/TextareaWidget/],
-          use: {
-            loader: 'null-loader',
-          },
+          use: { loader: 'null-loader' },
         },
       ],
       noParse: [/mapbox\/vendor\/promise.js$/],
@@ -206,10 +200,7 @@ module.exports = env => {
       minimizer: [
         new TerserPlugin({
           terserOptions: {
-            output: {
-              beautify: false,
-              comments: false,
-            },
+            output: { beautify: false, comments: false },
             warnings: false,
           },
           // cache: true,
@@ -231,7 +222,7 @@ module.exports = env => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        __BUILDTYPE__: JSON.stringify(buildOptions.buildtype),
+        __BUILDTYPE__: JSON.stringify(buildtype),
         __API__: JSON.stringify(buildOptions.api),
       }),
 
@@ -373,7 +364,7 @@ module.exports = env => {
   }
 
   if (isOptimizedBuild) {
-    const bucket = BUCKETS[buildOptions.buildtype];
+    const bucket = BUCKETS[buildtype];
 
     baseConfig.plugins.push(
       new webpack.SourceMapDevToolPlugin({
