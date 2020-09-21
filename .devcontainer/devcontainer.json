@@ -6,7 +6,8 @@
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "terminal.integrated.shell.linux": "/bin/bash",
-    "workbench.startupEditor": "readme"
+    "workbench.startupEditor": "readme",
+    "gitlens.showWhatsNewAfterUpgrades": false
   },
   "extensions": [
     "davidanson.vscode-markdownlint",
