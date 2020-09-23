@@ -10,7 +10,6 @@ import { mockItf } from './all-claims.cypress.helpers';
 
 const testConfig = createTestConfig(
   {
-    _13647Exception: true,
     dataPrefix: 'data',
 
     dataSets: [
