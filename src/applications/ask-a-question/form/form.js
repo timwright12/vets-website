@@ -8,6 +8,7 @@ import ConfirmationPage from './confirmation/ConfirmationPage';
 import VeteranInformationPage from './veteran/veteranInformationPage';
 import ContactInformationPage from './contactInformation/contactInformationPage';
 import InquiryPage from './inquiry/inquiryPage';
+import FileUploadPage from './fileUploadSpike/fileUploadPage';
 import * as topic from './inquiry/topic/topic';
 import { transformForSubmit } from 'platform/forms-system/src/js/helpers';
 import environment from 'platform/utilities/environment';
@@ -40,10 +41,12 @@ const {
   ssn,
   veteranServiceNumber,
   dateRange,
+  files,
 } = fullSchema.definitions;
 
 // Define all the form pages to help ensure uniqueness across all form chapters
 const formPages = {
+  fileUpload: 'fileUpload',
   topic: 'topic',
   veteranInformation: 'veteranInformation',
   contactInformation: 'contactInformation',
@@ -99,8 +102,20 @@ const formConfig = {
     ssn,
     veteranServiceNumber,
     dateRange,
+    files,
   },
   chapters: {
+    fileUploadChapter: {
+      title: "Testing File Upload...",
+      pages: {
+        [formPages.fileUpload]: {
+          path: 'fileUpload',
+          title: 'File Upload',
+          uiSchema: FileUploadPage.uiSchema,
+          schema: FileUploadPage.schema
+        }
+      }
+    },
     topicChapter: {
       title: inquiryChapterTitle,
       pages: {

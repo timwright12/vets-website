@@ -264,6 +264,23 @@
         "III",
         "IV"
       ]
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "confirmationCode": {
+            "type'": "string"
+          }
+        }
+      }
     }
   },
   "additionalProperties": false,
@@ -1723,6 +1740,14 @@
         },
         "serviceDateRange": {
           "$ref": "#/definitions/dateRange"
+        }
+      }
+    },
+    "fileUpload": {
+      "type": "object",
+      "properties": {
+        "files": {
+          "$ref": "#/definitions/files"
         }
       }
     },
