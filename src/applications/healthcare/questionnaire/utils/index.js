@@ -56,8 +56,11 @@ const getBookingNoteFromAppointment = appointment => {
   return display;
 };
 
-const getFormTitleFromAppointment = place => {
-  return `Questionnaire for your ${place}`;
+const getFormTitleFromAppointment = appointment => {
+  const notes = getBookingNoteFromAppointment(appointment);
+  return notes && notes.reasonForVisit
+    ? `Questionnaire for your ${notes.reasonForVisit}`
+    : 'Your questionnaire';
 };
 
 export { getBookingNoteFromAppointment, getFormTitleFromAppointment };
