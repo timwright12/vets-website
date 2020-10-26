@@ -12,6 +12,8 @@ import SaveInProgressIntro from 'platform/forms/save-in-progress/SaveInProgressI
 import { toggleLoginModal } from 'platform/site-wide/user-nav/actions';
 import IntroductionPageHelpers from '../components/introduction-page';
 
+import { getFormTitleFromAppointment } from '../utils';
+
 const IntroductionPage = props => {
   useEffect(() => {
     focusElement('.va-nav-breadcrumbs-list');
@@ -30,7 +32,7 @@ const IntroductionPage = props => {
   return (
     <div className="schemaform-intro healthcare-experience">
       <FormTitle
-        title="Upcoming appointment questionnaire"
+        title={getFormTitleFromAppointment(facilityName)}
         subTitle={facilityName}
       />
       <h2 className="better-prepare-yours">

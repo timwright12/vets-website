@@ -6,6 +6,8 @@ import LoadingIndicator from '@department-of-veterans-affairs/formation-react/Lo
 import RoutedSavableApp from 'platform/forms/save-in-progress/RoutedSavableApp';
 import formConfig from '../config/form';
 
+import { getFormTitleFromAppointment } from '../utils';
+
 import {
   questionnaireAppointmentLoading,
   questionnaireAppointmentLoaded,
@@ -33,6 +35,9 @@ const App = props => {
             return {
               ...f,
               subTitle: data?.vdsAppointments[0]?.clinic?.facility?.displayName,
+              title: getFormTitleFromAppointment(
+                data?.vdsAppointments[0]?.clinic?.facility?.displayName,
+              ),
             };
           });
         });
