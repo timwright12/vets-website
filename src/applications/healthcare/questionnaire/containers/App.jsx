@@ -35,9 +35,7 @@ const App = props => {
             return {
               ...f,
               subTitle: data?.vdsAppointments[0]?.clinic?.facility?.displayName,
-              title: getFormTitleFromAppointment(
-                data?.vdsAppointments[0]?.clinic?.facility?.displayName,
-              ),
+              title: getFormTitleFromAppointment(data),
             };
           });
         });

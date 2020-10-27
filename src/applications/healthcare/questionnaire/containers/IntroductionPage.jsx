@@ -32,7 +32,7 @@ const IntroductionPage = props => {
   return (
     <div className="schemaform-intro healthcare-experience">
       <FormTitle
-        title={getFormTitleFromAppointment(facilityName)}
+        title={getFormTitleFromAppointment(appointment)}
         subTitle={facilityName}
       />
       <h2 className="better-prepare-yours">
