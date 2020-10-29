@@ -11,6 +11,7 @@ import {
   UNABLE_TO_REACH_VETERAN_DETCODE,
 } from '../../utils/constants';
 import { getTimezoneBySystemId } from '../../utils/timezone';
+import { transformATLASLocation } from '../location/transformers';
 
 /**
  * Determines what type of appointment a VAR appointment object is depending on
@@ -263,7 +264,7 @@ function setParticipant(appt) {
 
   switch (type) {
     case APPOINTMENT_TYPES.vaAppointment: {
-      const participant = [];
+      let participant = [];
       if (appt.clinicId) {
         participant.push({
           actor: {
@@ -286,9 +287,11 @@ function setParticipant(appt) {
         });
       }
 
-      const providers = appt.vvsAppointments?.[0]?.providers;
+      const providers = appt.vvsAppointments?.[0]?.providers?.filter(
+        provider => !!provider.name,
+      );
       if (providers?.length) {
-        participant.concat(
+        participant = participant.concat(
           providers.map(provider => ({
             actor: {
               reference: `Practitioner/${provider.name.firstName}_${
@@ -321,7 +324,6 @@ function setParticipant(appt) {
           {
             actor: {
               reference: `Location/var${appt.facility.facilityCode}`,
-              display: appt.friendlyLocationName || appt.facility?.name,
             },
           },
         ];
@@ -370,6 +372,7 @@ function setContained(appt) {
     case APPOINTMENT_TYPES.vaAppointment: {
       if (isVideoVisit(appt)) {
         const contained = [];
+        const { tasInfo } = appt.vvsAppointments[0];
         const service = {
           resourceType: 'HealthcareService',
           id: `HealthcareService/var${appt.vvsAppointments[0].id}`,
@@ -402,7 +405,20 @@ function setContained(appt) {
           ],
         };
 
-        if (appt.sta6aid) {
+        if (tasInfo) {
+          service.characteristic = [
+            ...service.characteristic,
+            {
+              coding: [
+                {
+                  system: 'ATLAS_CC',
+                  code: tasInfo.confirmationCode,
+                },
+              ],
+            },
+          ];
+          contained.push(transformATLASLocation(tasInfo));
+        } else if (appt.sta6aid) {
           service.location = {
             reference: `Location/var${appt.sta6aid}`,
           };
