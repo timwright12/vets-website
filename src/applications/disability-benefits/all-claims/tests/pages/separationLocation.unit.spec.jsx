@@ -2,11 +2,14 @@ import React from 'react';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import moment from 'moment';
-import { DefinitionTester } from 'platform/testing/unit/schemaform-utils.jsx';
 import { mount } from 'enzyme';
+import { DefinitionTester } from 'platform/testing/unit/schemaform-utils.jsx';
+import { mockFetch, resetFetch } from 'platform/testing/unit/helpers';
 import formConfig from '../../config/form';
 
 describe('Separation location', () => {
+  beforeEach(() => mockFetch());
+  afterEach(() => resetFetch());
   const {
     schema,
     uiSchema,
