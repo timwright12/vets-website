@@ -12,6 +12,7 @@ const fileUploadPage = {
     'ui:description': 'File Upload Spike',
     [formFields.files]: fileUiSchema('Files To Upload', {
       fileUploadUrl: `${environment.API_URL}/v0/ask/inquiry_documents`,
+      fileTypes: ['pdf', 'jpg', 'jpeg', 'png', 'txt'],
     }),
   },
   schema: {

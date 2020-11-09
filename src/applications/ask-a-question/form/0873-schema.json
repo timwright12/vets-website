@@ -310,6 +310,9 @@
     "veteranStatus"
   ],
   "properties": {
+    "files": {
+      "type": "array"
+    },
     "fullName": {
       "type": "object",
       "properties": {
