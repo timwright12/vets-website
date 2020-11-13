@@ -4,6 +4,11 @@ import fullSchema from 'vets-json-schema/dist/10-10CG-schema.json';
 import IntroductionPage from 'applications/caregivers/containers/IntroductionPage';
 import NeedHelpFooter from 'applications/caregivers/components/NeedHelpFooter';
 import PreSubmitInfo from 'applications/caregivers/components/PreSubmitInfo';
+import SubmitError from 'applications/caregivers/components/SubmitError';
+import FormFooter from 'platform/forms/components/FormFooter';
+import { VA_FORM_IDS } from 'platform/forms/constants';
+import { externalServices } from 'platform/monitoring/DowntimeNotification';
+
 import {
   submitTransform,
   hasSecondaryCaregiverOne,
@@ -26,6 +31,8 @@ import {
   secondaryTwoContactPage,
 } from './pages';
 
+import manifest from '../manifest.json';
+
 const {
   address,
   date,
@@ -46,17 +53,30 @@ const { secondaryCaregiversUI } = definitions;
  * 3 - Secondary & secondaryTwo Family Caregiver (optional -- up to 2 conditionally)
  */
 const formConfig = {
+  rootUrl: manifest.rootUrl,
   urlPrefix: '/',
   submitUrl: `${environment.API_URL}/v0/caregivers_assistance_claims`,
   transformForSubmit: submitTransform,
   trackingPrefix: 'caregivers-10-10cg-',
   introduction: IntroductionPage,
-  footerContent: NeedHelpFooter,
+  footerContent: FormFooter,
+  getHelp: NeedHelpFooter,
   preSubmitInfo: PreSubmitInfo,
   confirmation: ConfirmationPage,
-  formId: '10-10CG',
+  submissionError: SubmitError,
+  formId: VA_FORM_IDS.FORM_10_10CG,
+  saveInProgress: {
+    // messages: {
+    //   inProgress: 'Your [savedFormDescription] is in progress.',
+    //   expired: 'Your saved [savedFormDescription] has expired. If you want to apply for [benefitType], please start a new [appType].',
+    //   saved: 'Your [benefitType] [appType] has been saved.',
+    // },
+  },
   version: 0,
   prefillEnabled: false,
+  downtime: {
+    dependencies: [externalServices.mvi, externalServices.carma],
+  },
   title:
     'Apply for the Program of Comprehensive Assistance for Family Caregivers',
   subTitle: 'Form 10-10CG',
@@ -73,7 +93,7 @@ const formConfig = {
   },
   chapters: {
     veteranChapter: {
-      title: 'Veteran or service member information',
+      title: 'Veteran information',
       pages: {
         veteranInfoOne: {
           path: 'vet-1',
@@ -96,7 +116,7 @@ const formConfig = {
       },
     },
     primaryCaregiverChapter: {
-      title: 'Primary Family Caregiver information',
+      title: 'Primary Family Caregiver applicant information',
       pages: {
         primaryCaregiverInfoOne: {
           path: 'primary-1',
@@ -119,7 +139,7 @@ const formConfig = {
       },
     },
     secondaryCaregiversChapter: {
-      title: 'Secondary Family Caregiver information',
+      title: 'Secondary Family Caregiver applicant information',
       depends: formData => hasSecondaryCaregiverOne(formData),
       pages: {
         secondaryCaregiverOneIntro: {
@@ -150,7 +170,7 @@ const formConfig = {
       pages: {
         secondaryCaregiverTwo: {
           path: 'secondary-two-1',
-          title: 'Secondary Family Caregiver (2) information',
+          title: 'Secondary Family Caregiver (2) applicant information',
           depends: formData => hasSecondaryCaregiverTwo(formData),
           uiSchema: secondaryTwoInfoPage.uiSchema,
           schema: secondaryTwoInfoPage.schema,

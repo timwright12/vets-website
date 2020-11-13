@@ -3,7 +3,6 @@ const E2eHelpers = require('platform/testing/e2e/helpers');
 const Timeouts = require('platform/testing/e2e/timeouts');
 const manifest = require('../../manifest.json');
 const testData = require('./686-test-data.json');
-const environments = require('site/constants/environments');
 
 import * as TestHelpers from './test-helpers';
 
@@ -118,6 +117,24 @@ const runTest = E2eHelpers.createE2eTest(client => {
     '.row.form-progress-buttons.schemaform-buttons div.small-6.medium-5.end.columns button.usa-button-primary',
   );
 
+  // previous spouse information and location of divorce
+  E2eHelpers.expectLocation(client, '/report-a-divorce');
+  client.waitForElementVisible(
+    '#root_reportDivorce_fullName_first',
+    Timeouts.normal,
+  );
+  client.axeCheck('.main');
+  TestHelpers.fillReportDivorceSpouseInformation(client, testData.data);
+  TestHelpers.fillReportDivorceLocationOfDivorce(client, testData.data);
+  TestHelpers.fillReportDivorceReasonMarriageEnded(client, testData.data);
+  client.click('button[id="4-continueButton"]');
+
+  // report household net worth
+  E2eHelpers.expectLocation(client, '/net-worth');
+  client.axeCheck('.main');
+  TestHelpers.fillNetWorth(client);
+  client.click('button[id="4-continueButton"]');
+
   // review page
   E2eHelpers.expectLocation(client, '/review-and-submit');
   client.waitForElementVisible(
@@ -141,5 +158,4 @@ const runTest = E2eHelpers.createE2eTest(client => {
 module.exports = runTest;
 
 // TODO: Remove this when CI builds temporary landing pages to run e2e tests
-module.exports['@disabled'] =
-  manifest.e2eTestsDisabled && process.env.BUILDTYPE !== environments.LOCALHOST;
+module.exports['@disabled'] = manifest.e2eTestsDisabled;

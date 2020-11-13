@@ -1,17 +1,20 @@
-import moment from '../../utils/moment-tz';
+import moment from '../../lib/moment-tz';
 
 import {
   APPOINTMENT_STATUS,
   APPOINTMENT_TYPES,
-  CANCELLED_APPOINTMENT_SET,
-  FUTURE_APPOINTMENTS_HIDE_STATUS_SET,
-  PAST_APPOINTMENTS_HIDE_STATUS_SET,
   PURPOSE_TEXT,
-  VIDEO_TYPES,
   EXPRESS_CARE,
   UNABLE_TO_REACH_VETERAN_DETCODE,
 } from '../../utils/constants';
 import { getTimezoneBySystemId } from '../../utils/timezone';
+import { transformATLASLocation } from '../location/transformers';
+
+import {
+  CANCELLED_APPOINTMENT_SET,
+  FUTURE_APPOINTMENTS_HIDE_STATUS_SET,
+  PAST_APPOINTMENTS_HIDE_STATUS_SET,
+} from './index';
 
 /**
  * Determines what type of appointment a VAR appointment object is depending on
@@ -23,11 +26,14 @@ import { getTimezoneBySystemId } from '../../utils/timezone';
 function getAppointmentType(appt) {
   if (appt.typeOfCareId?.startsWith('CC')) {
     return APPOINTMENT_TYPES.ccRequest;
-  } else if (appt.optionDate1) {
+  } else if (appt.typeOfCareId) {
     return APPOINTMENT_TYPES.request;
-  } else if (appt.clinicId || appt.vvsAppointments) {
+  } else if (
+    appt.vvsAppointments?.length ||
+    (appt.clinicId && !appt.communityCare)
+  ) {
     return APPOINTMENT_TYPES.vaAppointment;
-  } else if (appt.appointmentTime) {
+  } else if (appt.appointmentTime || appt.communityCare === true) {
     return APPOINTMENT_TYPES.ccAppointment;
   }
 
@@ -49,41 +55,12 @@ function isCommunityCare(appt) {
 }
 
 /**
- * Returns whether or not an appointment is a GFE video visit
- *
- * @param {Object} appt VAR appointment object
- */
-function isGFEVideoVisit(appt) {
-  return appt.vvsAppointments?.[0]?.appointmentKind === 'MOBILE_GFE';
-}
-
-/**
  * Returns whether or not a confirmed VA appointment is a video visit
  *
  * @param {Object} appt VAR appointment object
  */
 function isVideoVisit(appt) {
-  return !!appt.vvsAppointments?.length || isGFEVideoVisit(appt);
-}
-
-/**
- * If an appointment is a video appointment, returns whether it is a GFE video visit
- * or a regular video visit.  Return null if not a video appointment.
- *
- * @param {Object} appt VAR appointment object
- * @returns {String} Returns video appointment type or null
- */
-function getVideoType(appt) {
-  if (isGFEVideoVisit(appt)) {
-    return VIDEO_TYPES.gfe;
-  } else if (
-    appt.vvsAppointments?.length ||
-    appt.visitType === 'Video Conference'
-  ) {
-    return VIDEO_TYPES.videoConnect;
-  }
-
-  return null;
+  return !!appt.vvsAppointments?.length;
 }
 
 /**
@@ -164,7 +141,7 @@ function getConfirmedStatus(appointment, isPast) {
  * @returns {Object} Returns appointment datetime as moment object
  */
 function getMomentConfirmedDate(appt) {
-  if (isCommunityCare(appt)) {
+  if (isCommunityCare(appt) && appt.timeZone) {
     const zoneSplit = appt.timeZone.split(' ');
     const offset = zoneSplit.length > 1 ? zoneSplit[0] : '+0:00';
     return moment
@@ -290,8 +267,8 @@ function setParticipant(appt) {
 
   switch (type) {
     case APPOINTMENT_TYPES.vaAppointment: {
-      if (!isVideoVisit(appt)) {
-        const participant = [];
+      let participant = [];
+      if (appt.clinicId) {
         participant.push({
           actor: {
             reference: `HealthcareService/var${appt.facilityId}_${
@@ -299,21 +276,37 @@ function setParticipant(appt) {
             }`,
             display:
               appt.clinicFriendlyName ||
-              appt.vdsAppointments?.[0]?.clinic?.name,
+              appt.vdsAppointments?.[0]?.clinic?.name ||
+              appt.vvsAppointments?.[0]?.clinic?.name,
           },
         });
-
-        if (appt.sta6aid) {
-          participant.push({
-            actor: {
-              reference: `Location/var${appt.sta6aid}`,
-            },
-          });
-        }
-
-        return participant;
       }
-      return null;
+
+      if (appt.sta6aid) {
+        participant.push({
+          actor: {
+            reference: `Location/var${appt.sta6aid}`,
+          },
+        });
+      }
+
+      const providers = appt.vvsAppointments?.[0]?.providers?.filter(
+        provider => !!provider.name,
+      );
+      if (providers?.length) {
+        participant = participant.concat(
+          providers.map(provider => ({
+            actor: {
+              reference: `Practitioner/${provider.name.firstName}_${
+                provider.name.lastName
+              }`,
+              display: `${provider.name.firstName} ${provider.name.lastName}`,
+            },
+          })),
+        );
+      }
+
+      return participant;
     }
     case APPOINTMENT_TYPES.ccAppointment: {
       if (!!appt.name?.firstName && !!appt.name?.lastName) {
@@ -328,48 +321,47 @@ function setParticipant(appt) {
       }
       return null;
     }
-    case APPOINTMENT_TYPES.ccRequest:
     case APPOINTMENT_TYPES.request: {
-      const hasName =
-        appt.patient?.displayName ||
-        (!!appt.patient?.firstName && !!appt.patient?.lastName);
-
-      const participant = [
-        {
-          actor: {
-            reference: 'Patient/PATIENT_ID',
-            display: hasName
-              ? appt.patient?.displayName ||
-                `${appt.patient?.firstName} ${appt.patient?.lastName}`
-              : null,
-            telecom: [
-              {
-                system: 'phone',
-                value: appt.phoneNumber,
-              },
-              {
-                system: 'email',
-                value: appt.email,
-              },
-            ],
-          },
-        },
-      ];
-
       if (appt.facility) {
-        participant.push({
-          actor: {
-            reference: `Location/var${appt.facility.facilityCode}`,
-            display: appt.friendlyLocationName || appt.facility?.name,
+        return [
+          {
+            actor: {
+              reference: `Location/var${appt.facility.facilityCode}`,
+            },
           },
-        });
+        ];
       }
-
-      return participant;
+      return null;
     }
     default:
       return null;
   }
+}
+
+function createPatientResourceFromRequest(req) {
+  const hasName =
+    req.patient?.displayName ||
+    (!!req.patient?.firstName && !!req.patient?.lastName);
+
+  return {
+    resourceType: 'Patient',
+    name: {
+      text: hasName
+        ? req.patient?.displayName ||
+          `${req.patient?.firstName} ${req.patient?.lastName}`
+        : null,
+    },
+    telecom: [
+      {
+        system: 'phone',
+        value: req.phoneNumber,
+      },
+      {
+        system: 'email',
+        value: req.email,
+      },
+    ],
+  };
 }
 
 /**
@@ -382,97 +374,149 @@ function setContained(appt) {
   switch (getAppointmentType(appt)) {
     case APPOINTMENT_TYPES.vaAppointment: {
       if (isVideoVisit(appt)) {
-        return [
-          {
-            resourceType: 'HealthcareService',
-            id: `HealthcareService/var${appt.vvsAppointments[0].id}`,
-            type: [
-              {
-                text: 'Patient Virtual Meeting Room',
-              },
-            ],
-            location: {
-              reference: `Location/var${appt.facilityId}`,
+        const contained = [];
+        const { tasInfo } = appt.vvsAppointments[0];
+        const service = {
+          resourceType: 'HealthcareService',
+          id: `HealthcareService/var${appt.vvsAppointments[0].id}`,
+          type: [
+            {
+              text: 'Patient Virtual Meeting Room',
             },
-            characteristic: [
-              {
-                coding: getVideoType(appt),
-              },
-            ],
-            telecom: [
-              {
-                system: 'url',
-                value: getVideoVisitLink(appt),
-                period: {
-                  start: getMomentConfirmedDate(appt).format(),
-                },
-              },
-            ],
+          ],
+          providedBy: {
+            reference: `Organization/var${appt.facilityId}`,
           },
-        ];
+          characteristic: [
+            {
+              coding: [
+                {
+                  system: 'VVS',
+                  code: appt.vvsAppointments[0].appointmentKind,
+                },
+              ],
+            },
+          ],
+          telecom: [
+            {
+              system: 'url',
+              value: getVideoVisitLink(appt),
+              period: {
+                start: getMomentConfirmedDate(appt).format(),
+              },
+            },
+          ],
+        };
+
+        if (tasInfo) {
+          service.characteristic = [
+            ...service.characteristic,
+            {
+              coding: [
+                {
+                  system: 'ATLAS_CC',
+                  code: tasInfo.confirmationCode,
+                },
+              ],
+            },
+          ];
+          contained.push(transformATLASLocation(tasInfo));
+        } else if (appt.sta6aid) {
+          service.location = {
+            reference: `Location/var${appt.sta6aid}`,
+          };
+        }
+        contained.push(service);
+
+        return contained;
       }
 
       return null;
     }
     case APPOINTMENT_TYPES.request: {
+      const contained = [createPatientResourceFromRequest(appt)];
+
       if (appt.visitType === 'Video Conference') {
-        return [
-          {
-            resourceType: 'HealthcareService',
-            characteristic: [
-              {
-                coding: getVideoType(appt),
-              },
-            ],
-          },
-        ];
+        contained.push({
+          resourceType: 'HealthcareService',
+          characteristic: [
+            {
+              coding: [
+                {
+                  system: 'VVS',
+                },
+              ],
+            },
+          ],
+        });
       }
-      return null;
+
+      return contained;
     }
     case APPOINTMENT_TYPES.ccRequest: {
-      return appt.ccAppointmentRequest.preferredProviders.map(provider => {
-        const participant = {
-          actor: {
-            name: provider.practiceName,
-            // TODO: Map to participant.actor.Practitioner field.
-            firstName: provider.firstName,
-            lastName: provider.lastName,
-          },
-        };
+      const contained = [createPatientResourceFromRequest(appt)];
+      appt.ccAppointmentRequest.preferredProviders.forEach(
+        (provider, index) => {
+          const address = [];
+          if (provider.address) {
+            address.push({
+              line: [provider.address?.street],
+              city: provider.address?.city,
+              state: provider.address?.state,
+              postalCode: provider.address?.zipCode,
+            });
+          }
 
-        if (provider.address) {
-          const address = {
-            line: [provider.address?.street],
-            city: provider.address?.city,
-            state: provider.address?.state,
-            postalCode: provider.address?.zipCode,
-          };
-          participant.actor.address = address;
-        }
+          contained.push({
+            resourceType: 'Practitioner',
+            id: `cc-practitioner-${appt.id}-${index}`,
+            name: {
+              text: `${provider.firstName} ${provider.lastName}`,
+              family: provider.lastName,
+              given: provider.firstName,
+            },
+            address: provider.address ? address : null,
+            practitionerRole: [
+              {
+                location: [
+                  {
+                    reference: `Location/cc-location-${appt.id}-${index}`,
+                    display: provider.practiceName,
+                  },
+                ],
+              },
+            ],
+          });
+        },
+      );
 
-        return participant;
-      });
+      return contained;
     }
     case APPOINTMENT_TYPES.ccAppointment: {
-      const address = appt.address;
+      let address;
+      if (appt.address) {
+        address = {
+          line: [appt.address.street],
+          city: appt.address.city,
+          state: appt.address.state,
+          postalCode: appt.address.zipCode,
+        };
+      }
 
       return [
         {
-          actor: {
-            name: appt.providerPractice,
-            address: {
-              line: [address?.street],
-              city: address?.city,
-              state: address?.state,
-              postalCode: address?.zipCode,
-            },
-            telecom: [
-              {
-                system: 'phone',
-                value: appt.providerPhone,
-              },
-            ],
-          },
+          resourceType: 'Location',
+          id: `cc-location-id`,
+          name: appt.providerPractice,
+          address: appt.address ? address : null,
+          telecom: appt.providerPhone
+            ? [
+                {
+                  system: 'phone',
+                  value: appt.providerPhone,
+                },
+              ]
+            : null,
         },
       ];
     }
@@ -507,7 +551,6 @@ export function transformConfirmedAppointments(appointments) {
     const start = getMomentConfirmedDate(appt).format();
     const isPast = isPastAppointment(appt);
     const isCC = isCommunityCare(appt);
-
     return {
       resourceType: 'Appointment',
       id: `var${appt.id}`,
@@ -517,7 +560,7 @@ export function transformConfirmedAppointments(appointments) {
       minutesDuration,
       comment:
         appt.instructionsToVeteran ||
-        appt.vdsAppointments?.[0]?.bookingNote ||
+        (!appt.communityCare && appt.vdsAppointments?.[0]?.bookingNote) ||
         appt.vvsAppointments?.[0]?.instructionsTitle,
       participant: setParticipant(appt),
       contained: setContained(appt),

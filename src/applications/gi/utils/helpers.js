@@ -1,5 +1,7 @@
 import { snakeCase } from 'lodash';
 import constants from 'vets-json-schema/dist/constants.json';
+import URLSearchParams from 'url-search-params';
+import { useLocation } from 'react-router-dom';
 import { SMALL_SCREEN_WIDTH } from '../constants';
 
 export const formatNumber = value => {
@@ -7,7 +9,12 @@ export const formatNumber = value => {
   return `${str.replace(/\d(?=(\d{3})+$)/g, '$&,')}`;
 };
 
-export const formatCurrency = value => `$${formatNumber(Math.round(+value))}`;
+export const formatCurrency = value => {
+  if (isNaN(value)) {
+    return value;
+  }
+  return `$${formatNumber(Math.round(+value))}`;
+};
 
 export const isVetTecSelected = filters => filters.category === 'vettec';
 
@@ -133,3 +140,29 @@ export const handleInputFocusWithPotentialOverLap = (
     }
   }
 };
+
+export function useQueryParams() {
+  return new URLSearchParams(useLocation().search);
+}
+
+export function convertRatingToStars(rating) {
+  const ratingValue = parseFloat(rating);
+
+  if (!ratingValue || isNaN(ratingValue)) {
+    return null;
+  }
+
+  const rounded = ratingValue.toFixed(1);
+  let full = parseInt(rounded.split('.')[0], 10);
+  const firstDecimal = parseInt(rounded.split('.')[1], 10);
+
+  let half = false;
+
+  if (firstDecimal > 7) {
+    full++;
+  } else if (firstDecimal >= 3) {
+    half = true;
+  }
+
+  return { full, half, display: rounded };
+}

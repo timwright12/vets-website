@@ -31,6 +31,8 @@ const PULL_DRUPAL_BUILD_ARG = 'pull-drupal';
 // should use the files in the cms-export directory
 const USE_CMS_EXPORT_BUILD_ARG = 'use-cms-export';
 const CMS_EXPORT_DIR_BUILD_ARG = 'cms-export-dir';
+const CMS_EXPORT_CACHE_FILENAME =
+  '.cache/localhost/drupal/pagesTransformed.json';
 
 const getDrupalCachePath = buildOptions =>
   buildOptions[USE_CMS_EXPORT_BUILD_ARG]
@@ -138,6 +140,52 @@ function pipeDrupalPagesIntoMetalsmith(contentData, files) {
  * @param {Object} buildOptions
  * @return {Object} - The result of the GraphQL query
  */
+async function getSideNavsViaGraphQL(buildOptions = global.buildOptions) {
+  // When this function is called in the preview server,
+  // buildOptions will be null, so we need to get them.
+
+  if (!buildOptions) {
+    const getOptions = require('../options');
+    buildOptions = await getOptions();
+  }
+
+  global.buildtype = buildOptions.buildtype;
+  let sideNavs;
+
+  const sideNavFile = path.join(
+    buildOptions.cacheDirectory,
+    'drupal',
+    'side-nav-menus.json',
+  );
+
+  if (shouldPullDrupal(buildOptions) || !fs.existsSync(sideNavFile)) {
+    const contentApi = getApiClient(buildOptions);
+    log('Pulling side nav menus from Drupal...');
+    const response = await contentApi.getSideNavigations();
+    sideNavs = response.data.sideNavMenus;
+    // Write them to .cache/{buildtype}/drupal/side-nav-menus.json
+    fs.ensureDirSync(buildOptions.cacheDirectory);
+    fs.emptyDirSync(path.dirname(sideNavFile));
+    fs.writeJsonSync(sideNavFile, sideNavs, { spaces: 2 });
+  } else {
+    log(`Using cached side navs in ${sideNavFile}`);
+    sideNavs = fs.existsSync(sideNavFile) ? fs.readJsonSync(sideNavFile) : {};
+  }
+
+  if (global.verbose) {
+    log(`Drupal side navs:\n${JSON.stringify(sideNavs, null, 2)}`);
+  }
+
+  return sideNavs || [];
+}
+
+/**
+ * Uses Drupal content via a new GraphQL query or the cached result of a
+ * previous query. This is where the cache is saved.
+ *
+ * @param {Object} buildOptions
+ * @return {Object} - The result of the GraphQL query
+ */
 async function getContentViaGraphQL(buildOptions) {
   const contentApi = getApiClient(buildOptions);
   const drupalCache = getDrupalCachePath(buildOptions);
@@ -202,6 +250,12 @@ async function getContentFromExport(buildOptions) {
   }
 
   const drupalPages = await contentApi.getNonNodeContent();
+
+  if (drupalPages.errors && drupalPages.errors.length) {
+    log(JSON.stringify(drupalPages.errors, null, 2));
+    throw new Error('Drupal query returned with errors');
+  }
+
   drupalPages.data.nodeQuery = {
     entities: contentApi.getExportedPages(),
   };
@@ -222,6 +276,9 @@ async function loadDrupal(buildOptions) {
     ? await getContentFromExport(buildOptions)
     : await getContentViaGraphQL(buildOptions);
 
+  // Dynamic GraphQL from CMS build
+  fs.outputJsonSync(CMS_EXPORT_CACHE_FILENAME, drupalPages);
+
   log('Drupal successfully loaded!');
   return drupalPages;
 }
@@ -238,7 +295,9 @@ async function loadCachedDrupalFiles(buildOptions, files) {
         path.join(buildOptions.cacheDirectory, 'drupal/downloads'),
         file,
       );
-      log(`Loaded Drupal asset from cache: ${relativePath}`);
+      if (global.verbose) {
+        log(`Loaded Drupal asset from cache: ${relativePath}`);
+      }
       files[relativePath] = {
         path: relativePath,
         isDrupalAsset: true,
@@ -285,4 +344,4 @@ function getDrupalContent(buildOptions) {
   };
 }
 
-module.exports = { getDrupalContent, shouldPullDrupal };
+module.exports = { getSideNavsViaGraphQL, getDrupalContent, shouldPullDrupal };

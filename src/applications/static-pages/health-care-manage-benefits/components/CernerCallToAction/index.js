@@ -1,33 +1,37 @@
 // Node modules.
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { isEmpty, map } from 'lodash';
+import { isEmpty, map, replace } from 'lodash';
+import * as Sentry from '@sentry/browser';
 // Relative imports.
 import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
 import LoadingIndicator from '@department-of-veterans-affairs/formation-react/LoadingIndicator';
 import environment from 'platform/utilities/environment';
 import { apiRequest } from 'platform/utilities/api';
-import { CERNER_FACILITY_IDS, getCernerURL } from 'platform/utilities/cerner';
+import { appointmentsToolLink } from 'platform/utilities/cerner';
 
 export class CernerCallToAction extends Component {
+  static defaultProps = {
+    cernerFacilities: [],
+    otherFacilities: [],
+  };
+
   static propTypes = {
-    callToActions: PropTypes.arrayOf(
-      PropTypes.shape({
-        deriveHeaderText: PropTypes.func.isRequired,
-        href: PropTypes.string.isRequired,
-        label: PropTypes.string.isRequired,
-      }),
-    ),
-    type: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
-    // From mapStateToProps.
-    facilities: PropTypes.arrayOf(
+    cernerFacilities: PropTypes.arrayOf(
       PropTypes.shape({
         facilityId: PropTypes.string.isRequired,
         isCerner: PropTypes.bool.isRequired,
       }).isRequired,
-    ).isRequired,
+    ),
+    otherFacilities: PropTypes.arrayOf(
+      PropTypes.shape({
+        facilityId: PropTypes.string.isRequired,
+        isCerner: PropTypes.bool.isRequired,
+      }).isRequired,
+    ),
+    linksHeaderText: PropTypes.string.isRequired,
+    myVAHealthLink: PropTypes.string.isRequired,
+    myHealtheVetLink: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -40,32 +44,27 @@ export class CernerCallToAction extends Component {
   }
 
   componentDidMount() {
-    const { facilities } = this.props;
+    const { cernerFacilities, otherFacilities } = this.props;
+
+    const facilities = [...cernerFacilities, ...otherFacilities];
 
     // Escape early if there are no facilities.
     if (isEmpty(facilities)) {
-      return;
-    }
-
-    // Derive the cerner facilities.
-    const cernerFacilities = facilities.filter(facility =>
-      CERNER_FACILITY_IDS.includes(facility?.facilityId),
-    );
-
-    // Escape early if there are no cerner facilities.
-    if (isEmpty(cernerFacilities)) {
-      // WARNING: Add sentry logging here if there are no cerner facilities found, this should never happen as the component only renders when there ARE cerner facilities.
+      Sentry.withScope(scope => {
+        scope.setExtra('facilities', facilities);
+        Sentry.captureMessage(`Facilities - unexpected empty facilities`);
+      });
       return;
     }
 
     // Derive the list of facility IDs.
-    const cernerFacilityIDs = map(
-      cernerFacilities,
+    const facilityIDs = map(
+      facilities,
       facility => `vha_${facility.facilityId}`,
     );
 
     // Fetch cerner facilities.
-    this.fetchFacilities(cernerFacilityIDs);
+    this.fetchFacilities(facilityIDs);
   }
 
   fetchFacilities = async facilityIDs => {
@@ -86,82 +85,132 @@ export class CernerCallToAction extends Component {
   };
 
   render() {
-    const { callToActions, text, type } = this.props;
+    const {
+      cernerFacilities,
+      linksHeaderText,
+      myVAHealthLink,
+      myHealtheVetLink,
+    } = this.props;
     const { error, fetching, facilities } = this.state;
 
     // Escape early if we are fetching.
     if (fetching) {
-      return <LoadingIndicator message="Loading your information..." />;
+      return (
+        <div data-testid="cerner-cta-widget">
+          <LoadingIndicator message="Loading your information..." />
+        </div>
+      );
     }
 
     // Escape early if there was an error fetching the Cerner facilities.
     if (error || isEmpty(facilities)) {
       // WARNING: Add sentry logging here if there is an error fetching Cerner facilities.
+      Sentry.withScope(scope => {
+        scope.setExtra('error', error);
+        scope.setExtra('facilities', facilities);
+        Sentry.captureMessage(
+          `Facilities - unexpected empty facilities or error`,
+        );
+      });
       return (
-        <AlertBox
-          headline="Something went wrong"
-          content="We’re sorry. Something went wrong on our end. Please try again later."
-          status="error"
-        />
+        <div data-testid="cerner-cta-widget">
+          <AlertBox
+            headline="Something went wrong"
+            content="We’re sorry. Something went wrong on our end. Please try again later."
+            status="error"
+          />
+        </div>
       );
     }
 
-    // Derive the Cerner facility names.
-    const facilityNames = map(
-      facilities,
-      facility => facility?.attributes?.name || 'unknown facility name',
-    );
-    const joinedFacilityNames =
-      facilityNames.join(', ') || 'Cerner facility(s)';
-
     return (
-      <div className="usa-alert usa-alert-warning">
+      <div
+        className="usa-alert usa-alert-warning"
+        data-testid="cerner-cta-widget"
+      >
         <div className="usa-alert-body">
           <h3 className="usa-alert-heading">
-            According to our records, you are registered at a clinic within{' '}
-            {joinedFacilityNames}. VA providers at this facility and its clinics
-            are using the new My VA Health portal.
+            Your VA health care team may be using our new My VA Health portal
           </h3>
-          <p className="usa-alert-text vads-u-margin-y--4">
-            You may need to sign in again to view your VA lab and test results.
-            If you do, please sign in with the same account you used to sign in
-            here on VA.gov. You also may need to disable your browser&apos;s
-            pop-up blocker so that {type} tools are able to open.
-          </p>
-          {map(callToActions, callToAction => {
-            // Derive callToAction properties.
-            const headerText = callToAction?.deriveHeaderText(
-              joinedFacilityNames,
+          <h4 className="vads-u-margin-y--3">
+            Our records show that you&apos;re registered at:
+          </h4>
+
+          {/* List of user's facilities */}
+          {map(facilities, facility => {
+            // Derive facility properties.
+            const id = facility?.id;
+            const strippedID = replace(id, 'vha_', '');
+            const name = facility?.attributes?.name;
+            const isCerner = cernerFacilities?.some(
+              cernerFacility => cernerFacility?.facilityId === strippedID,
             );
-            const href = callToAction?.href;
-            const label = callToAction?.label;
 
             return (
-              <>
-                {headerText && (
-                  <h3 className="usa-alert-heading">{headerText}</h3>
-                )}
-                <a
-                  className="usa-button vads-u-color--white"
-                  href={href}
-                  rel="noopener noreferrer"
-                >
-                  {label}
-                </a>
-              </>
+              <p className="usa-alert-text vads-u-margin-bottom--2" key={id}>
+                <strong>{name}</strong>{' '}
+                {isCerner
+                  ? '(Now using My VA Health)'
+                  : '(Using My HealtheVet)'}
+              </p>
             );
           })}
+
+          <p className="usa-alert-text">
+            Please choose a health management portal below, depending on your
+            provider&apos;s facility. You may need to disable your
+            browser&apos;s pop-up blocker to open the portal. If you&apos;re
+            prompted to sign in again, use the same account you used to sign in
+            on VA.gov.
+          </p>
+
+          <h4 className="vads-u-margin-y--3">{linksHeaderText}</h4>
+
+          {/* List of user's facility links */}
+          {map(facilities, facility => {
+            // Derive facility properties.
+            const id = facility?.id;
+            const strippedID = replace(id, 'vha_', '');
+            const name = facility?.attributes?.name;
+            const isCerner = cernerFacilities?.some(
+              cernerFacility => cernerFacility?.facilityId === strippedID,
+            );
+
+            return (
+              <div key={`${id}-cta-link`}>
+                <p className="vads-u-margin-bottom--1">
+                  <strong>{name}</strong>
+                </p>
+                <a
+                  className="usa-button vads-u-color--white vads-u-margin-top--0 vads-u-margin-bottom--4"
+                  href={isCerner ? myVAHealthLink : myHealtheVetLink}
+                  rel="noreferrer noopener"
+                  target="_blank"
+                >
+                  {isCerner ? 'Go to My VA Health' : 'Go to My HealtheVet'}
+                </a>
+              </div>
+            );
+          })}
+          <div>
+            <p className="vads-u-margin-bottom--1">
+              <strong>Another VA health facility</strong>
+            </p>
+            <a
+              className="usa-button usa-button-secondary vads-u-color--primary vads-u-margin-top--0 vads-u-margin-bottom--2"
+              href={myHealtheVetLink}
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              {myHealtheVetLink === appointmentsToolLink
+                ? 'Go to the VA appointments tool'
+                : 'Go to My HealtheVet'}
+            </a>
+          </div>
         </div>
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  facilities: state?.user?.profile?.facilities,
-});
-
-export default connect(
-  mapStateToProps,
-  null,
-)(CernerCallToAction);
+export default CernerCallToAction;

@@ -1,4 +1,8 @@
 import React from 'react';
+import Telephone, {
+  CONTACTS,
+  PATTERNS,
+} from '@department-of-veterans-affairs/formation-react/Telephone';
 
 export const errorFragment = (
   <>
@@ -9,13 +13,8 @@ export const errorFragment = (
     </p>
     <p>
       If you get this error again, please call the VA.gov help desk at
-      <a aria-label="8 4 4. 6 9 8. 2 3 1 1." href="tel:8446982311">
-        844-698-2311
-      </a>{' '}
-      (
-      <a href="tel:711" aria-label="TTY. 7 1 1.">
-        TTY: 711
-      </a>
+      <Telephone contact={CONTACTS.VA_311} />{' '}
+      <Telephone contact={CONTACTS['711']} pattern={PATTERNS['3_DIGIT']} />
       ). We're here Monday-Friday, 8:00a.m.-8:00p.m. ET.
     </p>
   </>
@@ -23,7 +22,9 @@ export const errorFragment = (
 
 export const infoFragment = (
   <>
-    <h2>We don't have dependents information on file for you</h2>
+    <h2 className="vads-u-margin-top--1">
+      We don't have dependents information on file for you
+    </h2>
     <p>
       We can't find any dependents added to your disability award. If you are
       eligible for VA disability compensation and you have a VA combined rating

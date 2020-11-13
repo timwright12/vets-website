@@ -2,7 +2,7 @@ version: 2
 jobs:
   lint:
     docker:
-      - image: circleci/node:10.15.3
+      - image: circleci/node:14.15.0
     steps:
       - checkout
       - restore_cache:
@@ -24,8 +24,7 @@ jobs:
 
   unit-test:
     docker:
-      - image: circleci/node:10.15.3
-    environment:
+      - image: circleci/node:14.15.0
     steps:
       - checkout
       - restore_cache:
@@ -47,16 +46,62 @@ jobs:
       - store_artifacts:
           path: ./test-results
 
+  contract-test:
+    docker:
+      - image: circleci/node:14.15.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run: yarn install --frozen-lockfile
+      - save_cache:
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run: mkdir -p ./test-results
+      - run: mkdir -p ./pacts
+      - run:
+          command: yarn test:contract
+          environment:
+            MOCHA_FILE: ./test-results/test-results.xml
+      - run: yarn pact:publish
+      - persist_to_workspace:
+          root: .
+          paths:
+            - pacts
+      - store_test_results:
+          path: ./test-results
+      - store_artifacts:
+          path: ./test-results
+
+  can-i-deploy:
+    docker:
+      - image: circleci/node:14.15.0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run: yarn install --frozen-lockfile
+      - save_cache:
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run: yarn pact:can-i-deploy
+
   security-audit:
     docker:
-      - image: circleci/node:10.15.3
+      - image: circleci/node:14.15.0
     steps:
       - checkout
       - run: yarn security-check
 
   additional-linting:
     docker:
-      - image: circleci/node:10.15.3
+      - image: circleci/node:14.15.0
     steps:
       - checkout
       - restore_cache:
@@ -72,7 +117,7 @@ jobs:
 
   build:
     docker:
-      - image: circleci/node:10.15.3
+      - image: circleci/node:14.15.0
     steps:
       - checkout
       - restore_cache:
@@ -88,7 +133,7 @@ jobs:
 
   eslint-check:
     docker:
-      - image: circleci/node:10.18
+      - image: circleci/node:14.15.0
     environment:
       CODE_PATTERN: (/* eslint-disable)|(// eslint-disable)
       OVERALL_REVIEW_COMMENT: >
@@ -114,7 +159,7 @@ jobs:
 
   sentry-check:
     docker:
-      - image: circleci/node:10.18
+      - image: circleci/node:14.15.0
     environment:
       CODE_PATTERN: Sentry\.
       OVERALL_REVIEW_COMMENT: >
@@ -141,7 +186,7 @@ jobs:
 
   icon-check:
     docker:
-      - image: circleci/node:10.18
+      - image: circleci/node:14.15.0
     environment:
       CODE_PATTERN: (<i )|(<i$)
       OVERALL_REVIEW_COMMENT: >
@@ -169,7 +214,7 @@ jobs:
   build-e2e:
     working_directory: ~/vets-website
     docker:
-      - image: cypress/base:10.15.3
+      - image: cypress/base:14.15.0
     resource_class: xlarge
     steps:
       - checkout
@@ -187,6 +232,7 @@ jobs:
       - run:
           name: Build apps
           command: yarn build:webpack --env.buildtype vagovprod --env.scaffold
+          no_output_timeout: 15m
       - persist_to_workspace:
           root: ~/
           paths:
@@ -195,7 +241,7 @@ jobs:
   e2e-test:
     working_directory: ~/vets-website
     docker:
-      - image: cypress/base:10.15.3
+      - image: cypress/base:14.15.0
     resource_class: xlarge
     steps:
       - checkout
@@ -213,7 +259,6 @@ jobs:
       - run:
           name: Run Cypress Tests
           command: yarn cy:test:circle
-          no_output_timeout: 20m
       - store_test_results:
           path: ./test-results
       - store_artifacts:
@@ -243,8 +288,12 @@ workflows:
     jobs:
       - lint
       - unit-test
+      - contract-test
       - security-audit
       - build-e2e
+      - can-i-deploy:
+          requires:
+            - contract-test
       - build:
           requires:
             - lint

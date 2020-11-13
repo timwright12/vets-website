@@ -54,7 +54,6 @@ const responses = {
     data: {
       type: 'feature_toggles',
       features: [
-        { name: 'dashboardShowCovid19Alert', value: true },
         { name: 'facilityLocatorShowCommunityCares', value: true },
         { name: 'profile_show_profile_2.0', value: false },
         { name: 'vaOnlineScheduling', value: true },
@@ -67,13 +66,10 @@ const responses = {
         { name: 'ssoe', value: true },
         { name: 'ssoeInbound', value: false },
         { name: 'ssoeEbenefitsLinks', value: false },
-        { name: 'eduBenefitsStemScholarship', value: true },
         { name: 'edu_section_103', value: true },
-        { name: 'gibctEstimateYourBenefits', value: true },
         { name: 'form526OriginalClaims', value: false },
         { name: 'vaViewDependentsAccess', value: false },
         { name: 'gibctEybBottomSheet', value: true },
-        { name: 'routeStLouisRPOtoBuffaloRPO', value: true },
       ],
     },
   },

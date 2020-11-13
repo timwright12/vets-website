@@ -3,16 +3,20 @@ import createContactInformationPage from '../../pages/contactInformation';
 import phoneUI from 'platform/forms-system/src/js/definitions/phone';
 import * as address from 'platform/forms/definitions/address';
 
-const addressUiSchema = address.uiSchema('');
+const addressUiSchema = address.uiSchema('Your address');
 const contactInformation = createContactInformationPage(fullSchema10203);
 const ciUiSchema = contactInformation.uiSchema;
 const ciSchemaProperties = contactInformation.schema.properties;
-const { preferredContactMethod } = fullSchema10203.properties;
+const { preferredContactMethod, receiveTexts } = fullSchema10203.properties;
+
+import {
+  receiveTextsNote,
+  receiveTextsAlert,
+} from '../content/personalInformation';
 
 export const title = contactInformation.title;
 export const path = contactInformation.path;
 export const uiSchema = {
-  'ui:title': 'Your address',
   veteranAddress: {
     ...addressUiSchema,
     street: {
@@ -22,18 +26,21 @@ export const uiSchema = {
   },
   'view:otherContactInfo': {
     ...ciUiSchema['view:otherContactInfo'],
+    'ui:description':
+      'Please enter your contact details below so we can get in touch with you, if necessary.',
     homePhone: {
       ...phoneUI('Home phone number'),
       'ui:required': form => form.preferredContactMethod === 'homePhone',
     },
     mobilePhone: {
       ...phoneUI('Mobile phone number'),
-      'ui:required': form => form.preferredContactMethod === 'mobilePhone',
+      'ui:required': form =>
+        form.preferredContactMethod === 'mobilePhone' ||
+        form.receiveTexts === true,
     },
   },
   preferredContactMethod: {
-    'ui:title':
-      'How should we contact you if we have questions about your application?',
+    'ui:title': "What's the best way for us to contact you?",
     'ui:widget': 'radio',
     'ui:options': {
       labels: {
@@ -44,13 +51,38 @@ export const uiSchema = {
       },
     },
   },
+  receiveTexts: {
+    'ui:title':
+      'I would like to receive text messages from VA about my GI Bill benefits.',
+  },
+  'view:housingPaymentInfo': {
+    'ui:description': receiveTextsAlert,
+    'ui:options': {
+      hideIf: data =>
+        !data?.receiveTexts ||
+        data['view:otherContactInfo']?.mobilePhone?.length >=
+          fullSchema10203.definitions.phone.minLength,
+    },
+  },
+  'view:receiveTextsInfo': {
+    'ui:description': receiveTextsNote,
+  },
 };
 
 export const schema = {
   ...contactInformation.schema,
   properties: {
+    preferredContactMethod,
     veteranAddress: address.schema(fullSchema10203, true),
     'view:otherContactInfo': ciSchemaProperties['view:otherContactInfo'],
-    preferredContactMethod,
+    receiveTexts,
+    'view:housingPaymentInfo': {
+      type: 'object',
+      properties: {},
+    },
+    'view:receiveTextsInfo': {
+      type: 'object',
+      properties: {},
+    },
   },
 };

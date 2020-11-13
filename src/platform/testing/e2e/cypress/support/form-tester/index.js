@@ -126,40 +126,66 @@ const addNewArrayItem = $form => {
 };
 
 /**
- * Run the page hook if the page has one, optionally automatically fill the page
- * if no hook ran, expand any accordions, and run an aXe check. Finally, if the
- * page was automatically filled, also automatically continue to the next page.
+ * Performs the following actions on a page:
+ * 1. Run an initial axe check.
+ * 2. Run the page hook if the page has one.
+ * 3. Autofill if no hook ran and if the page is not review or confirmation.
+ * 4. Expand any accordions and run the end-of-page aXe check.
+ * 5. Run the post hook.
  *
  * @param {string} pathname - The pathname of the page to run the page hook on.
- * @param {boolean} [autofill] - If true, and if no page hook ran, automatically
- *     fill the page. If false, don't fill the page, even if no page hook ran.
  */
-const performPageActions = (pathname, autofill = true) => {
-  cy.execHook(pathname).then(hookExecuted => {
-    if (!hookExecuted && autofill) cy.fillPage();
+const performPageActions = (pathname, _13647Exception = false) => {
+  cy.axeCheck('main', { _13647Exception });
+
+  cy.execHook(pathname).then(({ hookExecuted, postHook }) => {
+    const shouldAutofill = !pathname.match(
+      /\/(introduction|confirmation|review-and-submit)$/,
+    );
+
+    if (!hookExecuted && shouldAutofill) cy.fillPage();
 
     cy.expandAccordions();
-    cy.axeCheck();
+    cy.axeCheck('main', { _13647Exception });
 
-    if (!hookExecuted && autofill) {
-      cy.findByText(/continue/i, { selector: 'button' }).click(FORCE_OPTION);
-    }
+    const postHookPromise = new Promise(resolve => {
+      postHook();
+      resolve();
+    });
+
+    cy.wrap(postHookPromise, NO_LOG_OPTION);
   });
 };
 
 /**
  * Top level loop that invokes all of the processing for a form page and
- * proceeds to the next page. When it gets to the end, it submits the form.
+ * asserts that it proceeds to the next page until it gets to the confirmation.
  */
-const processPage = () => {
-  // Run aXe check before doing anything on the page.
-  cy.axeCheck();
-
+const processPage = ({ _13647Exception }) => {
   cy.location('pathname', NO_LOG_OPTION).then(pathname => {
-    if (pathname.endsWith('review-and-submit')) {
-      performPageActions(pathname, false);
+    performPageActions(pathname, _13647Exception);
 
-      // Check the privacy agreement box if it exists.
+    if (!pathname.endsWith('/confirmation')) {
+      cy.location('pathname', NO_LOG_OPTION)
+        .should(newPathname => {
+          if (pathname === newPathname) {
+            throw new Error(`Expected to navigate away from ${pathname}`);
+          }
+        })
+        .then(() => processPage({ _13647Exception }));
+    }
+  });
+};
+
+/**
+ * Provides the default post hook to run for the given pathname.
+ * @param {string} pathname - The pathname for the current URL.
+ * @returns {function} The post hook to be invoked after all other page actions.
+ */
+const defaultPostHook = pathname => {
+  // On review pages, check the privacy agreement box if it exists and submit.
+  if (pathname.endsWith('/review-and-submit')) {
+    return () => {
       cy.get(APP_SELECTOR, NO_LOG_OPTION).then($form => {
         const privacyAgreement = $form.find('input[name^="privacyAgreement"]');
         if (privacyAgreement.length) {
@@ -170,24 +196,18 @@ const processPage = () => {
       });
 
       cy.findByText(/submit/i, { selector: 'button' }).click(FORCE_OPTION);
+    };
+  }
 
-      // The form should end up at the confirmation page after submitting.
-      cy.location('pathname').then(endPathname => {
-        expect(endPathname).to.match(/confirmation$/);
-        cy.axeCheck();
-        performPageActions(endPathname, false);
-      });
-    } else {
-      performPageActions(pathname);
-      cy.location('pathname', NO_LOG_OPTION)
-        .should(newPathname => {
-          if (pathname === newPathname) {
-            throw new Error(`Expected to navigate away from ${pathname}`);
-          }
-        })
-        .then(processPage);
-    }
-  });
+  // No-op on introduction and confirmation pages.
+  if (pathname.match(/\/(introduction|confirmation)$/)) {
+    return () => {};
+  }
+
+  // Everything else should click on the 'Continue' button.
+  return () => {
+    cy.findByText(/continue/i, { selector: 'button' }).click(FORCE_OPTION);
+  };
 };
 
 /**
@@ -198,15 +218,33 @@ const processPage = () => {
 Cypress.Commands.add('execHook', pathname => {
   cy.get('@pageHooks', NO_LOG_OPTION).then(pageHooks => {
     const hook = pageHooks?.[pathname];
-    if (!hook) return cy.wrap(false, NO_LOG_OPTION);
+    let hookExecuted = false;
+    let postHook = defaultPostHook(pathname);
+
+    if (!hook) return cy.wrap({ hookExecuted, postHook }, NO_LOG_OPTION);
 
     if (typeof hook !== 'function') {
       throw new Error(`Page hook for ${pathname} is not a function`);
     }
 
+    // Give the page hook the option to set a custom post hook.
+    const overridePostHook = fn => {
+      if (typeof fn !== 'function') {
+        throw new Error(`Post hook for ${pathname} is not a function`);
+      }
+      postHook = fn;
+    };
+
+    // Context object that's available all page hooks as the first argument.
+    const context = {
+      afterHook: overridePostHook,
+      pathname,
+    };
+
     const hookPromise = new Promise(resolve => {
-      hook();
-      resolve(true);
+      hook(context);
+      hookExecuted = true;
+      resolve({ hookExecuted, postHook });
     });
 
     return cy.wrap(hookPromise, NO_LOG_OPTION);
@@ -268,9 +306,7 @@ Cypress.Commands.add('enterData', field => {
         .type(field.data, { ...FORCE_OPTION, ...NO_DELAY_OPTION })
         .then(element => {
           // Get the autocomplete menu out of the way.
-          if (element.attr('role') === 'combobox') {
-            cy.wrap(element).type('{downarrow}{enter}');
-          }
+          if (element.attr('role') === 'combobox') element.blur();
         });
       break;
     }
@@ -406,6 +442,8 @@ Cypress.Commands.add('fillPage', () => {
 
       fillAvailableFields();
     });
+
+  Cypress.log();
 });
 
 /**
@@ -452,6 +490,7 @@ const testForm = testConfig => {
     setup = () => {},
     setupPerTest = () => {},
     skip,
+    _13647Exception = false,
   } = testConfig;
 
   const skippedTests = Array.isArray(skip) && new Set(skip);
@@ -482,10 +521,6 @@ const testForm = testConfig => {
 
       cy.wrap(arrayPages).as('arrayPages');
 
-      // Save a couple of seconds by definitively responding with
-      // no maintenance windows instead of letting the request time out.
-      cy.server().route('GET', '/v0/maintenance_windows', []);
-
       // Resolve relative page hook paths as relative to the form's root URL.
       const resolvedPageHooks = Object.entries(pageHooks).reduce(
         (hooks, [path, hook]) => ({
@@ -515,7 +550,7 @@ const testForm = testConfig => {
 
           cy.get(LOADING_SELECTOR)
             .should('not.exist')
-            .then(processPage);
+            .then(() => processPage({ _13647Exception }));
         });
       });
 

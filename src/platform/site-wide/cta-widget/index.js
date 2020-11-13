@@ -38,6 +38,7 @@ import Verify from './components/messages/Verify';
 import OpenMyHealtheVet from './components/messages/OpenMyHealtheVet';
 import MFA from './components/messages/MFA';
 import DirectDeposit from './components/messages/DirectDeposit';
+import ChangeAddress from './components/messages/ChangeAddress';
 import NotAuthorized from './components/messages/mvi/NotAuthorized';
 import NotFound from './components/messages/mvi/NotFound';
 import NeedsSSNResolution from './components/messages/NeedsSSNResolution';
@@ -111,6 +112,7 @@ export class CallToActionWidget extends React.Component {
         <SignIn
           serviceDescription={this._serviceDescription}
           primaryButtonHandler={this.openLoginModal}
+          headerLevel={this.props.headerLevel}
         />
       );
     }
@@ -162,6 +164,16 @@ export class CallToActionWidget extends React.Component {
               event: 'nav-user-profile-cta',
             })
           }
+        />
+      );
+    }
+
+    if (this.props.appId === widgetTypes.CHANGE_ADDRESS) {
+      return (
+        <ChangeAddress
+          featureToggles={this.props.featureToggles}
+          serviceDescription={this._serviceDescription}
+          primaryButtonHandler={this.goToTool}
         />
       );
     }

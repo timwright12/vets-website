@@ -1,54 +1,68 @@
 import React from 'react';
 import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
+import Telephone, {
+  CONTACTS,
+} from '@department-of-veterans-affairs/formation-react/Telephone';
 
-const noIssuesMessage = `We’re sorry. We were unable to locate any contestable
-  issues that are eligible to request a Higher-Level Review`;
+import { disabilitiesExplanationAlert } from './contestedIssues';
 
-const networkError = errors => {
-  const messages =
-    errors?.length > 1 ? (
-      <ul>
-        {errors.map(error => (
-          <li key={error.title}>{error.title}</li>
-        ))}
-      </ul>
-    ) : (
-      <p>
-        <strong>{errors?.[0].title}</strong>
-      </p>
-    );
-  return (
-    <>
-      We’re sorry. We’re having some problems on our end when we try to get
-      information about your contestable issues:
-      <p />
-      {messages}
-      <p>Please try again later.</p>
-    </>
-  );
-};
+const noIssuesMessage = (
+  <>
+    We don’t have any issues on file for you that are eligible for Higher-Level
+    Review. These are called contestable issues. If you think this is an error,
+    please call us at <Telephone contact={CONTACTS.VA_BENEFITS} />.
+    {disabilitiesExplanationAlert}
+  </>
+);
+
+const networkError = (
+  <p>
+    We’re having some connection issues on our end. Please refresh this page to
+    try again.
+  </p>
+);
+
+const benefitError = type => (
+  <p>We don’t currently support the "{type}" benefit type</p>
+);
 
 export const noContestableIssuesFound = (
   <AlertBox
     status="warning"
-    headline="No Contestable Issues"
+    headline="You have no issues eligible for a Higher-Level Review"
     content={noIssuesMessage}
   />
 );
 
-export const showContestableIssueError = errors => (
-  <AlertBox
-    status="error"
-    headline="We’re having some connection problems"
-    content={networkError(errors)}
-  />
-);
+export const showContestableIssueError = ({ error, type } = {}) => {
+  const headline =
+    error === 'invalidBenefitType'
+      ? `We don’t support this benefit type`
+      : 'We can’t load your issues';
+  const content =
+    error === 'invalidBenefitType' ? benefitError(type) : networkError;
+  return <AlertBox status="error" headline={headline} content={content} />;
+};
 
 export const showWorkInProgress = (
   <AlertBox
     status="info"
     headline="We’re still working on this feature"
-    content={`We’re rolling out the Higher-Level Review form in stages. It’s
-      not quite ready yet, so please check back again soon.`}
+    content={
+      <>
+        <p>
+          We’re rolling out the Higher-Level Review form in stages. It’s not
+          quite ready yet. Please check back again soon.
+        </p>
+        <p>
+          <a
+            href="/decision-reviews/higher-level-review/"
+            className="u-vads-display--block u-vads-margin-top--2"
+          >
+            Return to Higher-Level Review information page
+          </a>
+        </p>
+      </>
+    }
   />
 );

@@ -28,6 +28,8 @@ import EligibleBuriedView from '../components/EligibleBuriedView';
 import SupportingDocumentsDescription from '../components/SupportingDocumentsDescription';
 import { validateSponsorDeathDate } from '../validation';
 
+import manifest from '../manifest.json';
+
 import {
   isVeteran,
   isAuthorizedAgent,
@@ -69,6 +71,7 @@ const {
   phone,
   files,
   centralMailVaFile,
+  race,
 } = fullSchemaPreNeed.definitions;
 
 const nonRequiredFullName = _.omit('required', fullName);
@@ -80,11 +83,23 @@ function currentlyBuriedPersonsMinItem() {
 }
 
 const formConfig = {
+  rootUrl: manifest.rootUrl,
   urlPrefix: '/',
   submitUrl: `${environment.API_URL}/v0/preneeds/burial_forms`,
   trackingPrefix: 'preneed-',
   transformForSubmit: transform,
   formId: VA_FORM_IDS.FORM_40_10007,
+  saveInProgress: {
+    messages: {
+      inProgress:
+        'Your pre-need determination of eligibility in a VA national cemetery application is in progress.',
+      // TODO: Fix the expired message
+      expired:
+        'Your saved pre-need determination of eligibility in a VA national cemetery application has expired. If you want to apply for pre-need determination of eligibility in a VA national cemetery, please start a new application.',
+      saved:
+        'Your pre-need determination of eligibility in a VA national cemetery application has been saved.',
+    },
+  },
   prefillEnabled: true,
   verifyRequiredPrefill: false,
   version: 0,
@@ -109,6 +124,7 @@ const formConfig = {
     date,
     dateRange,
     gender,
+    race,
     email,
     phone,
     files,
@@ -204,6 +220,7 @@ const formConfig = {
                           'vaClaimNumber',
                           'placeOfBirth',
                           'gender',
+                          'race',
                           'maritalStatus',
                           'militaryStatus',
                         ],
@@ -328,6 +345,7 @@ const formConfig = {
                         'vaClaimNumber',
                         'placeOfBirth',
                         'gender',
+                        'race',
                         'maritalStatus',
                         'militaryStatus',
                         'isDeceased',

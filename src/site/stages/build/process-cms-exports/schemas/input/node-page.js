@@ -28,7 +28,9 @@ module.exports = {
       maxItems: 1,
     },
     field_related_links: {
-      $ref: 'EntityReferenceArray',
+      type: 'array',
+      maxItems: 1,
+      items: { $ref: 'EntityReference' },
     },
     field_administration: {
       $ref: 'EntityReferenceArray',
@@ -42,20 +44,11 @@ module.exports = {
         },
       },
     },
+    field_table_of_contents_boolean: { $ref: 'GenericNestedBoolean' },
     metatag: {
       type: 'object',
     },
-    path: {
-      type: 'array',
-      maxItems: 1,
-      items: {
-        type: 'object',
-        properties: {
-          alias: { type: 'string' },
-        },
-        required: ['alias'],
-      },
-    },
+    path: { $res: 'RawPath' },
   },
   required: getFilter('node-page'),
 };

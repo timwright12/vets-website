@@ -2,9 +2,6 @@ import _ from 'lodash/fp'; // eslint-disable-line no-restricted-imports
 import shouldUpdate from 'recompose/shouldUpdate';
 import { deepEquals } from '@department-of-veterans-affairs/react-jsonschema-form/lib/utils';
 
-import FormPage from './containers/FormPage';
-import ReviewPage from './review/ReviewPage';
-
 // An active page is one that will be shown to the user.
 // Pages become inactive if they are conditionally shown based
 // on answers to previous questions.
@@ -91,62 +88,6 @@ export function createPageList(formConfig, formPages) {
     .map(page =>
       _.set('path', `${formConfig.urlPrefix || ''}${page.path}`, page),
     );
-}
-
-/*
- * Create the routes based on a form config. This goes through each chapter in a form
- * config, pulls out the config for each page, then generates a list of Route components with the
- * config as props
- */
-export function createRoutes(formConfig) {
-  const formPages = createFormPageList(formConfig);
-  const pageList = createPageList(formConfig, formPages);
-
-  let routes = formPages.map(page => ({
-    path: page.path,
-    component: page.component || FormPage,
-    pageConfig: page,
-    pageList,
-    urlPrefix: formConfig.urlPrefix,
-  }));
-
-  if (formConfig.additionalRoutes) {
-    routes = formConfig.additionalRoutes
-      .map(route => ({
-        ...route,
-        formConfig,
-        pageList,
-      }))
-      .concat(routes);
-  }
-
-  if (formConfig.introduction) {
-    routes = [
-      {
-        path: 'introduction',
-        component: formConfig.introduction,
-        formConfig,
-        pageList,
-      },
-    ].concat(routes);
-  }
-
-  return routes.concat([
-    {
-      path: 'review-and-submit',
-      formConfig,
-      component: ReviewPage,
-      pageList,
-    },
-    {
-      path: 'confirmation',
-      component: formConfig.confirmation,
-    },
-    {
-      path: '*',
-      onEnter: (nextState, replace) => replace(formConfig.urlPrefix || '/'),
-    },
-  ]);
 }
 
 function formatDayMonth(val) {
@@ -700,4 +641,39 @@ export function transformForSubmit(
   const withoutViewFields = filterViewFields(withoutInactivePages);
 
   return JSON.stringify(withoutViewFields, replacer) || '{}';
+}
+
+/**
+ * Determines whether or not the review field should be displayed on the review page
+ *
+ * @param propName {string} The name of the field to check
+ * @param schema {Object} The current JSON Schema
+ * @param uiSchema {Object} The current UI Schema
+ * @param formData {Object} The current form data
+ * @param formContext {Object} The context of the current form
+ * @returns {boolean} the display status of the field
+ */
+export function showReviewField(
+  propName,
+  schema,
+  uiSchema,
+  formData,
+  formContext,
+) {
+  const hiddenOnSchema =
+    schema.properties[propName] && schema.properties[propName]['ui:hidden'];
+  const collapsedOnSchema =
+    schema.properties[propName] && schema.properties[propName]['ui:collapsed'];
+  const hideOnReviewIfFalse =
+    _.get([propName, 'ui:options', 'hideOnReviewIfFalse'], uiSchema) === true;
+  let hideOnReview = _.get([propName, 'ui:options', 'hideOnReview'], uiSchema);
+  if (typeof hideOnReview === 'function') {
+    hideOnReview = hideOnReview(formData, formContext);
+  }
+  return (
+    (!hideOnReviewIfFalse || !!formData[propName]) &&
+    !hideOnReview &&
+    !hiddenOnSchema &&
+    !collapsedOnSchema
+  );
 }

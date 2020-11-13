@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
 import Pagination from '@department-of-veterans-affairs/formation-react/Pagination';
-import ResponsiveTable from '../../responsive-table/ResponsiveTable';
+import Table from '@department-of-veterans-affairs/formation-react/Table';
 import { clientServerErrorContent } from '../helpers';
 import { chunk } from 'lodash';
 
-const alertClasses =
-  'vads-u-padding-y--2p5 vads-u-padding-right--4 vads-u-padding-left--2';
-
-class PaymentsReceived extends Component {
+const MAX_PAGE_LIST_LENGTH = 10;
+class Payments extends Component {
   state = {
     page: 1,
-    maxRows: 5,
+    maxRows: 6,
     numberOfPages: null,
     currentlyShowingData: [],
     paginatedData: null,
@@ -66,15 +64,20 @@ class PaymentsReceived extends Component {
 
   render() {
     let tableContent = '';
+    let tableAriaLabelldBy = 'paymentsRecievedHeader paymentsRecievedContent';
+    if (this.props.tableVersion === 'returned') {
+      tableAriaLabelldBy = 'paymentsReturnedHeader paymentsReturnedContent';
+    }
     if (this.state.currentlyShowingData) {
       tableContent = (
         <>
           {this.props.textContent}
-          <p className="vads-u-font-size--lg">
+          <p className="vads-u-font-size--lg vads-u-font-family--serif">
             Displaying {this.state.fromNumber} - {this.state.toNumber} of{' '}
             {this.props.data.length}
           </p>
-          <ResponsiveTable
+          <Table
+            ariaLabelledBy={tableAriaLabelldBy}
             className="va-table"
             currentSort={{
               value: 'String',
@@ -89,7 +92,7 @@ class PaymentsReceived extends Component {
             onPageSelect={page => this.handleDataPagination(page)}
             page={this.state.page}
             pages={this.state.numberOfPages}
-            maxPageListLength={this.state.numberOfPages}
+            maxPageListLength={MAX_PAGE_LIST_LENGTH}
             showLastPage
           />
         </>
@@ -97,10 +100,10 @@ class PaymentsReceived extends Component {
     } else {
       tableContent = (
         <AlertBox
-          className={alertClasses}
-          content={clientServerErrorContent('Received')}
+          content={clientServerErrorContent(this.props.tableVersion)}
           status="info"
-          isVisible
+          backgroundOnly="true"
+          className="vads-u-background-color--gray-lightest"
         />
       );
     }
@@ -108,4 +111,4 @@ class PaymentsReceived extends Component {
   }
 }
 
-export default PaymentsReceived;
+export default Payments;

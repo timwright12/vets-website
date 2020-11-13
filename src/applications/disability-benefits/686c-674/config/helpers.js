@@ -1,4 +1,8 @@
 import React from 'react';
+import Telephone, {
+  CONTACTS,
+  PATTERNS,
+} from '@department-of-veterans-affairs/formation-react/Telephone';
 
 export const isChapterFieldRequired = (formData, option) =>
   formData[`view:selectable686Options`][option];
@@ -48,26 +52,96 @@ export const ServerErrorAlert = (
     </p>
     <p>
       If you get this error again, please call the VA.gov help desk at{' '}
-      <a href="tel:8446982311" aria-label="8 4 4. 6 9 8. 2 3 1 1.">
-        844-698-2311
-      </a>{' '}
-      (
-      <a href="tel:711" aria-label="TTY. 7 1 1.">
-        TTY: 711
-      </a>
+      <Telephone contact={CONTACTS.VA_311} /> (TTY:{' '}
+      <Telephone contact={CONTACTS['711']} pattern={PATTERNS['3_DIGIT']} />
       ). We’re here Monday through Friday, 8:00 a.m. to 8:00 p.m. ET.
     </p>
   </>
 );
 
-export const stateTitle = (
-  <>
-    State (<strong>or</strong> Country if outside the U.S.)
-  </>
-);
+export const isInsideListLoopReturn = (
+  chapter,
+  outerField,
+  uiTitle,
+  formChapter,
+) => {
+  return {
+    'ui:title': uiTitle,
+    isOutsideUs: {
+      'ui:title': 'This occurred outside the US',
+    },
+    country: {
+      'ui:title': 'Country',
+      'ui:required': (formData, index) =>
+        formData?.[chapter]?.[`${index}`]?.[outerField]?.isOutsideUs,
+      'ui:options': {
+        hideIf: (formData, index) => {
+          if (!formData?.[chapter]?.[`${index}`]?.[outerField]?.isOutsideUs) {
+            return true;
+          }
+          return false;
+        },
+      },
+    },
+    state: {
+      'ui:title': 'State',
+      'ui:required': (formData, index) =>
+        !formData?.[chapter]?.[`${index}`]?.[outerField]?.isOutsideUs,
+      'ui:options': {
+        hideIf: (formData, index) => {
+          if (formData?.[chapter]?.[`${index}`]?.[outerField]?.isOutsideUs) {
+            return true;
+          }
+          return false;
+        },
+      },
+    },
+    city: {
+      'ui:required': formData => isChapterFieldRequired(formData, formChapter),
+      'ui:title': 'City',
+    },
+  };
+};
 
-export const cityTitle = (
-  <>
-    City <strong>or</strong> county
-  </>
-);
+export const isOutsideListLoopReturn = (
+  chapter,
+  outerField,
+  uiTitle,
+  formChapter,
+) => {
+  return {
+    'ui:title': uiTitle,
+    isOutsideUs: {
+      'ui:title': 'This occurred outside the US',
+    },
+    country: {
+      'ui:title': 'Country',
+      'ui:required': formData => formData?.[chapter]?.[outerField]?.isOutsideUs,
+      'ui:options': {
+        hideIf: formData => {
+          if (!formData?.[chapter]?.[outerField]?.isOutsideUs) {
+            return true;
+          }
+          return false;
+        },
+      },
+    },
+    state: {
+      'ui:title': 'State',
+      'ui:required': formData =>
+        !formData?.[chapter]?.[outerField]?.isOutsideUs,
+      'ui:options': {
+        hideIf: formData => {
+          if (formData?.[chapter]?.[outerField]?.isOutsideUs) {
+            return true;
+          }
+          return false;
+        },
+      },
+    },
+    city: {
+      'ui:required': formData => isChapterFieldRequired(formData, formChapter),
+      'ui:title': 'City',
+    },
+  };
+};

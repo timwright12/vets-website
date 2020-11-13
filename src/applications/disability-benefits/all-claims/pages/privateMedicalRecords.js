@@ -11,7 +11,7 @@ import { DATA_PATHS } from '../constants';
 const { privateMedicalRecordAttachments } = fullSchema.properties;
 
 const fileUploadUi = ancillaryFormUploadUi(
-  'to your private medical records',
+  'Upload your private medical records',
   ' ',
   {
     attachmentId: '',
@@ -68,6 +68,9 @@ export const uiSchema = {
     },
     'view:acknowledgement': {
       'ui:title': 'Patient Acknowledgment',
+      'ui:options': {
+        useDlWrap: true,
+      },
     },
     'ui:validations': [
       (errors, item) => {

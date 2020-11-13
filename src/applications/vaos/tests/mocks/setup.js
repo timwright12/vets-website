@@ -1,27 +1,34 @@
 import React from 'react';
-import { Router } from 'react-router';
-import { createMemoryHistory } from 'history';
+import { Route, Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history-v4';
 import { combineReducers, applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { fireEvent, waitFor } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 
 import { commonReducer } from 'platform/startup/store';
 import { renderInReduxProvider } from 'platform/testing/unit/react-testing-library-helpers';
 
-import reducers from '../../reducers';
-import newAppointmentReducer from '../../reducers/newAppointment';
+import reducers from '../../redux/reducer';
+import newAppointmentReducer from '../../new-appointment/redux/reducer';
+import expressCareReducer from '../../express-care/redux/reducer';
+import { fetchExpressCareWindows } from '../../appointment-list/redux/actions';
 
-import TypeOfCarePage from '../../containers/TypeOfCarePage';
-import VAFacilityPage from '../../containers/VAFacilityPage';
+import TypeOfCarePage from '../../new-appointment/components/TypeOfCarePage';
+import VAFacilityPage from '../../new-appointment/components/VAFacilityPage';
+import ExpressCareInfoPage from '../../express-care/components/ExpressCareInfoPage';
+import ExpressCareReasonPage from '../../express-care/components/ExpressCareReasonPage';
 import { cleanup } from '@testing-library/react';
-import ClinicChoicePage from '../../containers/ClinicChoicePage';
-import PreferredDatePage from '../../containers/PreferredDatePage';
+import ClinicChoicePage from '../../new-appointment/components/ClinicChoicePage';
+import PreferredDatePage from '../../new-appointment/components/PreferredDatePage';
 import { getParentSiteMock, getFacilityMock } from './v0';
 import { mockParentSites, mockSupportedFacilities } from './helpers';
 
 import createRoutesWithStore from '../../routes';
+import TypeOfEyeCarePage from '../../new-appointment/components/TypeOfEyeCarePage';
+import TypeOfFacilityPage from '../../new-appointment/components/TypeOfFacilityPage';
 
 export function createTestStore(initialState) {
   return createStore(
@@ -29,13 +36,25 @@ export function createTestStore(initialState) {
       ...commonReducer,
       ...reducers,
       newAppointment: newAppointmentReducer,
+      expressCare: expressCareReducer,
     }),
     initialState,
     applyMiddleware(thunk),
   );
 }
 
-export function renderFromRoutes({ initialState, store = null, path = '' }) {
+export function createTestHistory(path = '/') {
+  const history = createMemoryHistory({ initialEntries: [path] });
+  sinon.spy(history, 'replace');
+  sinon.spy(history, 'push');
+
+  return history;
+}
+
+export function renderWithStoreAndRouter(
+  ui,
+  { initialState, store = null, path = '/', history = null },
+) {
   const testStore =
     store ||
     createStore(
@@ -43,9 +62,10 @@ export function renderFromRoutes({ initialState, store = null, path = '' }) {
       initialState,
       applyMiddleware(thunk),
     );
-  const memoryHistory = createMemoryHistory(path);
+
+  const historyObject = history || createTestHistory(path);
   const screen = renderInReduxProvider(
-    <Router history={memoryHistory}>{createRoutesWithStore(testStore)}</Router>,
+    <Router history={historyObject}>{ui}</Router>,
     {
       store: testStore,
       initialState,
@@ -53,25 +73,73 @@ export function renderFromRoutes({ initialState, store = null, path = '' }) {
     },
   );
 
-  return { ...screen, memoryHistory };
+  return { ...screen, history: historyObject };
 }
 
-export async function setTypeOfCare(store, label) {
-  const router = {
-    push: sinon.spy(),
-  };
-  const { findByLabelText, getByText } = renderInReduxProvider(
-    <TypeOfCarePage router={router} />,
+export function renderFromRoutes({ initialState, store = null, path = '/' }) {
+  const testStore =
+    store ||
+    createStore(
+      combineReducers({ ...commonReducer, ...reducers }),
+      initialState,
+      applyMiddleware(thunk),
+    );
+  const history = createTestHistory(path);
+  const screen = renderInReduxProvider(
+    <Router history={history}>{createRoutesWithStore(testStore)}</Router>,
+    {
+      store: testStore,
+      initialState,
+      reducers,
+    },
+  );
+
+  return { ...screen, history };
+}
+
+export async function setTypeOfFacility(store, label) {
+  const { findByLabelText, getByText, history } = renderWithStoreAndRouter(
+    <TypeOfFacilityPage />,
     { store },
   );
 
   const radioButton = await findByLabelText(label);
   fireEvent.click(radioButton);
   fireEvent.click(getByText(/Continue/));
-  await waitFor(() => expect(router.push.called).to.be.true);
+  await waitFor(() => expect(history.push.called).to.be.true);
   await cleanup();
 
-  return router.push.firstCall.args[0];
+  return history.push.firstCall.args[0];
+}
+
+export async function setTypeOfCare(store, label) {
+  const { findByLabelText, getByText, history } = renderWithStoreAndRouter(
+    <TypeOfCarePage />,
+    { store },
+  );
+
+  const radioButton = await findByLabelText(label);
+  fireEvent.click(radioButton);
+  fireEvent.click(getByText(/Continue/));
+  await waitFor(() => expect(history.push.called).to.be.true);
+  await cleanup();
+
+  return history.push.firstCall.args[0];
+}
+
+export async function setTypeOfEyeCare(store, label) {
+  const { findByLabelText, getByText, history } = renderWithStoreAndRouter(
+    <TypeOfEyeCarePage />,
+    { store },
+  );
+
+  const radioButton = await findByLabelText(label);
+  fireEvent.click(radioButton);
+  fireEvent.click(getByText(/Continue/));
+  await waitFor(() => expect(history.push.called).to.be.true);
+  await cleanup();
+
+  return history.push.firstCall.args[0];
 }
 
 export async function setVAFacility(store, facilityId) {
@@ -107,61 +175,86 @@ export async function setVAFacility(store, facilityId) {
     data: facilities,
   });
 
-  const router = {
+  const history = {
     push: sinon.spy(),
   };
-  const { findByText } = renderInReduxProvider(
-    <VAFacilityPage router={router} />,
+  const { findByText } = renderWithStoreAndRouter(
+    <VAFacilityPage history={history} />,
     { store },
   );
 
   const continueButton = await findByText(/Continue/);
   fireEvent.click(continueButton);
-  await waitFor(() => expect(router.push.called).to.be.true);
+  await waitFor(() => expect(history.push.called).to.be.true);
   await cleanup();
 
-  return router.push.firstCall.args[0];
+  return history.push.firstCall.args[0];
 }
 
 export async function setClinic(store, clinicLabel) {
-  const router = {
-    push: sinon.spy(),
-  };
-  const { findByText, findByLabelText } = renderInReduxProvider(
-    <ClinicChoicePage router={router} />,
-    { store },
+  const screen = renderWithStoreAndRouter(
+    <Route component={ClinicChoicePage} />,
+    {
+      store,
+    },
   );
 
-  fireEvent.click(await findByLabelText(clinicLabel));
-  fireEvent.click(await findByText(/Continue/));
-  await waitFor(() => expect(router.push.called).to.be.true);
+  fireEvent.click(await screen.findByLabelText(clinicLabel));
+  fireEvent.click(await screen.findByText(/Continue/));
+  await waitFor(() => expect(screen.history.push.called).to.be.true);
   await cleanup();
 
-  return router.push.firstCall.args[0];
+  return screen.history.push.firstCall.args[0];
 }
 
 export async function setPreferredDate(store, preferredDate) {
-  const router = {
-    push: sinon.spy(),
-  };
-  const { findByText, getByLabelText, getByText } = renderInReduxProvider(
-    <PreferredDatePage router={router} />,
-    { store },
+  const screen = renderWithStoreAndRouter(
+    <Route component={PreferredDatePage} />,
+    {
+      store,
+    },
   );
 
-  await findByText(/earliest date/);
-  fireEvent.change(getByLabelText('Month'), {
+  await screen.findByText(/earliest date/);
+  fireEvent.change(screen.getByLabelText('Month'), {
     target: { value: preferredDate.month() + 1 },
   });
-  fireEvent.change(getByLabelText('Day'), {
+  fireEvent.change(screen.getByLabelText('Day'), {
     target: { value: preferredDate.date() },
   });
-  fireEvent.change(getByLabelText('Year'), {
+  fireEvent.change(screen.getByLabelText('Year'), {
     target: { value: preferredDate.year() },
   });
-  fireEvent.click(getByText(/Continue/));
-  await waitFor(() => expect(router.push.called).to.be.true);
+  fireEvent.click(screen.getByText(/Continue/));
+  await waitFor(() => expect(screen.history.push.called).to.be.true);
   await cleanup();
 
-  return router.push.firstCall.args[0];
+  return screen.history.push.firstCall.args[0];
+}
+
+export async function setExpressCareFacility({ store }) {
+  const windowsThunk = fetchExpressCareWindows();
+  await windowsThunk(store.dispatch, store.getState);
+  const screen = renderWithStoreAndRouter(<ExpressCareInfoPage />, {
+    store,
+  });
+
+  await screen.findByText(/How Express Care Works/i);
+  fireEvent.click(screen.getByText(/^Continue/));
+  await waitFor(() => expect(screen.history.push.called).to.be.true);
+  await cleanup();
+}
+
+export async function setExpressCareReason({ store, label }) {
+  const screen = renderWithStoreAndRouter(<ExpressCareReasonPage />, {
+    store,
+  });
+
+  userEvent.click(await screen.findByLabelText(label));
+
+  await waitFor(() => expect(screen.getByLabelText(label).checked).to.be.true);
+
+  userEvent.click(screen.getByText(/^Continue/));
+  await waitFor(() => expect(screen.history.push.called).to.be.true);
+  await cleanup();
 }

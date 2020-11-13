@@ -8,6 +8,7 @@ import {
   selectCheckbox,
   selectRadio,
 } from 'platform/testing/unit/schemaform-utils.jsx';
+import { changeDropdown } from '../helpers/index';
 
 import formConfig from '../../config/form';
 
@@ -45,7 +46,7 @@ describe('686 add child - child place of birth', () => {
         data={formData}
       />,
     );
-    expect(form.find('input').length).to.equal(8);
+    expect(form.find('input').length).to.equal(10);
     form.unmount();
   });
 
@@ -81,7 +82,7 @@ describe('686 add child - child place of birth', () => {
         onSubmit={onSubmit}
       />,
     );
-    fillData(form, 'input#root_placeOfBirth_state', 'California');
+    changeDropdown(form, 'select#root_placeOfBirth_state', 'CA');
     fillData(form, 'input#root_placeOfBirth_city', 'Someplace');
     selectCheckbox(form, 'root_childStatus_biological', true);
     selectRadio(form, 'root_previouslyMarried', 'No');

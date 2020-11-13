@@ -4,18 +4,23 @@ const {
   getWysiwygString,
   createLink,
   createMetaTagArray,
+  isPublished,
+  getImageCrop,
 } = require('./helpers');
 const { mapKeys, camelCase } = require('lodash');
 const assert = require('assert');
 const moment = require('moment');
 
-function toUtc(timeString) {
+function toUtc(timeString, withExplicitUtc = true) {
   const time = moment.utc(timeString);
   assert(
     time.isValid(),
     `Expected timeString to be a moment-parsable string. Found ${timeString}`,
   );
-  return time.format('YYYY-MM-DD kk:mm:ss [UTC]');
+  const formatString = withExplicitUtc
+    ? 'YYYY-MM-DD HH:mm:ss [UTC]'
+    : 'YYYY-MM-DD[T]kk:mm:ss';
+  return time.format(formatString);
 }
 
 const transform = entity => ({
@@ -27,8 +32,8 @@ const transform = entity => ({
   changed: utcToEpochTime(getDrupalValue(entity.changed)),
   entityMetatags: createMetaTagArray(entity.metatag.value),
   // TODO: Verify this is how to derive the entityPublished state
-  entityPublished: entity.moderationState[0].value === 'published',
-  fieldAdditionalInformationAbo: entity.fieldAdditionalInformationAbo.value
+  entityPublished: isPublished(getDrupalValue(entity.status)),
+  fieldAdditionalInformationAbo: entity.fieldAdditionalInformationAbo[0]
     ? {
         processed: getWysiwygString(
           getDrupalValue(entity.fieldAdditionalInformationAbo),
@@ -44,10 +49,25 @@ const transform = entity => ({
   },
   fieldDate: {
     startDate: toUtc(entity.fieldDate[0].value),
-    value: entity.fieldDate[0].value,
+    value: toUtc(entity.fieldDate[0].value, false),
     endDate: toUtc(entity.fieldDate[0].end_value),
-    endValue: entity.fieldDate[0].end_value,
+    endValue: toUtc(entity.fieldDate[0].end_value, false),
   },
+  // The templates expect timestamps, like we get from graphql,
+  // but the cms-export gives us UTC dates.
+  fieldDatetimeRangeTimezone:
+    entity.fieldDatetimeRangeTimezone &&
+    entity.fieldDatetimeRangeTimezone.length
+      ? {
+          value: entity.fieldDatetimeRangeTimezone[0].value
+            ? Date.parse(entity.fieldDatetimeRangeTimezone[0].value) / 1000
+            : null,
+          endValue: entity.fieldDatetimeRangeTimezone[0].endValue
+            ? Date.parse(entity.fieldDatetimeRangeTimezone[0].endValue) / 1000
+            : null,
+          timezone: entity.fieldDatetimeRangeTimezone[0].timezone,
+        }
+      : {},
   fieldDescription: getDrupalValue(entity.fieldDescription),
   fieldEventCost: getDrupalValue(entity.fieldEventCost),
   fieldEventCta: getDrupalValue(entity.fieldEventCta),
@@ -57,7 +77,11 @@ const transform = entity => ({
   fieldFacilityLocation: entity.fieldFacilityLocation[0] || null,
   fieldLink: createLink(entity.fieldLink, ['url']),
   fieldLocationHumanreadable: getDrupalValue(entity.fieldLocationHumanreadable),
-  fieldMedia: entity.fieldMedia[0] || null,
+  fieldMedia:
+    entity.fieldMedia && entity.fieldMedia.length
+      ? { entity: getImageCrop(entity.fieldMedia[0], '_72MEDIUMTHUMBNAIL') }
+      : null,
+  status: getDrupalValue(entity.status),
 });
 
 module.exports = {
@@ -70,6 +94,7 @@ module.exports = {
     'field_address',
     'field_body',
     'field_date',
+    'field_datetime_range_timezone',
     'field_description',
     'field_event_cost',
     'field_event_cta',
@@ -79,7 +104,7 @@ module.exports = {
     'field_location_humanreadable',
     'field_media',
     'metatag',
-    'moderation_state',
+    'status',
   ],
   transform,
 };

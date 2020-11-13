@@ -1,10 +1,13 @@
-import { apiRequest } from 'platform/utilities/api';
-import environment from 'platform/utilities/environment';
-import { isVet360Configured } from 'platform/user/profile/vet360/util/local-vet360.js';
+import recordEvent from '~/platform/monitoring/record-event';
+import { apiRequest } from '~/platform/utilities/api';
+import environment from '~/platform/utilities/environment';
+import { isVAProfileServiceConfigured } from '@@vap-svc/util/local-vapsvc';
+
 import {
   debtLettersSuccess,
   debtLettersSuccessVBMS,
 } from '../utils/mockResponses';
+import { deductionCodes } from '../const/deduction-codes';
 
 export const DEBTS_FETCH_INITIATED = 'DEBTS_FETCH_INITIATED';
 export const DEBTS_FETCH_SUCCESS = 'DEBTS_FETCH_SUCCESS';
@@ -39,28 +42,6 @@ export const setActiveDebt = debt => ({
   debt,
 });
 
-export const fetchDebtLetters = () => async dispatch => {
-  dispatch(fetchDebtsInitiated());
-  try {
-    const options = {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Key-Inflection': 'camel',
-        'Source-App-Name': window.appName,
-      },
-    };
-    const response = isVet360Configured()
-      ? await apiRequest(`${environment.API_URL}/v0/debts`, options)
-      : await debtLettersSuccess();
-
-    return dispatch(fetchDebtLettersSuccess(response));
-  } catch (error) {
-    return dispatch(fetchDebtLettersFailure());
-  }
-};
-
 export const fetchDebtLettersVBMS = () => async dispatch => {
   dispatch(fetchDebtLettersInitiated());
   try {
@@ -73,7 +54,7 @@ export const fetchDebtLettersVBMS = () => async dispatch => {
         'Source-App-Name': window.appName,
       },
     };
-    const response = isVet360Configured()
+    const response = isVAProfileServiceConfigured()
       ? await apiRequest(`${environment.API_URL}/v0/debt_letters`, options)
       : await debtLettersSuccessVBMS();
 
@@ -83,6 +64,7 @@ export const fetchDebtLettersVBMS = () => async dispatch => {
         return {
           ...debtLetter,
           typeDescription: debtLetter.typeDescription.slice(6),
+          date: new Date(debtLetter.receivedAt),
         };
       }
       return debtLetter;
@@ -90,6 +72,54 @@ export const fetchDebtLettersVBMS = () => async dispatch => {
 
     return dispatch(fetchDebtLettersVBMSSuccess(filteredResponse));
   } catch (error) {
+    recordEvent({ event: 'bam-get-veteran-vbms-info-failed' });
     return dispatch(fetchDebtLettersVBMSFailure());
+  }
+};
+
+export const fetchDebtLetters = () => async dispatch => {
+  dispatch(fetchDebtsInitiated());
+  try {
+    const options = {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Key-Inflection': 'camel',
+        'Source-App-Name': window.appName,
+      },
+    };
+    const response = isVAProfileServiceConfigured()
+      ? await apiRequest(`${environment.API_URL}/v0/debts`, options)
+      : await debtLettersSuccess();
+
+    if (Object.keys(response).includes('error')) {
+      recordEvent({ event: 'bam-get-veteran-dmc-info-failed' });
+      return dispatch(fetchDebtLettersFailure());
+    }
+
+    const approvedDeductionCodes = Object.keys(deductionCodes);
+    // remove any debts that do not have approved deductionCodes or
+    // that have a current amount owed of 0
+    const filteredResponse = response.debts
+      .filter(res => approvedDeductionCodes.includes(res.deductionCode))
+      .filter(debt => debt.currentAr > 0);
+
+    recordEvent({
+      event: 'bam-get-veteran-dmc-info-successful',
+      'veteran-has-dependent-debt': response.hasDependentDebt,
+    });
+
+    if (filteredResponse.length > 0) {
+      recordEvent({ 'number-of-current-debt-cards': filteredResponse.length });
+    }
+    // suppress VBMS call if they have dependent debt
+    if (!response.hasDependentDebts) {
+      dispatch(fetchDebtLettersVBMS());
+    }
+    return dispatch(fetchDebtLettersSuccess(filteredResponse));
+  } catch (error) {
+    recordEvent({ event: 'bam-get-veteran-dmc-info-failed' });
+    return dispatch(fetchDebtLettersFailure());
   }
 };

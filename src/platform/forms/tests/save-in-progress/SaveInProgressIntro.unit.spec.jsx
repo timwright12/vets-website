@@ -20,8 +20,11 @@ describe('Schemaform <SaveInProgressIntro>', () => {
   const toggleLoginModal = () => {};
 
   const formConfig = {
-    customText: {
-      appType: '',
+    saveInProgress: {
+      messages: {
+        expired:
+          'Your saved health care benefits application (10-10EZ) has expired. If you want to apply for health care benefits, please start a new application.',
+      },
     },
   };
 
@@ -68,7 +71,7 @@ describe('Schemaform <SaveInProgressIntro>', () => {
     ).to.include(moment.unix(946684800).format('M/D/YYYY [at] h:mm a'));
 
     expect(tree.find('.usa-alert').text()).to.contain(
-      'Your form is in progress',
+      'Your application is in progress',
     );
     expect(tree.find('.usa-alert').text()).to.contain('will expire on');
     expect(tree.find('withRouter(FormStartControls)').exists()).to.be.true;
@@ -223,7 +226,7 @@ describe('Schemaform <SaveInProgressIntro>', () => {
     );
 
     expect(tree.find('.usa-alert').text()).to.contain(
-      'You can save this form in progress',
+      'You can save this application in progress',
     );
     expect(tree.find('withRouter(FormStartControls)').exists()).to.be.true;
     tree.unmount();
@@ -254,7 +257,7 @@ describe('Schemaform <SaveInProgressIntro>', () => {
     );
 
     expect(tree.find('.usa-alert').text()).to.contain(
-      'Note: Since you’re signed in to your account, we can prefill part of your application based on your account details. You can also save your form in progress and come back later to finish filling it out.',
+      'Note: Since you’re signed in to your account, we can prefill part of your application based on your account details. You can also save your application in progress and come back later to finish filling it out.',
     );
     expect(tree.find('withRouter(FormStartControls)').exists()).to.be.true;
     tree.unmount();
@@ -364,7 +367,9 @@ describe('Schemaform <SaveInProgressIntro>', () => {
       />,
     );
 
-    expect(tree.find('.usa-alert').text()).to.contain('Your form has expired');
+    expect(tree.find('.usa-alert').text()).to.contain(
+      'Your application has expired',
+    );
     expect(tree.find('.usa-alert').text()).to.contain(
       'Your saved health care benefits application (10-10EZ) has expired. If you want to apply for health care benefits, please start a new application.',
     );
@@ -595,6 +600,60 @@ describe('Schemaform <SaveInProgressIntro>', () => {
     expect(tree.find('.usa-button-primary').text()).to.equal(
       'Custom message displayed to non-signed-in users',
     );
+    tree.unmount();
+  });
+
+  it('should not render an inProgress message', () => {
+    const user = {
+      profile: {
+        savedForms: [
+          {
+            form: VA_FORM_IDS.FORM_10_10EZ,
+            metadata: {
+              lastUpdated: 946684800,
+              expiresAt: moment().unix() + 2000,
+            },
+          },
+        ],
+        prefillsAvailable: [],
+      },
+      login: {
+        currentlyLoggedIn: true,
+        loginUrls: {
+          idme: '/mockLoginUrl',
+        },
+      },
+    };
+
+    const emptyMessageConfig = {
+      saveInProgress: {
+        messages: {
+          inProgress: '',
+        },
+      },
+    };
+
+    const tree = shallow(
+      <SaveInProgressIntro
+        saveInProgress={{ formData: {} }}
+        pageList={pageList}
+        formId="1010ez"
+        user={user}
+        prefillEnabled
+        hideUnauthedStartLink
+        fetchInProgressForm={fetchInProgressForm}
+        removeInProgressForm={removeInProgressForm}
+        toggleLoginModal={toggleLoginModal}
+        startMessageOnly
+        unauthStartText="Custom message displayed to non-signed-in users"
+        formConfig={emptyMessageConfig}
+      />,
+    );
+    expect(tree.find('.saved-form-item-metadata')).to.have.lengthOf(1);
+    expect(tree.find('.saved-form-metadata-container').text()).to.not.contain(
+      'Your application is in progress',
+    );
+
     tree.unmount();
   });
 });

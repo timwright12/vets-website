@@ -5,8 +5,6 @@ import Scroll from 'react-scroll';
 
 import { focusElement } from 'platform/utilities/ui';
 
-import { fireAnalytics } from '../analytics/helpers.js';
-
 const scroller = Scroll.scroller;
 const scrollToTop = () => {
   scroller.scrollTo('topScrollElement', {
@@ -20,7 +18,6 @@ export class ConfirmationPage extends React.Component {
   componentDidMount() {
     focusElement('.schemaform-title > h1');
     scrollToTop();
-    fireAnalytics(this.props.form.data);
   }
 
   handlePrintClick = () => {
@@ -28,14 +25,10 @@ export class ConfirmationPage extends React.Component {
   };
 
   render() {
-    const { submission } = this.props.form;
+    const { submission, data } = this.props.form;
     const { response } = submission;
-    let veteranFirstName = '';
-    let veteranLastName = '';
-    if (submission.data) {
-      veteranFirstName = submission.data.veteranInformation.first;
-      veteranLastName = submission.data.veteranInformation.last;
-    }
+    const veteranFirstName = data.veteranInformation.fullName.first || '';
+    const veteranLastName = data.veteranInformation.fullName.last || '';
 
     return (
       <>
@@ -53,7 +46,9 @@ export class ConfirmationPage extends React.Component {
             </p>
             {response && (
               <div>
-                <p>for {`${veteranFirstName} ${veteranLastName}`}</p>
+                <p>
+                  for {veteranFirstName} {veteranLastName}
+                </p>
                 <ul className="claim-list">
                   <li>
                     <strong>Date submitted</strong>

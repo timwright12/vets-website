@@ -1,16 +1,26 @@
 import React from 'react';
+import moment from 'moment';
 import AdditionalInfo from '@department-of-veterans-affairs/formation-react/AdditionalInfo';
 import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
-import { FORM_URL, NULL_CONDITION_STRING } from '../constants';
+import { COVID_FAQ_URL, NULL_CONDITION_STRING } from '../constants';
+import DownloadLink from './DownloadLink';
 
-export const contestedIssuesTitle = (
-  <>
-    <strong>Select the issue(s) you would like to contest</strong>
-    <span className="schemaform-required-span vads-u-font-weight--normal vads-u-font-size--base">
-      (*Required)
-    </span>
-  </>
-);
+// We shouldn't ever see the couldn't find contestable issues message since we
+// prevent the user from navigating past the intro page; but it's here just in
+// case we end up filtering out deferred and expired issues
+export const ContestedIssuesTitle = props =>
+  props?.formData?.contestedIssues?.length === 0 ? (
+    <h2 className="vads-u-font-size--h4">
+      Sorry, we couldn’t find any contested issues
+    </h2>
+  ) : (
+    <>
+      <strong>Select the issue you would like to have reviewed</strong>
+      <span className="schemaform-required-span vads-u-font-weight--normal vads-u-font-size--base">
+        (*Required)
+      </span>
+    </>
+  );
 
 /**
  * @typedef {Object} Disability
@@ -24,6 +34,7 @@ export const disabilityOption = ({ attributes }) => {
     ratingIssueSubjectText,
     description,
     ratingIssuePercentNumber,
+    approxDecisionDate,
   } = attributes;
   // May need to throw an error to Sentry if any of these doesn't exist
   // A valid rated disability *can* have a rating percentage of 0%
@@ -31,56 +42,91 @@ export const disabilityOption = ({ attributes }) => {
 
   return (
     <div className="widget-content">
-      <h3 className="vads-u-margin-top--0 vads-u-font-size--h4">
+      <h3 className="vads-u-margin-y--0 vads-u-font-size--h4">
         {typeof ratingIssueSubjectText === 'string'
           ? ratingIssueSubjectText
           : NULL_CONDITION_STRING}
       </h3>
-      <span>{description || ''}</span>
+      {description && (
+        <p className="vads-u-margin-bottom--0">{description || ''}</p>
+      )}
       {showPercentNumber && (
-        <p>
+        <p className="vads-u-margin-bottom--0">
           Current rating: <strong>{ratingIssuePercentNumber}%</strong>
+        </p>
+      )}
+      {approxDecisionDate && (
+        <p>
+          Decision date:{' '}
+          <strong>{moment(approxDecisionDate).format('MMM D, YYYY')}</strong>
         </p>
       )}
     </div>
   );
 };
 
+const disabilitiesList = (
+  <div>
+    <ul>
+      <li>
+        We made the decision over a year ago. You have 1 year from the date on
+        your decision letter to request a Higher-Level Review.{' '}
+        <strong>Note:</strong> If you weren’t able to request a timely review
+        due to COVID-19 pandemic, we may grant you an extension of the deadline.
+        To request an extension, <DownloadLink /> and attach a note that you’re
+        requesting a filing extension due to COVID-19.
+      </li>
+      <li>
+        Your issue isn’t related to monthly compensation, pension, or survivor
+        benefits. For all other benefits, like health care, insurance or
+        education, you’ll need to <DownloadLink /> and submit it by mail or in
+        person.
+      </li>
+      <li>
+        The issue or decision isn’t in our system yet. You’ll need to{' '}
+        <DownloadLink /> and submit it by fax or mail.
+      </li>
+      <li>
+        You’re applying for a benefit that another surviving dependent of the
+        Veteran is also applying for. And by law, only 1 of you can receive the
+        benefit. You’ll need to appeal to the Board of Veterans’ Appeals.
+      </li>
+      <li>
+        You’re requesting a review of a Board of Veterans’ Appeals decision.
+        You’ll need to refer to the Board’s decision notice for your review
+        options.
+      </li>
+      <li>
+        You’re requesting a review of another Higher-Level Review. You can
+        either submit a supplemental claim or appeal to the Board of Veterans’
+        Appeals.
+      </li>
+    </ul>
+    <p>
+      To learn more about how COVID-19 affects claims or appeals, please visit
+      our <a href={COVID_FAQ_URL}>Coronavirus FAQ page</a>.
+    </p>
+  </div>
+);
+
+export const disabilitiesExplanationAlert = (
+  <>
+    <p className="vads-u-margin-top--2p5" />
+    <AdditionalInfo triggerText={'Why isn’t my issue eligible?'}>
+      <p>Your issue may not be eligible for a Higher-Level Review if:</p>
+      {disabilitiesList}
+    </AdditionalInfo>
+  </>
+);
+
 export const disabilitiesExplanation = (
   <>
     <p className="vads-u-margin-top--2p5" />
-    <AdditionalInfo triggerText="Don’t see the issue you’re looking for?">
-      There are several reasons your issue or decision might not appear in the
-      list above:
-      <ul>
-        <li>
-          If we made the decision over a year ago, it’s not eligible for a
-          Higher-Level Review.
-        </li>
-        <li>
-          The decision might be for another benefit type, like health care,
-          insurance, or education. Decisions for these benefit types won’t
-          appear on this list. If you want to request Higher-Level Review for
-          benefit types other than compensation, you’ll need to fill out a{' '}
-          <a href={FORM_URL}>
-            Decision Review Request: Higher-Level Review (VA Form 20-0996)
-          </a>
-          .
-        </li>
-        <li>
-          The issue or decision might not be in our system. Please refer to your
-          decision letter about what form you’ll need to submit.
-        </li>
-        <li>
-          If you were unable to file a Higher-Level Review claim before the
-          deadline and need to request an extension based on good cause, you’ll
-          need to fill out a paper{' '}
-          <a href={FORM_URL}>
-            VA Form 20-0996, Decision Review Request: Higher-Level Review
-          </a>{' '}
-          with your request for an extension.
-        </li>
-      </ul>
+    <AdditionalInfo triggerText={'Don’t see the issue you’re looking for?'}>
+      <p>
+        There are many reasons a decision might not appear in the list above.
+      </p>
+      {disabilitiesList}
     </AdditionalInfo>
   </>
 );

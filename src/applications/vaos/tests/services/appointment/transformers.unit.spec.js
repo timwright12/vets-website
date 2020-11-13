@@ -4,14 +4,17 @@ import {
   APPOINTMENT_TYPES,
   VIDEO_TYPES,
   APPOINTMENT_STATUS,
-  CANCELLED_APPOINTMENT_SET,
-  PAST_APPOINTMENTS_HIDE_STATUS_SET,
-  FUTURE_APPOINTMENTS_HIDE_STATUS_SET,
 } from '../../../utils/constants';
 import {
   transformConfirmedAppointments,
   transformPendingAppointments,
 } from '../../../services/appointment/transformers';
+import {
+  CANCELLED_APPOINTMENT_SET,
+  PAST_APPOINTMENTS_HIDE_STATUS_SET,
+  FUTURE_APPOINTMENTS_HIDE_STATUS_SET,
+} from '../../../services/appointment';
+import { transformATLASLocation } from '../../../services/location/transformers';
 
 const now = moment();
 const tomorrow = moment().add(1, 'days');
@@ -207,6 +210,20 @@ const videoAppt = {
           },
         },
       ],
+      tasInfo: {
+        confirmationCode: '7VBBCA',
+        address: {
+          streetAddress: '114 Dewey Ave',
+          city: 'Eureka',
+          state: 'MT',
+          zipCode: '59917',
+          country: 'USA',
+          longitude: -115.1,
+          latitude: 48.8,
+          additionalDetails: '',
+        },
+        siteCode: 9931,
+      },
       providers: [
         {
           name: { firstName: 'Test T+90', lastName: 'Test' },
@@ -371,15 +388,13 @@ describe('VAOS Appointment transformer', () => {
       });
 
       it('should set provider contact info', () => {
-        expect(data.contained[0].actor.name).to.equal('Audiologists of Dayton');
-        expect(data.contained[0].actor.address.line[0]).to.equal('123 Main St');
-        expect(data.contained[0].actor.address.city).to.equal('dayton');
-        expect(data.contained[0].actor.address.state).to.equal('OH');
-        expect(data.contained[0].actor.address.postalCode).to.equal('45405');
-        expect(data.contained[0].actor.telecom[0].system).to.equal('phone');
-        expect(data.contained[0].actor.telecom[0].value).to.equal(
-          '(703) 345-2400',
-        );
+        expect(data.contained[0].name).to.equal('Audiologists of Dayton');
+        expect(data.contained[0].address.line[0]).to.equal('123 Main St');
+        expect(data.contained[0].address.city).to.equal('dayton');
+        expect(data.contained[0].address.state).to.equal('OH');
+        expect(data.contained[0].address.postalCode).to.equal('45405');
+        expect(data.contained[0].telecom[0].system).to.equal('phone');
+        expect(data.contained[0].telecom[0].value).to.equal('(703) 345-2400');
         expect(data.participant[0].actor.display).to.equal('Bob Belcher');
       });
 
@@ -432,22 +447,25 @@ describe('VAOS Appointment transformer', () => {
       });
 
       it('should not set clinic as HealthcareService', () => {
-        expect(data.participant).to.equal(null);
+        expect(
+          data.participant.some(p =>
+            p.actor?.reference?.includes('HealthcareService'),
+          ),
+        ).to.be.false;
       });
 
       it('should set video url in HealthcareService.telecom', () => {
         expect('contained' in data).to.equal(true);
-        expect(data.contained[0].resourceType).to.equal('HealthcareService');
-        expect(data.contained[0].id).to.contain(
+        expect(data.contained[1].resourceType).to.equal('HealthcareService');
+        expect(data.contained[1].id).to.contain(
           `var${videoAppt.vvsAppointments[0].id}`,
         );
-        expect(data.contained[0].telecom[0].value).to.equal(
+        expect(data.contained[1].telecom[0].value).to.equal(
           'https://care2.evn.va.gov/vvc-app/?join=1&media=1&escalate=1&conference=VVC8275247@care2.evn.va.gov&pin=3242949390#',
         );
-        expect(data.contained[0].telecom[0].period.start).to.equal(data.start);
-        expect(data.contained[0].resourceType).to.equal('HealthcareService');
-        expect(data.contained[0].characteristic[0].coding).to.equal(
-          VIDEO_TYPES.videoConnect,
+        expect(data.contained[1].telecom[0].period.start).to.equal(data.start);
+        expect(data.contained[1].characteristic[0].coding[0].system).to.equal(
+          'VVS',
         );
       });
 
@@ -467,7 +485,7 @@ describe('VAOS Appointment transformer', () => {
         );
       });
 
-      it('should return gfe video characteristicyr', () => {
+      it('should return gfe video characteristics', () => {
         const gfeData = transformConfirmedAppointments([
           {
             ...videoAppt,
@@ -480,9 +498,24 @@ describe('VAOS Appointment transformer', () => {
           },
         ])[0];
 
-        expect(gfeData.contained[0].resourceType).to.equal('HealthcareService');
-        expect(gfeData.contained[0].characteristic[0].coding).to.equal(
+        expect(gfeData.contained[1].resourceType).to.equal('HealthcareService');
+        expect(gfeData.contained[1].characteristic[0].coding[0].code).to.equal(
           VIDEO_TYPES.gfe,
+        );
+      });
+      it('should return ATLAS location', () => {
+        const { address } = transformATLASLocation(
+          videoAppt.vvsAppointments[0].tasInfo,
+        );
+
+        expect(data.contained[0].address).to.eql(address);
+      });
+      it('should return confirmation code', () => {
+        expect(data.contained[1].characteristic[1].coding[0].code).to.equal(
+          '7VBBCA',
+        );
+        expect(data.contained[1].characteristic[1].coding[0].system).to.equal(
+          'ATLAS_CC',
         );
       });
     });
@@ -515,21 +548,17 @@ describe('VAOS Appointment transformer', () => {
           p.actor.reference.includes('Location'),
         )[0];
         expect(locationActor.actor.reference).to.equal('Location/var983');
-        expect(locationActor.actor.display).to.equal(
-          'CHYSHR-Cheyenne VA Medical Center',
-        );
       });
 
       it('should set patient info in participants', () => {
-        const patientActor = data.participant.filter(p =>
-          p.actor.reference.includes('Patient'),
+        const patientActor = data.contained.filter(
+          p => p.resourceType === 'Patient',
         )[0];
-        expect(patientActor.actor.display).to.equal('MORRISON, JUDY');
-        const telecomPhone = patientActor.actor.telecom.filter(
+        const telecomPhone = patientActor.telecom.filter(
           t => t.system === 'phone',
         )[0];
         expect(telecomPhone.value).to.equal('(999) 999-9999');
-        const telecomEmail = patientActor.actor.telecom.filter(
+        const telecomEmail = patientActor.telecom.filter(
           t => t.system === 'email',
         )[0];
         expect(telecomEmail.value).to.equal('aarathi.poldass@va.gov');
@@ -544,9 +573,9 @@ describe('VAOS Appointment transformer', () => {
       });
 
       it('should return video type in HealthcareService coding', () => {
-        expect(data.contained[0].resourceType).to.equal('HealthcareService');
-        expect(data.contained[0].characteristic[0].coding).to.equal(
-          VIDEO_TYPES.videoConnect,
+        expect(data.contained[1].resourceType).to.equal('HealthcareService');
+        expect(data.contained[1].characteristic[0].coding[0].system).to.equal(
+          'VVS',
         );
       });
 
@@ -828,62 +857,47 @@ describe('VAOS Appointment transformer', () => {
       expect(data.reason).to.equal('Follow-up/Routine');
     });
 
-    describe('Appointment participants', () => {
-      const locationActor = data.participant.filter(p =>
-        p.actor.reference.includes('Location'),
+    describe('Appointment contained resources', () => {
+      const practitionerData = data.contained.filter(
+        p => p.resourceType === 'Practitioner',
       )[0];
-      const patientActor = data.participant.filter(p =>
-        p.actor.reference.includes('Patient'),
+      const patientData = data.contained.filter(
+        p => p.resourceType === 'Patient',
       )[0];
 
-      describe('should set facility as Location in participants', () => {
+      describe('should set provider location', () => {
         it('should set location reference', () => {
-          expect(locationActor.actor.reference).to.equal('Location/var983');
+          expect(
+            practitionerData.practitionerRole[0].location[0].reference,
+          ).to.equal('Location/cc-location-8a4886886e4c8e22016e6613216d001f-0');
         });
 
         it('should set the display', () => {
-          expect(locationActor.actor.display).to.equal(
-            'CHYSHR-Cheyenne VA Medical Center- RR',
-          );
+          expect(
+            practitionerData.practitionerRole[0].location[0].display,
+          ).to.contain('Some practice');
+        });
+
+        it('should set provider contact info', () => {
+          expect(practitionerData.name.given).to.equal('Test');
+          expect(practitionerData.name.family).to.equal('User');
+          expect(practitionerData.name.text).to.equal('Test User');
         });
       });
 
       describe('should set patient info in participants', () => {
-        it('should set name', () => {
-          expect(patientActor.actor.display).to.equal('MORRISON, JUDY');
-        });
-
         it('should set phone', () => {
-          const telecomPhone = patientActor.actor.telecom.filter(
+          const telecomPhone = patientData.telecom.filter(
             t => t.system === 'phone',
           )[0];
           expect(telecomPhone.value).to.equal('(555) 555-5555');
         });
 
         it('should set email', () => {
-          const telecomEmail = patientActor.actor.telecom.filter(
+          const telecomEmail = patientData.telecom.filter(
             t => t.system === 'email',
           )[0];
           expect(telecomEmail.value).to.equal('Vilasini.reddy@va.gov');
-        });
-      });
-    });
-
-    describe('VA custom attributes', () => {
-      describe('Contained attributes', () => {
-        it('should set provider contact info', () => {
-          expect(data.contained[0].actor.name).to.equal(
-            'Some practiceSome practiceSome practiceSome practice',
-          );
-          expect(data.contained[0].actor.firstName).to.equal('Test');
-          expect(data.contained[0].actor.lastName).to.equal('User');
-        });
-
-        it('should set provider address', () => {
-          expect(data.contained[0].actor.address.line[0]).to.equal('street');
-          expect(data.contained[0].actor.address.city).to.equal('city');
-          expect(data.contained[0].actor.address.state).to.equal('state');
-          expect(data.contained[0].actor.address.postalCode).to.equal('01060');
         });
       });
     });

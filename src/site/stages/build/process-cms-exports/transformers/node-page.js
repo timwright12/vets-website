@@ -5,6 +5,7 @@ const {
   getDrupalValue,
   utcToEpochTime,
   createMetaTagArray,
+  isPublished,
 } = require('./helpers');
 
 function pageTransform(entity) {
@@ -15,7 +16,8 @@ function pageTransform(entity) {
     fieldPageLastBuilt,
     fieldAlert,
     fieldDescription,
-    moderationState: [{ value: published }],
+    fieldTableOfContentsBoolean,
+    status,
     metatag: { value: metaTags },
   } = entity;
 
@@ -23,9 +25,10 @@ function pageTransform(entity) {
     title: getDrupalValue(title),
     entityBundle: 'page',
     fieldAdministration: entity.fieldAdministration[0],
-
+    fieldRelatedLinks: entity.fieldRelatedLinks[0],
     fieldIntroText: getDrupalValue(fieldIntroText),
     fieldDescription: getDrupalValue(fieldDescription),
+    fieldTableOfContentsBoolean: getDrupalValue(fieldTableOfContentsBoolean),
     changed: utcToEpochTime(getDrupalValue(changed)),
     fieldPageLastBuilt: {
       // Assume the raw data is in UTC
@@ -37,13 +40,13 @@ function pageTransform(entity) {
     //   getDrupalValue(fieldPageLastBuilt),
     // ).toUTCString(),
 
-    entityPublished: published === 'published',
-    entityMetaTags: createMetaTagArray(metaTags, 'type'),
+    entityPublished: isPublished(getDrupalValue(status)),
+    entityMetatags: createMetaTagArray(metaTags),
   });
 
   transformed.fieldAlert = !isEmpty(flatten(fieldAlert)) ? fieldAlert[0] : null;
 
-  delete transformed.moderationState;
+  delete transformed.status;
   delete transformed.metatag;
   delete transformed.path;
 
@@ -54,6 +57,7 @@ module.exports = {
   filter: [
     'field_intro_text',
     'field_description',
+    'field_table_of_contents_boolean',
     'field_featured_content',
     'field_content_block',
     'field_alert',
@@ -62,7 +66,7 @@ module.exports = {
     'field_page_last_built',
     'metatag',
     'changed',
-    'moderation_state',
+    'status',
     'path',
   ],
   transform: pageTransform,

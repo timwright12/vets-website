@@ -40,7 +40,8 @@ export default class ArrayField extends React.Component {
      * manage and doesn’t need to persist from page to page
      */
     this.state = {
-      editing: props.formData ? props.formData.map(() => false) : [true],
+      // force edit mode for any empty service period data
+      editing: this.setInitialState(),
     };
   }
 
@@ -66,6 +67,16 @@ export default class ArrayField extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     return !deepEquals(this.props, nextProps) || nextState !== this.state;
   }
+
+  setInitialState = () => {
+    const { formData, uiSchema } = this.props;
+    if (formData) {
+      return uiSchema['ui:options']?.setEditState
+        ? uiSchema['ui:options']?.setEditState(formData)
+        : formData.map(() => false);
+    }
+    return [true];
+  };
 
   onItemChange = (indexToChange, value) => {
     const newItems = _.set(indexToChange, value, this.props.formData || []);
@@ -350,7 +361,7 @@ export default class ArrayField extends React.Component {
             const isLast = items.length === index + 1;
             const isEditing = this.state.editing[index];
 
-            const Tag = formContext.onReviewPage ? 'h5' : 'h3';
+            const Tag = formContext.onReviewPage ? 'h4' : 'h3';
 
             if (isEditing) {
               return (

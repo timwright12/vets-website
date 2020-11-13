@@ -1,18 +1,62 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import { srSubstitute } from '../../all-claims/utils';
+import { setData } from 'platform/forms-system/src/js/actions';
 import { genderLabels } from 'platform/static-data/labels';
 import { selectProfile } from 'platform/user/selectors';
+import Telephone, {
+  CONTACTS,
+} from '@department-of-veterans-affairs/formation-react/Telephone';
+import { srSubstitute } from '../../all-claims/utils';
+import { SELECTED } from '../constants';
 
 const mask = srSubstitute('●●●–●●–', 'ending with');
 
-export const veteranInfoView = ({ profile = {}, veteran = {} }) => {
-  const { ssnLastFour, vaFileNumber } = veteran;
+export const VeteranInfoView = ({
+  formData = {},
+  profile = {},
+  veteran = {},
+  setFormData,
+  contestableIssues = {},
+}) => {
+  const { ssnLastFour, vaFileLastFour } = veteran;
   const { dob, gender, userFullName } = profile;
 
   const { first, middle, last, suffix } = userFullName;
+  // ContestableIssues API needs a benefit type, so they are grouped together
+  const { issues, benefitType } = contestableIssues;
+
+  useEffect(() => {
+    if (issues?.length > 0 && benefitType) {
+      // Everytime the user starts the form, we need to get an updated list of
+      // contestable issues. This bit of code ensures that exactly matching
+      // previously selected entries are still selected
+      const contestedIssues = issues.map(issue => {
+        const newAttrs = issue.attributes;
+        const existingIssue = (formData.contestedIssues || []).find(
+          ({ attributes: oldAttrs }) =>
+            ['ratingIssueReferenceId', 'ratingIssuePercentNumber'].every(
+              key => oldAttrs[key] === newAttrs[key],
+            ),
+        );
+        return existingIssue?.[SELECTED]
+          ? { ...issue, [SELECTED]: true }
+          : issue;
+      });
+
+      // add benefitType (from wizard) and contestedIssues (from API) values to
+      // the form; it's added here instead of the intro page because at this
+      // point the prefill or save-in-progress data would overwrite it
+      setFormData({
+        ...formData,
+        // add benefitType from wizard
+        benefitType: benefitType || formData.benefitType,
+        contestedIssues,
+      });
+    }
+  });
 
   return (
     <>
@@ -28,9 +72,9 @@ export const veteranInfoView = ({ profile = {}, veteran = {} }) => {
             Social Security number: {mask} {ssnLastFour.slice(-4)}
           </p>
         )}
-        {vaFileNumber && (
+        {vaFileLastFour && (
           <p className="vafn">
-            VA file number: {mask} {vaFileNumber.slice(-4)}
+            VA file number: {mask} {vaFileLastFour.slice(-4)}
           </p>
         )}
         <p>
@@ -48,24 +92,33 @@ export const veteranInfoView = ({ profile = {}, veteran = {} }) => {
       <p>
         <strong>Note:</strong> If you need to update your personal information,
         please call Veterans Benefits Assistance toll free at{' '}
-        <a
-          href="tel:1-800-827-1000"
-          aria-label="8 0 0. 8 2 7. 1 0 0 0."
-          className="nowrap"
-        >
-          800-827-1000
-        </a>
-        , Monday through Friday, 8:00 a.m. to 9:00 p.m. ET.
+        <Telephone contact={CONTACTS.VA_BENEFITS} />, Monday through Friday,
+        8:00 a.m. to 9:00 p.m. ET.
       </p>
     </>
   );
 };
 
-export default connect(state => {
+VeteranInfoView.propTypes = {
+  setFormData: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
   const profile = selectProfile(state);
-  const veteran = state.form?.loadedData?.formData?.veteran;
+  const veteran = state.form?.data.veteran;
+  const { contestableIssues } = state;
   return {
     profile,
     veteran,
+    contestableIssues,
   };
-})(veteranInfoView);
+};
+
+const mapDispatchToProps = {
+  setFormData: setData,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(VeteranInfoView);

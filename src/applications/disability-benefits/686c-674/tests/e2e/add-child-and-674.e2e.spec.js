@@ -3,7 +3,6 @@ const E2eHelpers = require('platform/testing/e2e/helpers');
 const Timeouts = require('platform/testing/e2e/timeouts');
 const manifest = require('../../manifest.json');
 const testData = require('./686-test-data.json');
-const environments = require('site/constants/environments');
 
 import * as TestHelpers from './test-helpers';
 
@@ -36,7 +35,7 @@ const runTest = E2eHelpers.createE2eTest(client => {
 
   // veteran information
   E2eHelpers.expectLocation(client, '/veteran-information');
-  // client.axeCheck('.main');
+  client.axeCheck('.main');
   client.click('button[id="4-continueButton"]');
 
   // veteran address
@@ -91,13 +90,9 @@ const runTest = E2eHelpers.createE2eTest(client => {
 
   // Student Information for 674
   E2eHelpers.expectLocation(client, '/report-674');
-  client.waitForElementVisible(
-    '#root_studentNameAndSSN_fullName_first',
-    Timeouts.normal,
-  );
+  client.waitForElementVisible('.vads-u-font-weight--bold', Timeouts.verySlow);
   client.axeCheck('.main');
   TestHelpers.fill674StudentInformation(client, testData.data);
-  // TestHelpers.fill674StudentInformation(client, testData.data);
   client.click('button[id="4-continueButton"]');
 
   // Student Address for 674
@@ -137,6 +132,12 @@ const runTest = E2eHelpers.createE2eTest(client => {
   client.selectRadio('root_studentDidAttendSchoolLastTerm', 'N');
   client.click('button[id="4-continueButton"]');
 
+  // report household net worth
+  E2eHelpers.expectLocation(client, '/net-worth');
+  client.axeCheck('.main');
+  TestHelpers.fillNetWorth(client);
+  client.click('button[id="4-continueButton"]');
+
   // review page
   E2eHelpers.expectLocation(client, '/review-and-submit');
   client.waitForElementVisible(
@@ -160,5 +161,4 @@ const runTest = E2eHelpers.createE2eTest(client => {
 module.exports = runTest;
 
 // TODO: Remove this when CI builds temporary landing pages to run e2e tests
-module.exports['@disabled'] =
-  manifest.e2eTestsDisabled && process.env.BUILDTYPE !== environments.LOCALHOST;
+module.exports['@disabled'] = manifest.e2eTestsDisabled;

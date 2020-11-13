@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import { expect } from 'chai';
 import DebtLettersList from '../components/DebtLettersList';
 
@@ -53,9 +53,11 @@ describe('DebtLettersList', () => {
   });
   it('renders correct number of debt rows', () => {
     const wrapper = shallow(<DebtLettersList store={fakeStore} />);
-    expect(wrapper.dive().find(`td`).length).to.equal(12);
+    expect(wrapper.dive().find(`DebtLettersTable`).length).to.equal(1);
     expect(
       wrapper
+        .dive()
+        .find('DebtLettersTable')
         .dive()
         .find('td')
         .at(0)
@@ -64,17 +66,12 @@ describe('DebtLettersList', () => {
     expect(
       wrapper
         .dive()
+        .find('DebtLettersTable')
+        .dive()
         .find('td')
         .at(1)
         .text(),
     ).to.equal('Second Demand Letter');
-    expect(
-      wrapper
-        .dive()
-        .find('td')
-        .at(2)
-        .text(),
-    ).to.equal('Download Letter');
     wrapper.unmount();
   });
   it('renders correct empty state', () => {
@@ -86,7 +83,8 @@ describe('DebtLettersList', () => {
           },
         },
         debtLetters: {
-          isFetching: false,
+          isPendingVBMS: false,
+          isPending: false,
           debts: [],
           debtLinks: [],
         },
@@ -96,21 +94,7 @@ describe('DebtLettersList', () => {
     };
     const wrapper = shallow(<DebtLettersList store={fakeStoreEmptyState} />);
     expect(wrapper.dive().find(`table`).length).to.equal(0);
-    expect(
-      wrapper
-        .dive()
-        .find('h4')
-        .text(),
-    ).to.equal("Our records show that you don't have any debt letters");
-    expect(
-      wrapper
-        .dive()
-        .find('p')
-        .at(1)
-        .text(),
-    ).to.equal(
-      'If you believe that you have a debt with the VA, call the Debt Management Center at 800-827-0648',
-    );
+    expect(wrapper.dive().find('CoronaVirusAlert').length).to.equal(1);
     wrapper.unmount();
   });
 });

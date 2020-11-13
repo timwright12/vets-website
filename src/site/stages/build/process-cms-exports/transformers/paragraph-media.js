@@ -1,4 +1,4 @@
-const { getDrupalValue } = require('./helpers');
+const { getDrupalValue, getImageCrop } = require('./helpers');
 
 const transform = entity => ({
   entity: {
@@ -7,7 +7,10 @@ const transform = entity => ({
     fieldAllowClicksOnThisImage:
       // OpenAPI spec says this defaults to false
       getDrupalValue(entity.fieldAllowClicksOnThisImage) || false,
-    fieldMedia: entity.fieldMedia[0] || null,
+    fieldMedia:
+      entity.fieldMedia && entity.fieldMedia.length
+        ? { entity: getImageCrop(entity.fieldMedia[0], '_21MEDIUMTHUMBNAIL') }
+        : null,
   },
 });
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import FacilityDirectionsLink from '../components/FacilityDirectionsLink';
+import Telephone from '@department-of-veterans-affairs/formation-react/Telephone';
 
 export default function FacilityAddress({
   name,
@@ -17,14 +18,18 @@ export default function FacilityAddress({
           <br />
         </>
       )}
-      {address?.line?.map(line => (
-        <React.Fragment key={line}>
-          {line}
+      {!!address && (
+        <>
+          {address?.line?.map(line => (
+            <React.Fragment key={line}>
+              {line}
+              <br />
+            </React.Fragment>
+          ))}
+          {address.city}, {address.state} {address.postalCode}
           <br />
-        </React.Fragment>
-      ))}
-      {address.city}, {address.state} {address.postalCode}
-      <br />
+        </>
+      )}
       {showDirectionsLink && (
         <>
           <FacilityDirectionsLink location={facility} />
@@ -37,7 +42,8 @@ export default function FacilityAddress({
             <strong>Main phone:</strong>
           </dt>{' '}
           <dd className="vads-u-display--inline">
-            <a href={`tel:${phone.replace(/[^0-9]/g, '')}`}>{phone}</a>
+            <br />
+            <Telephone contact={phone} />
           </dd>
         </dl>
       )}

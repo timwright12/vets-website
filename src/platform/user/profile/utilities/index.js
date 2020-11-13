@@ -4,9 +4,9 @@ import {
   setSentryLoginType,
   clearSentryLoginType,
 } from '../../authentication/utilities';
-import localStorage from 'platform/utilities/storage/localStorage';
+import localStorage from '~/platform/utilities/storage/localStorage';
 
-import { ssoKeepAliveSession } from 'platform/utilities/sso';
+import { ssoKeepAliveSession } from '~/platform/utilities/sso';
 
 import {
   ADDRESS_VALIDATION_TYPES,
@@ -16,14 +16,14 @@ import {
 } from '../constants/addressValidationMessages';
 
 import {
-  isVet360Configured,
+  isVAProfileServiceConfigured,
   mockContactInformation,
-} from 'vet360/util/local-vet360';
+} from '@@vap-svc/util/local-vapsvc';
 
 const commonServices = {
   EMIS: 'EMIS',
   MVI: 'MVI',
-  Vet360: 'Vet360',
+  VA_PROFILE: 'Vet360',
 };
 
 function getErrorStatusDesc(code) {
@@ -60,6 +60,7 @@ export function mapRawUserDataToState(json) {
         vaProfile,
         vet360ContactInformation,
         veteranStatus,
+        session,
       },
     },
     meta,
@@ -67,38 +68,36 @@ export function mapRawUserDataToState(json) {
 
   const userState = {
     accountType: loa.current,
-    signIn,
     dob,
     email,
     gender,
+    isCernerPatient: vaProfile?.isCernerPatient,
     loa,
     multifactor,
     prefillsAvailable,
     savedForms,
     services,
+    signIn,
     userFullName: {
       first,
       middle,
       last,
     },
     verified,
-    vet360: isVet360Configured()
+    vapContactInfo: isVAProfileServiceConfigured()
       ? vet360ContactInformation
       : mockContactInformation,
+    session,
+    veteranStatus: {},
   };
 
   if (meta && veteranStatus === null) {
     const errorStatus = meta.errors.find(
       error => error.externalService === commonServices.EMIS,
     ).status;
-    userState.veteranStatus = getErrorStatusDesc(errorStatus);
+    userState.veteranStatus.status = getErrorStatusDesc(errorStatus);
   } else {
-    userState.isVeteran = veteranStatus.isVeteran;
-    userState.veteranStatus = {
-      isVeteran: veteranStatus.isVeteran,
-      veteranStatus,
-      servedInMilitary: veteranStatus.servedInMilitary,
-    };
+    userState.veteranStatus = { ...veteranStatus };
   }
 
   if (meta && vaProfile === null) {
@@ -117,11 +116,11 @@ export function mapRawUserDataToState(json) {
 
   // This one is checking userState because there's no extra mapping and it's
   // easier to leave the mocking code the way it is
-  if (meta && userState.vet360 === null) {
+  if (meta && userState.vapContactInfo === null) {
     const errorStatus = meta.errors.find(
-      error => error.externalService === commonServices.Vet360,
+      error => error.externalService === commonServices.VA_PROFILE,
     ).status;
-    userState.vet360 = { status: getErrorStatusDesc(errorStatus) };
+    userState.vapContactInfo = { status: getErrorStatusDesc(errorStatus) };
   }
 
   return userState;
@@ -249,7 +248,8 @@ export const showAddressValidationModal = suggestedAddresses => {
   if (
     suggestedAddresses.length === 1 &&
     addressMetaData.confidenceScore > 90 &&
-    addressMetaData.deliveryPointValidation === CONFIRMED
+    (addressMetaData.deliveryPointValidation === CONFIRMED ||
+      addressMetaData.addressType?.toLowerCase() === 'international')
   ) {
     return false;
   }

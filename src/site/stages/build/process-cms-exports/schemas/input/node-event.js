@@ -45,6 +45,17 @@ module.exports = {
         required: ['value', 'end_value'],
       },
     },
+    field_datetime_range_timezone: {
+      type: 'array',
+      items: {
+        properties: {
+          value: { type: 'string' },
+          end_value: { type: 'string' },
+          timezone: { type: 'string' },
+        },
+        required: ['value', 'end_value', 'timezone'],
+      },
+    },
     field_description: { $ref: 'GenericNestedString' },
     field_event_cost: { $ref: 'GenericNestedString' },
     field_event_cta: { $ref: 'GenericNestedString' },
@@ -65,6 +76,8 @@ module.exports = {
     },
     field_location_humanreadable: { $ref: 'GenericNestedString' },
     field_media: { $ref: 'EntityReferenceArray' },
+    // Needed for filtering reverse fields in other transformers
+    status: { $ref: 'GenericNestedBoolean' },
   },
   required: [
     'title',
@@ -76,6 +89,7 @@ module.exports = {
     'field_address',
     'field_body',
     'field_date',
+    'field_datetime_range_timezone',
     'field_description',
     'field_event_cost',
     'field_event_cta',
@@ -84,5 +98,6 @@ module.exports = {
     'field_link',
     'field_location_humanreadable',
     'field_media',
+    'status',
   ],
 };

@@ -70,6 +70,7 @@ describe('Schemaform review <ArrayField>', () => {
           },
         },
       },
+      additionalItems: {},
     };
     const uiSchema = {
       'ui:title': 'List of things',
@@ -132,7 +133,7 @@ describe('Schemaform review <ArrayField>', () => {
       items: {},
       'ui:options': {
         viewField: f => f,
-        itemName: 'Item name',
+        itemName: 'item name',
       },
     };
     const arrayData = [{}, {}];
@@ -152,9 +153,11 @@ describe('Schemaform review <ArrayField>', () => {
     );
 
     tree.getMountedInstance().handleAdd();
-    expect(tree.everySubTree('h5')[0].text()).to.equal('New Item name');
+    expect(tree.everySubTree('.schemaform-array-row-title')[0].text()).to.equal(
+      'New item name',
+    );
     expect(tree.everySubTree('button')[2].text()).to.equal(
-      'Add Another Item name',
+      'Add another item name',
     );
   });
   it('should render array warning', () => {
@@ -294,11 +297,11 @@ describe('Schemaform review <ArrayField>', () => {
       expect(tree.everySubTree('SchemaForm').length).to.equal(2);
     });
     it('enforces max items', () => {
-      expect(tree.subTree('.edit-btn').props.disabled).to.be.false;
+      expect(tree.subTree('.add-btn').props.disabled).to.be.false;
 
       tree.getMountedInstance().handleAdd();
 
-      expect(tree.subTree('.edit-btn').props.disabled).to.be.true;
+      expect(tree.subTree('.add-btn').props.disabled).to.be.true;
     });
     it('remove', () => {
       expect(tree.everySubTree('SchemaForm').length).to.equal(1);
@@ -324,6 +327,7 @@ describe('Schemaform review <ArrayField>', () => {
           },
         },
       },
+      additionalItems: {},
     };
     const uiSchema = {
       'ui:title': 'List of things',
@@ -362,5 +366,88 @@ describe('Schemaform review <ArrayField>', () => {
 
     expect(instance.state.items).to.eql(newProps.arrayData);
     expect(instance.state.editing).to.eql([]);
+  });
+  it('should render reviewTitle first', () => {
+    const idSchema = {};
+    const schema = {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          field: {
+            type: 'string',
+          },
+        },
+      },
+    };
+    const uiSchema = {
+      'ui:title': 'List of things',
+      items: {},
+      'ui:options': {
+        viewField: f => f,
+        reviewTitle: 'My List',
+      },
+    };
+    const arrayData = [];
+    const tree = SkinDeep.shallowRender(
+      <ArrayField
+        pageKey="page1"
+        arrayData={arrayData}
+        path={['thingList']}
+        schema={schema}
+        uiSchema={uiSchema}
+        idSchema={idSchema}
+        registry={registry}
+        formContext={formContext}
+        pageTitle="Page Title"
+        requiredSchema={requiredSchema}
+      />,
+    );
+
+    expect(tree.subTree('.form-review-panel-page-header').text()).to.equal(
+      uiSchema['ui:options'].reviewTitle,
+    );
+    expect(tree.everySubTree('SchemaForm')).to.be.empty;
+  });
+  it('should render page title', () => {
+    const idSchema = {};
+    const schema = {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          field: {
+            type: 'string',
+          },
+        },
+      },
+    };
+    const uiSchema = {
+      'ui:title': ' ',
+      items: {},
+      'ui:options': {
+        viewField: f => f,
+      },
+    };
+    const arrayData = [];
+    const tree = SkinDeep.shallowRender(
+      <ArrayField
+        pageKey="page1"
+        arrayData={arrayData}
+        path={['thingList']}
+        schema={schema}
+        uiSchema={uiSchema}
+        idSchema={idSchema}
+        registry={registry}
+        formContext={formContext}
+        pageTitle="Page Title"
+        requiredSchema={requiredSchema}
+      />,
+    );
+
+    expect(tree.subTree('.form-review-panel-page-header').text()).to.equal(
+      'Page Title',
+    );
+    expect(tree.everySubTree('SchemaForm')).to.be.empty;
   });
 });

@@ -1,72 +1,185 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
 import LoadingIndicator from '@department-of-veterans-affairs/formation-react/LoadingIndicator';
+import Telephone, {
+  CONTACTS,
+} from '@department-of-veterans-affairs/formation-react/Telephone';
+
 import Payments from './payments/Payments.jsx';
+import ViewPaymentsHeader from '../../components/view-payments-header/ViewPaymentsHeader.jsx';
 import {
-  fields,
-  paymentsRecievedContent,
+  paymentsReturnedFields,
+  paymentsReceivedFields,
+  paymentsReceivedContent,
   paymentsReturnedContent,
+  filterReturnPayments,
+  reformatReturnPaymentDates,
+  reformatPaymentDates,
 } from './helpers';
 import { getAllPayments } from '../../actions';
+import {
+  isClientError,
+  ClientErrorAlertContent,
+  ServerErrorAlertContent,
+  NoPaymentsContent,
+} from '../../utils';
 
 class ViewPaymentsLists extends Component {
   componentDidMount() {
     this.props.getAllPayments();
   }
 
-  render() {
-    let paymentsReceivedTableContent = '';
-    let paymentsReturnedTableContent = '';
+  buildReturnedPaymentListContent = returnPayments => {
+    // If there are returned payments, set paymentsReturnedTable to a Payments component
+    // If there are NO returned payments, set paymentsReturnedTable to AlertBox
+    let paymentsReturnedTable = {};
 
-    if (this.props.isLoading) {
-      paymentsReceivedTableContent = (
-        <LoadingIndicator message="Loading payments received..." />
-      );
-      paymentsReturnedTableContent = (
-        <LoadingIndicator message="Loading payments returned..." />
-      );
-    } else if (!this.props.isLoading) {
-      paymentsReceivedTableContent = (
+    if (returnPayments.length > 0) {
+      // convert date to more friendly format
+      const filteredReturnPayments = reformatReturnPaymentDates(returnPayments);
+
+      paymentsReturnedTable = (
         <Payments
-          fields={fields}
-          data={this.props.hasPaymentsReceived}
-          textContent={paymentsRecievedContent}
-        />
-      );
-      paymentsReturnedTableContent = (
-        <Payments
-          fields={fields}
-          data={this.props.hasPaymentsReturned}
+          tableVersion="returned"
+          fields={paymentsReturnedFields}
+          data={filteredReturnPayments}
           textContent={paymentsReturnedContent}
         />
       );
+    } else {
+      paymentsReturnedTable = (
+        <AlertBox
+          content={
+            <p>
+              We can’t find any returned VA payments. If you think this is an
+              error, or if you have questions about your payment history, please
+              call <Telephone contact={CONTACTS.VA_BENEFITS} />.
+            </p>
+          }
+          headline="We don’t have a record of returned payments"
+          status="info"
+          backgroundOnly="true"
+          className="vads-u-background-color--gray-lightest"
+        />
+      );
     }
-    return (
-      <>
-        {paymentsReceivedTableContent}
-        <p>
-          <strong>Note:</strong> Some details about payments may not be
-          available online. For example, payments less than $1 for direct
-          deposit, or $5 for mailed checks, will not show in your online payment
-          history. Gross payments and modifications will show only for recurring
-          and irregular compensation payments. If you have questions about
-          payments made by VA, please call the VA Help Desk at{' '}
-          <a href="tel:8008271000" aria-label="1. 800. 827. 1000">
-            800-827-1000
-          </a>
-        </p>
-        {paymentsReturnedTableContent}
-      </>
-    );
+    return paymentsReturnedTable;
+  };
+
+  buildPaymentListContent = payments => {
+    // If there are recieved payments, set paymentsReceivedTable to a Payments component
+    // If there are NO recieved payments, set paymentsReceivedTable to AlertBox
+    let paymentsReceivedTable = {};
+    if (payments.length > 0) {
+      // remove all entries with all null property values
+      const filteredPayments = filterReturnPayments(payments);
+      const reformattedPayments = reformatPaymentDates(filteredPayments);
+      paymentsReceivedTable = (
+        <Payments
+          tableVersion="received"
+          fields={paymentsReceivedFields}
+          data={reformattedPayments}
+          textContent={paymentsReceivedContent}
+        />
+      );
+    } else {
+      paymentsReceivedTable = (
+        <AlertBox
+          content={
+            <p>
+              We can’t find any VA payments made to you. If you think this is an
+              error, or if you have questions about your payment history, please
+              call <Telephone contact={CONTACTS.VA_BENEFITS} />.
+            </p>
+          }
+          headline="We don’t have a record of VA payments made to you"
+          status="info"
+          backgroundOnly="true"
+          className="vads-u-background-color--gray-lightest"
+        />
+      );
+    }
+    return paymentsReceivedTable;
+  };
+
+  render() {
+    let paymentsReceivedTable = '';
+    let paymentsReturnedTable = '';
+    let content;
+    // If the app is loading, show a loading LoadingIndicator
+    // if there is an error show an AlertBox
+    // If the app is NOT loading
+    if (this.props.isLoading) {
+      content = <LoadingIndicator message="Loading payment information..." />;
+    }
+
+    if (this.props.error) {
+      const status = isClientError(this.props.error.code) ? 'info' : 'error';
+      const alertContent = isClientError(this.props.error.code)
+        ? ClientErrorAlertContent
+        : ServerErrorAlertContent;
+      content = <AlertBox content={alertContent} status={status} isVisible />;
+    }
+
+    if (!this.props.isLoading && this.props.payments) {
+      // Deconstruct payments props object
+      // If there are no payments AND no payments returned, render an Alertbox
+      // If there are either payments OR payments returned, run payment list builders
+      const { returnPayments, payments } = this.props.payments;
+      if (returnPayments.length === 0 && payments.length === 0) {
+        content = (
+          <AlertBox
+            content={NoPaymentsContent}
+            status="info"
+            backgroundOnly="true"
+            className="vads-u-background-color--gray-lightest"
+          />
+        );
+      } else {
+        // run payments returned list builder
+        paymentsReturnedTable = this.buildReturnedPaymentListContent(
+          returnPayments,
+        );
+
+        // Run payments recieved list builder
+        paymentsReceivedTable = this.buildPaymentListContent(payments);
+
+        content = (
+          <>
+            <ViewPaymentsHeader />
+            {paymentsReceivedTable}
+            <strong>Note:</strong> Some payment details might not be available
+            online. For example, direct-deposit payments less than $1 or check
+            payments less than $5, won’t show in your online payment history.
+            Gross (before deductions) payments and changes will show only for
+            recurring and irregular compensation payments. If you have questions
+            about payments made by VA, please call the VA Help Desk at{' '}
+            <Telephone contact={CONTACTS.VA_BENEFITS} />
+            {paymentsReturnedTable}
+            <h3>What if I find a check that I reported missing?</h3>
+            <p>
+              If you reported a check missing and found it later, you must
+              return the original check to the U.S. Department of the Treasury
+              and wait to receive your replacement check. If you endorse both
+              the original and replacement check, you'll get a double payment.
+              If this happens, VA Debt Management Center will contact you about
+              collection.
+            </p>
+          </>
+        );
+      }
+    }
+
+    return content;
   }
 }
 
 function mapStateToProps(state) {
   return {
-    allState: state,
     isLoading: state.allPayments.isLoading,
-    hasPaymentsReceived: state.allPayments.hasPaymentsReceived,
-    hasPaymentsReturned: state.allPayments.hasPaymentsReturned,
+    payments: state.allPayments.payments,
+    error: state.allPayments.error,
   };
 }
 

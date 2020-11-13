@@ -17,6 +17,8 @@ const {
 } = require('../process-cms-exports/helpers');
 const entityTreeFactory = require('../process-cms-exports');
 
+/* eslint-disable no-console */
+
 function encodeCredentials({ user, password }) {
   const credentials = `${user}:${password}`;
   return Buffer.from(credentials).toString('base64');
@@ -93,7 +95,6 @@ function getDrupalClient(buildOptions, clientOptionsArg) {
           try {
             return JSON.parse(data);
           } catch (error) {
-            /* eslint-disable no-console */
             console.error(
               chalk.red(
                 "There was an error parsing the response body, it isn't valid JSON. Here is the error:",
@@ -141,7 +142,7 @@ function getDrupalClient(buildOptions, clientOptionsArg) {
         );
         await new Promise(resolve => {
           const parentPath = path.join(buildOptions['cms-export-dir'], '..');
-          fs.ensureDirSync(parentPath);
+          fs.emptyDirSync(path.resolve(buildOptions['cms-export-dir']));
           // This untars to parentDir/cms-export-content/ because the tarball
           // contains a single directory named cms-export-content.
           response.body.pipe(tar.extract(parentPath));
@@ -167,9 +168,11 @@ function getDrupalClient(buildOptions, clientOptionsArg) {
       }
     },
 
-    getAllPages(onlyPublishedContent = true) {
+    async getAllPages(onlyPublishedContent = true) {
+      const allPagesQuery = await getQuery(queries.GET_ALL_PAGES);
+      // console.log("allPagesQuery:", allPagesQuery);
       return this.query({
-        query: getQuery(queries.GET_ALL_PAGES),
+        query: allPagesQuery,
         variables: {
           today: moment().format('YYYY-MM-DD'),
           onlyPublishedContent,
@@ -177,10 +180,14 @@ function getDrupalClient(buildOptions, clientOptionsArg) {
       });
     },
 
-    getNonNodeContent(onlyPublishedContent = true) {
+    async getNonNodeContent(onlyPublishedContent = true) {
+      const nonNodeQuery = await getQuery(queries.GET_ALL_PAGES, {
+        useTomeSync: true,
+      });
+      // console.log("nonNodeQuery:", nonNodeQuery);
       say('Querying for non-node content');
       return this.query({
-        query: getQuery(queries.GET_ALL_PAGES, { useTomeSync: true }),
+        query: nonNodeQuery,
         variables: {
           onlyPublishedContent,
         },
@@ -195,15 +202,46 @@ function getDrupalClient(buildOptions, clientOptionsArg) {
       );
       const assembleEntityTree = entityTreeFactory(contentDir);
 
-      return entities.map(entity => assembleEntityTree(entity));
+      const timerStart = process.hrtime.bigint();
+      const transformedEntities = entities.map(entity =>
+        assembleEntityTree(entity),
+      );
+      const timeElapsed = (process.hrtime.bigint() - timerStart) / 1000000n;
+
+      say(
+        `${chalk.green(
+          global.readEntityCacheHits,
+        )} cache hits while expanding entity references`,
+      );
+      say(
+        `${chalk.green(
+          global.transformerCacheHits,
+        )} cache hits while performing entity transformations`,
+      );
+      say(
+        `Total time to transform ${chalk.blue(
+          transformedEntities.length,
+        )} nodes: ${chalk.green(timeElapsed)}ms`,
+      );
+      return transformedEntities;
     },
 
-    getLatestPageById(nodeId) {
+    async getLatestPageById(nodeId) {
       return this.query({
-        query: getQuery(queries.GET_LATEST_PAGE_BY_ID),
+        query: await getQuery(queries.GET_LATEST_PAGE_BY_ID),
         variables: {
           id: nodeId,
           today: moment().format('YYYY-MM-DD'),
+          onlyPublishedContent: false,
+        },
+      });
+    },
+
+    // Sets up the CMS SideNav Menus list.
+    async getSideNavigations() {
+      return this.query({
+        query: await getQuery(queries.GET_HEALTH_SYSTEM_NAVS),
+        variables: {
           onlyPublishedContent: false,
         },
       });

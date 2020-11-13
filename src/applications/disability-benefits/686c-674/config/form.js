@@ -1,14 +1,15 @@
 import fullSchema from 'vets-json-schema/dist/686C-674-schema.json';
 import environment from 'platform/utilities/environment';
+import FormFooter from 'platform/forms/components/FormFooter';
+import { externalServices } from 'platform/monitoring/DowntimeNotification';
 import { VA_FORM_IDS } from 'platform/forms/constants';
 import { TASK_KEYS, MARRIAGE_TYPES } from './constants';
 import { isChapterFieldRequired } from './helpers';
-import { customTransformForSubmit } from './utilities';
 import IntroductionPage from '../containers/IntroductionPage';
 import ConfirmationPage from '../containers/ConfirmationPage';
-import FormFooter from 'platform/forms/components/FormFooter';
 import CustomPreSubmitInfo from '../components/CustomPreSubmitInfo';
 import GetFormHelp from '../components/GetFormHelp.jsx';
+import { customSubmit686 } from '../analytics/helpers';
 
 // Chapter imports
 import { formerSpouseInformation } from './chapters/report-divorce';
@@ -44,7 +45,7 @@ import {
   stepchildInformation,
 } from './chapters/stepchild-no-longer-part-of-household';
 import {
-  studentNameAndSSN,
+  studentNameAndSsn,
   studentAddressMarriageTuition,
   studentSchoolAddress,
   studentTermDates,
@@ -52,35 +53,50 @@ import {
   studentIncomeInformation,
   studentNetworthInformation,
 } from './chapters/674';
+import { householdIncome } from './chapters/household-income';
+
+import manifest from '../manifest.json';
 
 const emptyMigration = savedData => savedData;
 const migrations = [emptyMigration];
 
 const formConfig = {
+  rootUrl: manifest.rootUrl,
   urlPrefix: '/',
   // NOTE: e2e tests will fail until the dependents_applications endpoint gets merged in to vets-api.
   // All e2e tests will be disabled until then. If you need to run an e2e test, temporarily change
   // dependents_appilcations to 21-686c.
   submitUrl: `${environment.API_URL}/v0/dependents_applications`,
-  trackingPrefix: 'disability-21-686c',
+  submit: customSubmit686,
+  trackingPrefix: 'disability-21-686c-',
   introduction: IntroductionPage,
   confirmation: ConfirmationPage,
   preSubmitInfo: CustomPreSubmitInfo,
   formId: VA_FORM_IDS.FORM_21_686C,
+  saveInProgress: {
+    messages: {
+      inProgress: 'Your dependent status application (21-686c) is in progress.',
+      expired:
+        'Your saved dependent status application (21-686c) has expired. If you want to apply for dependent status, please start a new application.',
+      saved: 'Your dependent status application has been saved.',
+    },
+  },
   version: 1,
   migrations,
   prefillEnabled: true,
   footerContent: FormFooter,
   getHelp: GetFormHelp,
+  downtime: {
+    dependencies: [externalServices.bgs],
+  },
   savedFormMessages: {
     notFound: 'Please start over to apply for declare or remove a dependent.',
     noAuth:
       'Please sign in again to continue your application for declare or remove a dependent.',
   },
-  title: 'Add or remove dependents from your VA benefits',
+  title: 'Add or remove a dependent on your VA disability benefits',
   subTitle: 'VA Form 21-686c (and 21-674)',
   defaultDefinitions: { ...fullSchema.definitions },
-  transformForSubmit: customTransformForSubmit,
   chapters: {
     optionSelection: {
       title: 'What do you want to do?',
@@ -94,6 +110,7 @@ const formConfig = {
         },
       },
     },
+
     veteranInformation: {
       title: "Veteran's Information",
       pages: {
@@ -236,13 +253,13 @@ const formConfig = {
     report674: {
       title: 'Information needed to add a student 18 to 23 years old',
       pages: {
-        studentNameAndSSN: {
+        studentNameAndSsn: {
           depends: formData =>
             isChapterFieldRequired(formData, TASK_KEYS.report674),
           title: 'Information needed to add a student 18 to 23 years old',
           path: 'report-674',
-          uiSchema: studentNameAndSSN.uiSchema,
-          schema: studentNameAndSSN.schema,
+          uiSchema: studentNameAndSsn.uiSchema,
+          schema: studentNameAndSsn.schema,
         },
         studentAddressMarriageTuition: {
           depends: formData =>
@@ -298,11 +315,7 @@ const formConfig = {
       pages: {
         formerSpouseDetails: {
           depends: formData =>
-            // if addSpouse is selected, divorce should not appear since the information is the same.
-            // otherwise, show reportDivorce.
-            isChapterFieldRequired(formData, TASK_KEYS.addSpouse)
-              ? false
-              : isChapterFieldRequired(formData, TASK_KEYS.reportDivorce),
+            isChapterFieldRequired(formData, TASK_KEYS.reportDivorce),
           title: 'Information needed to report a divorce',
           path: 'report-a-divorce',
           uiSchema: formerSpouseInformation.uiSchema,
@@ -397,6 +410,17 @@ const formConfig = {
           path: 'report-child-stopped-attending-school',
           uiSchema: reportChildStoppedAttendingSchool.uiSchema,
           schema: reportChildStoppedAttendingSchool.schema,
+        },
+      },
+    },
+    householdIncome: {
+      title: 'Your net worth',
+      pages: {
+        householdIncome: {
+          path: 'net-worth',
+          title: 'Your net worth',
+          uiSchema: householdIncome.uiSchema,
+          schema: householdIncome.schema,
         },
       },
     },

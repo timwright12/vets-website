@@ -14,6 +14,10 @@
       margin-top: 1.5em;
     }
 
+    .filter-additional-info {
+      margin: 15px 0px 15px 0px;
+    }
+
     @include media-maxwidth($small-screen) {
       background: $color-white;
       display: none;
@@ -139,13 +143,17 @@
 
     .info-flag {
       color: $color-gray-dark;
-      background-color: $color-gray-lighter;
-      border-radius: 3px 3px 3px 3px;
+      background-color: $color-white;
       font-size: 0.9em;
-      font-weight: bold;
       display: inline-block;
       padding: 0.1em 0.5em;
       margin-right: 1em;
+      margin-top: -1em !important;
+    }
+    @media (max-width: 640px) {
+      .info-flag {
+        margin-top: 0.5em !important;
+      }
     }
 
     .caution-flag {
@@ -174,6 +182,64 @@
     }
   }
 
+  .tag-container {
+    margin-top: -34px;
+    padding: 4px 0px;
+    @include media-maxwidth($medium-screen) {
+      margin-top: 10px;
+    }
+  }
+
+  .search-result-tag {
+    background-color: $color-white;
+    color: $color-gray-dark;
+    display: inline-block;
+    margin: 0px 8px 8px 0px;
+    padding: 0px 4px;
+    font-size: 14px;
+  }
+  .search-button-mobile {
+    margin-top: 1em;
+    margin-bottom: 6em !important;
+    @include media-maxwidth($small-screen) {
+      margin-top: 1em;
+      width: 100%;
+    }
+  }
+  .input-box-margin {
+    margin: 6px 0px;
+  }
+  .search-button {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    margin-top: 0.5em;
+    margin-right: -1px;
+    margin-bottom: 0.5em;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #0071bb;
+    border: 0;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto",
+      "Arial", sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 1rem 2rem;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+  }
+
+  .search-filter-text {
+    @media (min-width: $small-screen) {
+      display: none;
+    }
+  }
   .vettec-logo-container {
     @include media($medium-screen) {
       margin-top: -2.667em;
@@ -205,4 +271,8 @@
   .usa-alert-heading {
     font-size: 1em;
   }
+}
+
+.exclude-warnings-closings-checkbox {
+  padding-left: 0.2em;
 }

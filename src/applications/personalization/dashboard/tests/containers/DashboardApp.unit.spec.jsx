@@ -1,9 +1,7 @@
 import React from 'react';
 import SkinDeep from 'skin-deep';
-import sinon from 'sinon';
 import { expect } from 'chai';
 
-import localStorage from 'platform/utilities/storage/localStorage';
 import { DashboardApp, mapStateToProps } from '../../containers/DashboardApp';
 
 const defaultProps = {
@@ -16,14 +14,6 @@ const defaultProps = {
 };
 
 describe('<DashboardApp>', () => {
-  before(() => {
-    sinon.stub(localStorage, 'getItem');
-  });
-
-  after(() => {
-    localStorage.getItem.restore();
-  });
-
   it('should render', () => {
     const tree = SkinDeep.shallowRender(<DashboardApp {...defaultProps} />);
     const vdom = tree.getRenderOutput();
@@ -92,25 +82,14 @@ describe('<DashboardApp>', () => {
     );
   });
 
-  it('should render the ViewYourProfile2 section when showProfile 2 is true', () => {
-    const tree = SkinDeep.shallowRender(
-      <DashboardApp {...defaultProps} showProfile2 />,
-    );
-    expect(tree.toString()).to.contain('<ViewYourProfile2 />');
+  it('should render the ViewYourProfile section', () => {
+    const tree = SkinDeep.shallowRender(<DashboardApp {...defaultProps} />);
+    expect(tree.toString()).to.contain('<ViewYourProfile />');
   });
 
-  it('should not render the Manage Your Account section when showProfile 2 is true', () => {
-    const tree = SkinDeep.shallowRender(
-      <DashboardApp {...defaultProps} showProfile2 />,
-    );
+  it('should not render the Manage Your Account section', () => {
+    const tree = SkinDeep.shallowRender(<DashboardApp {...defaultProps} />);
     expect(tree.toString()).not.to.contain('<ManageYourAccount />');
-  });
-
-  it('should render the Manage Your Account section when showProfile 2 is false', () => {
-    const tree = SkinDeep.shallowRender(
-      <DashboardApp profile={{ loa: { current: 3 }, showProfile2: false }} />,
-    );
-    expect(tree.toString()).to.contain('<ManageYourAccount />');
   });
 
   it('should not render warnings if information available', () => {
@@ -136,9 +115,6 @@ describe('<DashboardApp>', () => {
 
 describe('mapStateToProps', () => {
   const defaultState = () => ({
-    featureToggles: {
-      dashboardShowCovid19Alert: true,
-    },
     hcaEnrollmentStatus: {},
     user: {
       profile: {
@@ -173,15 +149,6 @@ describe('mapStateToProps', () => {
       state.user.profile.facilities = [{ facilityId: 'abc' }];
       const props = mapStateToProps(state);
       expect(props.showCOVID19Alert).to.be.false;
-    });
-  });
-  describe('showProfile2', () => {
-    it('is set to true when the feature flag "profile_show_profile_2.0" is turned on', () => {
-      const state = defaultState();
-      const profile2 = 'profile_show_profile_2.0';
-      state.featureToggles[profile2] = true;
-      const props = mapStateToProps(state);
-      expect(props.showProfile2).to.be.true;
     });
   });
   describe('vaHealthChatEligibleFacilityId', () => {

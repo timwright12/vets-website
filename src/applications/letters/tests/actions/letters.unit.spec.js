@@ -1,9 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import * as Sentry from '@sentry/browser';
-import sentryTestkit from 'sentry-testkit';
 
-const { testkit, sentryTransport } = sentryTestkit();
+import { testkit } from 'platform/testing/unit/sentry';
 
 import {
   BACKEND_SERVICE_ERROR,
@@ -26,21 +24,16 @@ import {
   getLetterPdf,
 } from '../../actions/letters';
 
-Sentry.init({
-  dsn: 'http://one@fake/dsn',
-  transport: sentryTransport,
-});
-
 /**
  * Setup() for each test requires stubbing global fetch() and setting userToken.
  * Teardown() resets everything back to normal.
  */
+
 let oldFetch;
-let oldWindow;
+
 const setup = () => {
   testkit.reset();
   oldFetch = global.fetch;
-  oldWindow = global.window;
   global.fetch = sinon.stub();
   global.fetch.returns(
     Promise.resolve({
@@ -49,16 +42,16 @@ const setup = () => {
       json: () => Promise.resolve({}),
     }),
   );
-  global.window.dataLayer = [];
   global.window.URL = {
     createObjectURL: () => {},
     revokeObjectURL: () => {},
   };
 };
+
 const teardown = () => {
   global.fetch = oldFetch;
-  global.window = oldWindow;
 };
+
 const getState = () => ({});
 
 describe('getLettersList', () => {

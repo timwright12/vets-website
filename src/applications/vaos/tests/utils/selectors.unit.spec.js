@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import moment from '../../lib/moment-tz';
 
 import {
   getChosenClinicInfo,
@@ -16,16 +17,14 @@ import {
   getTypeOfCare,
   getCancelInfo,
   getCCEType,
-  isWelcomeModalDismissed,
-  selectCernerFacilities,
+  selectIsWelcomeModalDismissed,
+  selectLocalExpressCareWindowString,
+  selectNextAvailableExpressCareWindowString,
+  selectIsCernerOnlyPatient,
+  selectUseFlatFacilityPage,
 } from '../../utils/selectors';
 
-import { selectIsCernerOnlyPatient } from 'platform/user/selectors';
-import {
-  VHA_FHIR_ID,
-  APPOINTMENT_TYPES,
-  VIDEO_TYPES,
-} from '../../utils/constants';
+import { VHA_FHIR_ID, APPOINTMENT_TYPES } from '../../utils/constants';
 
 describe('VAOS selectors', () => {
   describe('getNewAppointment', () => {
@@ -105,7 +104,7 @@ describe('VAOS selectors', () => {
           },
           facilities: {},
           eligibility: {},
-          parentFacilities: [{}],
+          parentFacilities: [{ identifier: [] }],
           facilityDetails: {},
         },
       };
@@ -114,39 +113,23 @@ describe('VAOS selectors', () => {
       expect(newState.typeOfCare).to.equal('Pharmacy');
       expect(newState.loadingParentFacilities).to.be.true;
     });
-    it('should return eligibility error flag', () => {
-      const state = {
-        user: {
-          profile: {
-            facilities: [],
-          },
-        },
-        newAppointment: {
-          pages: {},
-          data: {
-            typeOfCareId: '160',
-            facilityType: 'vamc',
-            vaParent: '983',
-          },
-          facilities: {},
-          eligibility: {},
-          parentFacilities: [{}],
-          facilityDetails: {},
-          eligibilityStatus: 'failed',
-        },
-      };
-
-      const newState = getFacilityPageInfo(state);
-      expect(newState.hasEligibilityError).to.be.true;
-    });
     it('should return Cerner facilities', () => {
       const state = {
+        featureToggles: {
+          // eslint-disable-next-line camelcase
+          show_new_schedule_view_appointments_page: true,
+        },
         user: {
           profile: {
             facilities: [
-              { facilityId: '123', isCerner: true },
+              {
+                facilityId: '668',
+                isCerner: true,
+                usesCernerAppointments: true,
+              },
               { facilityId: '124', isCerner: false },
             ],
+            isCernerPatient: true,
           },
         },
         newAppointment: {
@@ -154,18 +137,23 @@ describe('VAOS selectors', () => {
           data: {
             typeOfCareId: '160',
             facilityType: 'vamc',
-            vaParent: '983',
+            vaParent: 'some_id',
           },
           facilities: {},
           eligibility: {},
-          parentFacilities: [{}],
+          parentFacilities: [
+            {
+              id: 'some_id',
+              identifier: [{ system: VHA_FHIR_ID, value: '668' }],
+            },
+          ],
           facilityDetails: {},
           eligibilityStatus: 'failed',
         },
       };
 
       const newState = getFacilityPageInfo(state);
-      expect(newState.cernerFacilities).to.deep.equal(['123']);
+      expect(newState.cernerOrgIds).to.deep.equal(['some_id']);
     });
   });
 
@@ -398,7 +386,8 @@ describe('VAOS selectors', () => {
       };
 
       const data = getDateTimeSelect(state, 'selectDateTime');
-      expect(data.timezone).to.equal('Mountain time (MT)');
+      expect(data.timezone).to.equal('America/Denver');
+      expect(data.timezoneDescription).to.equal('Mountain time (MT)');
       expect(data.availableDates).to.eql(['2019-10-24']);
       expect(data.availableSlots).to.eql(availableSlots);
     });
@@ -440,9 +429,20 @@ describe('VAOS selectors', () => {
   describe('getCancelInfo', () => {
     it('should fetch facility in info', () => {
       const state = {
+        featureToggles: {
+          // eslint-disable-next-line camelcase
+          show_new_schedule_view_appointments_page: true,
+        },
         user: {
           profile: {
-            facilities: [{ facilityId: '123', isCerner: true }],
+            facilities: [
+              {
+                facilityId: '123',
+                isCerner: true,
+                usesCernerAppointments: true,
+              },
+            ],
+            isCernerPatient: true,
           },
         },
         appointments: {
@@ -465,9 +465,20 @@ describe('VAOS selectors', () => {
     });
     it('should fetch facility from clinic map', () => {
       const state = {
+        featureToggles: {
+          // eslint-disable-next-line camelcase
+          show_new_schedule_view_appointments_page: true,
+        },
         user: {
           profile: {
-            facilities: [{ facilityId: '123', isCerner: true }],
+            facilities: [
+              {
+                facilityId: '123',
+                isCerner: true,
+                usesCernerAppointments: true,
+              },
+            ],
+            isCernerPatient: true,
           },
         },
         appointments: {
@@ -505,26 +516,40 @@ describe('VAOS selectors', () => {
     });
     it('should fetch facility from video appointment', () => {
       const state = {
+        featureToggles: {
+          // eslint-disable-next-line camelcase
+          show_new_schedule_view_appointments_page: true,
+        },
         user: {
           profile: {
-            facilities: [{ facilityId: '123', isCerner: true }],
+            facilities: [
+              {
+                facilityId: '123',
+                isCerner: true,
+                usesCernerAppointments: true,
+              },
+            ],
+            isCernerPatient: true,
           },
         },
         appointments: {
           appointmentToCancel: {
             status: 'booked',
+            legacyVAR: { apiData: { facilityId: '123' } },
             vaos: {
               appointmentType: APPOINTMENT_TYPES.vaAppointment,
             },
             contained: [
               {
-                location: {
-                  reference: 'Location/var123',
-                },
-              },
-              {
                 resourceType: 'HealthcareService',
-                characteristic: [{ coding: VIDEO_TYPES.videoConnect }],
+                characteristic: [
+                  {
+                    coding: [{ system: 'VVS' }],
+                  },
+                ],
+                providedBy: {
+                  reference: 'Organization/var123',
+                },
               },
             ],
           },
@@ -570,14 +595,14 @@ describe('VAOS selectors', () => {
     });
   });
 
-  describe('isWelcomeModalDismissed', () => {
+  describe('selectIsWelcomeModalDismissed', () => {
     it('should return dismissed if key is in list', () => {
       const state = {
         announcements: {
           dismissed: ['welcome-to-new-vaos'],
         },
       };
-      expect(isWelcomeModalDismissed(state)).to.be.true;
+      expect(selectIsWelcomeModalDismissed(state)).to.be.true;
     });
     it('should not return dismissed if key is not in list', () => {
       const state = {
@@ -585,29 +610,49 @@ describe('VAOS selectors', () => {
           dismissed: ['welcome-to-new-va'],
         },
       };
-      expect(isWelcomeModalDismissed(state)).to.be.false;
+      expect(selectIsWelcomeModalDismissed(state)).to.be.false;
     });
   });
 
   describe('selectIsCernerOnlyPatient', () => {
     it('should return true if Cerner only', () => {
       const state = {
+        featureToggles: {
+          // eslint-disable-next-line camelcase
+          show_new_schedule_view_appointments_page: true,
+        },
         user: {
           profile: {
-            facilities: [{ facilityId: '123', isCerner: true }],
+            facilities: [
+              {
+                facilityId: '668',
+                isCerner: true,
+                usesCernerAppointments: true,
+              },
+            ],
           },
+          isCernerPatient: true,
         },
       };
       expect(selectIsCernerOnlyPatient(state)).to.be.true;
     });
     it('should return false if not Cerner only', () => {
       const state = {
+        featureToggles: {
+          // eslint-disable-next-line camelcase
+          show_new_schedule_view_appointments_page: true,
+        },
         user: {
           profile: {
             facilities: [
-              { facilityId: '123', isCerner: true },
+              {
+                facilityId: '668',
+                isCerner: true,
+                usesCernerAppointments: true,
+              },
               { facilityId: '124', isCerner: false },
             ],
+            isCernerPatient: true,
           },
         },
       };
@@ -615,35 +660,295 @@ describe('VAOS selectors', () => {
     });
   });
 
-  describe('selectCernerFacilities', () => {
-    it('should return collection of cerner facilities', () => {
+  describe('selectLocalExpressCareWindowString', () => {
+    it('should return currently active hours', () => {
+      const today = moment();
+      const startTime = today
+        .clone()
+        .subtract('2', 'minutes')
+        .tz('America/Denver');
+      const endTime = today
+        .clone()
+        .add('1', 'minutes')
+        .tz('America/Denver');
       const state = {
+        appointments: {
+          expressCareFacilities: [
+            {
+              facilityId: '983',
+              days: [
+                {
+                  day: today
+                    .clone()
+                    .tz('America/Denver')
+                    .format('dddd')
+                    .toUpperCase(),
+                  canSchedule: true,
+                  startTime: startTime.format('HH:mm'),
+                  endTime: endTime.format('HH:mm'),
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      expect(selectLocalExpressCareWindowString(state, today)).to.equal(
+        `${startTime.format('h:mm a')} to ${endTime.format('h:mm a')} MT`,
+      );
+    });
+
+    it('should be empty when not active', () => {
+      const today = moment();
+      const startTime = today
+        .clone()
+        .subtract('2', 'minutes')
+        .tz('America/Denver');
+      const endTime = today
+        .clone()
+        .subtract('1', 'minutes')
+        .tz('America/Denver');
+      const state = {
+        appointments: {
+          expressCareFacilities: [
+            {
+              facilityId: '983',
+              days: [
+                {
+                  day: today.format('dddd').toUpperCase(),
+                  canSchedule: true,
+                  startTime: startTime.format('HH:mm'),
+                  endTime: endTime.format('HH:mm'),
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      expect(selectLocalExpressCareWindowString(state, today)).not.to.exist;
+    });
+  });
+
+  describe('selectNextAvailableExpressCareWindowString', () => {
+    it('should return today’s schedule if current time is before window start', () => {
+      const today = moment();
+      const startTime = today
+        .clone()
+        .add('1', 'minutes')
+        .tz('America/Denver');
+      const endTime = today
+        .clone()
+        .add('2', 'minutes')
+        .tz('America/Denver');
+      const state = {
+        appointments: {
+          expressCareFacilities: [
+            {
+              facilityId: '983',
+              days: [
+                {
+                  day: today
+                    .clone()
+                    .tz('America/Denver')
+                    .format('dddd')
+                    .toUpperCase(),
+                  canSchedule: true,
+                  startTime: startTime.format('HH:mm'),
+                  endTime: endTime.format('HH:mm'),
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      expect(selectNextAvailableExpressCareWindowString(state, today)).to.equal(
+        `today from ${startTime.format('h:mm a')} to ${endTime.format(
+          'h:mm a',
+        )} MT`,
+      );
+    });
+
+    it.skip('should return next day’s schedule if current time is after window start', () => {
+      const today = moment();
+      const tomorrow = moment()
+        .add(1, 'days')
+        .clone()
+        .tz('America/Denver');
+      const startTime = today
+        .clone()
+        .subtract(2, 'minutes')
+        .tz('America/Denver');
+      const endTime = today
+        .clone()
+        .subtract(1, 'minutes')
+        .tz('America/Denver');
+      const state = {
+        appointments: {
+          expressCareFacilities: [
+            {
+              facilityId: '983',
+              days: [
+                {
+                  day: today
+                    .clone()
+                    .tz('America/Denver')
+                    .format('dddd')
+                    .toUpperCase(),
+                  canSchedule: true,
+                  startTime: startTime.format('HH:mm'),
+                  endTime: endTime.format('HH:mm'),
+                  dayOfWeekIndex: today.format('d'),
+                },
+                {
+                  day: tomorrow.format('dddd').toUpperCase(),
+                  canSchedule: true,
+                  startTime: startTime.format('HH:mm'),
+                  endTime: endTime.format('HH:mm'),
+                  dayOfWeekIndex: tomorrow.format('d'),
+                },
+              ].sort((a, b) => (a.dayOfWeekIndex < b.dayOfWeekIndex ? -1 : 1)),
+            },
+          ],
+        },
+      };
+      expect(selectNextAvailableExpressCareWindowString(state, today)).to.equal(
+        `${tomorrow.format('dddd')} from ${startTime.format(
+          'h:mm a',
+        )} to ${endTime.format('h:mm a')} MT`,
+      );
+    });
+
+    it('should return today’s schedule and designate next week if current time is after window start and today is the only schedulable day', () => {
+      const today = moment();
+      const startTime = today
+        .clone()
+        .add(-2, 'minutes')
+        .tz('America/Denver');
+      const endTime = today
+        .clone()
+        .add(-1, 'minutes')
+        .tz('America/Denver');
+      const state = {
+        appointments: {
+          expressCareFacilities: [
+            {
+              facilityId: '983',
+              days: [
+                {
+                  day: today
+                    .clone()
+                    .tz('America/Denver')
+                    .format('dddd')
+                    .toUpperCase(),
+                  canSchedule: true,
+                  startTime: startTime.format('HH:mm'),
+                  endTime: endTime.format('HH:mm'),
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      expect(selectNextAvailableExpressCareWindowString(state, today)).to.equal(
+        `next ${today
+          .clone()
+          .tz('America/Denver')
+          .format('dddd')} from ${startTime.format(
+          'h:mm a',
+        )} to ${endTime.format('h:mm a')} MT`,
+      );
+    });
+  });
+
+  describe('selectUseFlatFacilityPage', () => {
+    it('should return true if feature toggle is on and user is not cerner patient', () => {
+      const state = {
+        featureToggles: {
+          vaOnlineSchedulingFlatFacilityPage: true,
+        },
+      };
+
+      expect(selectUseFlatFacilityPage(state)).to.be.true;
+    });
+
+    it('should return false if feature toggle is off', () => {
+      const state = {
+        featureToggles: {
+          vaOnlineSchedulingFlatFacilityPage: false,
+        },
+        user: {
+          profile: {
+            facilities: [{ facilityId: '124', isCerner: false }],
+          },
+        },
+      };
+
+      expect(selectUseFlatFacilityPage(state)).to.be.false;
+    });
+
+    it('should return false if feature toggle is on and user has cerner facilities', () => {
+      const state = {
+        featureToggles: {
+          vaOnlineSchedulingFlatFacilityPage: true,
+        },
         user: {
           profile: {
             facilities: [
-              { facilityId: '123', isCerner: true },
+              {
+                facilityId: '668',
+                isCerner: true,
+                usesCernerAppointments: true,
+              },
               { facilityId: '124', isCerner: false },
             ],
           },
         },
       };
 
-      expect(selectCernerFacilities(state).length).to.be.equal(1);
+      expect(selectUseFlatFacilityPage(state)).to.be.false;
     });
 
-    it('should return empty collection of cerner facilities', () => {
+    it('should return false if feature toggle is on and user is registered to Sacramento VA', () => {
       const state = {
+        featureToggles: {
+          vaOnlineSchedulingFlatFacilityPage: true,
+        },
         user: {
           profile: {
             facilities: [
-              { facilityId: '123', isCerner: false },
-              { facilityId: '124', isCerner: false },
+              { facilityId: '983', isCerner: false },
+              { facilityId: '612', isCerner: false },
             ],
           },
         },
       };
 
-      expect(selectCernerFacilities(state).length).to.be.equal(0);
+      expect(selectUseFlatFacilityPage(state)).to.be.false;
     });
+  });
+
+  it('should return false if feature toggle is on and user is registered to Sacramento VA and has cerner facilities', () => {
+    const state = {
+      featureToggles: {
+        vaOnlineSchedulingFlatFacilityPage: true,
+      },
+      user: {
+        profile: {
+          facilities: [
+            {
+              facilityId: '668',
+              isCerner: true,
+              usesCernerAppointments: true,
+            },
+            { facilityId: '612', isCerner: false },
+          ],
+        },
+      },
+    };
+
+    expect(selectUseFlatFacilityPage(state)).to.be.false;
   });
 });

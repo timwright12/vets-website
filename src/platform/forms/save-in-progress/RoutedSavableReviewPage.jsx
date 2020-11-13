@@ -3,13 +3,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Scroll from 'react-scroll';
-import { FINISH_APP_LATER_DEFAULT_MESSAGE } from './constants';
+import { FINISH_APP_LATER_DEFAULT_MESSAGE } from '../../forms-system/src/js/constants';
 import debounce from '../../utilities/data/debounce';
 
 import ReviewChapters from 'platform/forms-system/src/js/review/ReviewChapters';
 import SubmitController from 'platform/forms-system/src/js/review/SubmitController';
 
-import CallHRC from '../../static-data/CallHRC';
 import DowntimeNotification, {
   externalServiceStatus,
 } from '../../monitoring/DowntimeNotification';
@@ -18,11 +17,7 @@ import { focusElement } from '../../utilities/ui';
 import { toggleLoginModal } from '../../site-wide/user-nav/actions';
 import SaveFormLink from './SaveFormLink';
 import SaveStatus from './SaveStatus';
-import {
-  autoSaveForm,
-  saveAndRedirectToReturnUrl,
-  saveErrors,
-} from './actions';
+import { autoSaveForm, saveAndRedirectToReturnUrl } from './actions';
 import { getFormContext } from './selectors';
 import DowntimeMessage from './DowntimeMessage';
 
@@ -53,78 +48,11 @@ class RoutedSavableReviewPage extends React.Component {
     const { form, user } = this.props;
     if (user.login.currentlyLoggedIn) {
       const data = form.data;
-      const { formId, version } = form;
+      const { formId, version, submission } = form;
       const returnUrl = this.props.location.pathname;
 
-      this.props.autoSaveForm(formId, data, version, returnUrl);
+      this.props.autoSaveForm(formId, data, version, returnUrl, submission);
     }
-  };
-
-  renderErrorMessage = () => {
-    const { route, user, form, location, showLoginModal } = this.props;
-    const errorText = route.formConfig.errorText;
-    const savedStatus = form.savedStatus;
-    const CustomSubmissionError = route.formConfig?.submissionError;
-
-    const saveLink = (
-      <SaveFormLink
-        locationPathname={location.pathname}
-        form={form}
-        user={user}
-        showLoginModal={showLoginModal}
-        saveAndRedirectToReturnUrl={this.props.saveAndRedirectToReturnUrl}
-        toggleLoginModal={this.props.toggleLoginModal}
-      >
-        Save your form
-      </SaveFormLink>
-    );
-
-    if (saveErrors.has(savedStatus)) {
-      return saveLink;
-    }
-
-    const DefaultErrorMessage = () => {
-      let InlineErrorComponent;
-      if (typeof errorText === 'function') {
-        InlineErrorComponent = errorText;
-      } else if (typeof errorText === 'string') {
-        InlineErrorComponent = () => <p>{errorText}</p>;
-      } else {
-        InlineErrorComponent = () => (
-          <p>
-            If it still doesn’t work, please <CallHRC />
-          </p>
-        );
-      }
-
-      return (
-        <div className="usa-alert usa-alert-error schemaform-failure-alert">
-          <div className="usa-alert-body">
-            <p className="schemaform-warning-header">
-              <strong>We’re sorry. We can't submit your form right now.</strong>
-            </p>
-            <p>
-              We’re working to fix the problem. Please make sure you’re
-              connected to the Internet, and then try saving your form again.{' '}
-              {saveLink}.
-            </p>
-            {!user.login.currentlyLoggedIn && (
-              <p>
-                If you don’t have an account, you’ll have to start over. Try
-                submitting your form again tomorrow.
-              </p>
-            )}
-            <InlineErrorComponent />
-          </div>
-        </div>
-      );
-    };
-
-    return CustomSubmissionError ? (
-      <CustomSubmissionError location={location} form={form} user={user} />
-    ) : (
-      <DefaultErrorMessage />
-    );
   };
 
   renderDowntime = (downtime, children) => {
@@ -147,7 +75,9 @@ class RoutedSavableReviewPage extends React.Component {
       path,
       user,
     } = this.props;
-
+    const finishAppLaterMessage =
+      formConfig?.customText?.finishAppLaterMessage ||
+      FINISH_APP_LATER_DEFAULT_MESSAGE;
     const downtimeDependencies = get('downtime.dependencies', formConfig) || [];
     return (
       <div>
@@ -161,12 +91,12 @@ class RoutedSavableReviewPage extends React.Component {
           appTitle="application"
           render={this.renderDowntime}
           dependencies={downtimeDependencies}
+          customText={formConfig.customText}
         >
           <SubmitController
             formConfig={formConfig}
             pageList={pageList}
             path={path}
-            renderErrorMessage={this.renderErrorMessage}
           />
         </DowntimeNotification>
         <SaveStatus
@@ -174,17 +104,19 @@ class RoutedSavableReviewPage extends React.Component {
           showLoginModal={this.props.showLoginModal}
           toggleLoginModal={this.props.toggleLoginModal}
           form={form}
+          formConfig={formConfig}
         />
         <SaveFormLink
           locationPathname={location.pathname}
           form={form}
+          formConfig={formConfig}
           user={user}
+          pageList={pageList}
           showLoginModal={this.props.showLoginModal}
           saveAndRedirectToReturnUrl={this.props.saveAndRedirectToReturnUrl}
           toggleLoginModal={this.props.toggleLoginModal}
         >
-          {formConfig?.customText?.finishAppLaterMessage ||
-            FINISH_APP_LATER_DEFAULT_MESSAGE}
+          {finishAppLaterMessage}
         </SaveFormLink>
       </div>
     );
@@ -229,6 +161,7 @@ RoutedSavableReviewPage.propTypes = {
     formConfig: PropTypes.shape({
       customText: PropTypes.shape({
         finishAppLaterMessage: PropTypes.string,
+        appType: PropTypes.string,
       }),
     }),
   }).isRequired,
@@ -243,6 +176,7 @@ RoutedSavableReviewPage.defaultProps = {
     formConfig: {
       customText: {
         finishAppLaterMessage: '',
+        appType: '',
       },
     },
   },

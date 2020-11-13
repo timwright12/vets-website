@@ -8,9 +8,11 @@ const ENVIRONMENTS = require('../../constants/environments');
 const HOSTNAMES = require('../../constants/hostnames');
 const assetSources = require('../../constants/assetSources');
 
+const projectRoot = path.resolve(__dirname, '../../../../');
+
 const defaultBuildtype = ENVIRONMENTS.LOCALHOST;
 const defaultHost = HOSTNAMES[defaultBuildtype];
-const defaultContentDir = '../../../../../vagov-content/pages';
+const defaultContentDir = path.join(projectRoot, '../vagov-content/pages');
 
 const getDrupalClient = require('./drupal/api');
 const { shouldPullDrupal } = require('./drupal/metalsmith-drupal');
@@ -55,7 +57,13 @@ const COMMAND_LINE_OPTIONS_DEFINITIONS = [
   { name: 'local-css-sourcemaps', type: Boolean, defaultValue: false },
   { name: 'accessibility', type: Boolean, defaultValue: false },
   { name: 'lint-plain-language', type: Boolean, defaultValue: false },
-  { name: 'unexpected', type: String, multile: true, defaultOption: true },
+  { name: 'verbose', alias: 'v', type: Boolean, defaultValue: false },
+
+  // HACK: The drupal-aws-cache script ends up here while trying to cache
+  // the query for getting all pages. The 'fetch' option from that cache script
+  // isn't actually a part of this list of options, but an error would be thrown
+  // without it. Remove this when getOptions is decoupled from the cache script.
+  { name: 'fetch', type: Boolean, defaultValue: false },
 ];
 
 function gatherFromCommandLine() {
@@ -65,10 +73,6 @@ function gatherFromCommandLine() {
   options['cms-export-dir'] =
     options['cms-export-dir'] || defaultCMSExportContentDir(options.buildtype);
 
-  if (options.unexpected && options.unexpected.length !== 0) {
-    throw new Error(`Unexpected arguments: '${options.unexpected}'`);
-  }
-
   return options;
 }
 
@@ -76,7 +80,6 @@ function applyDefaultOptions(options) {
   const contentPagesRoot = options['content-directory'];
   const contentRoot = path.join(contentPagesRoot, '../');
 
-  const projectRoot = path.resolve(__dirname, '../../../../');
   const siteRoot = path.join(__dirname, '../../');
   const includes = path.join(siteRoot, 'includes');
   const components = path.join(siteRoot, 'components');
@@ -187,7 +190,14 @@ async function setUpFeatureFlags(options) {
       `${apiClient.getSiteUri()}/flags_list`,
     );
 
-    rawFlags = (await result.json()).data;
+    const responseBody = await result.text();
+    try {
+      rawFlags = JSON.parse(responseBody).data;
+    } catch (e) {
+      throw new TypeError(
+        `Could not parse Drupal build flags. Response:\n${responseBody}`,
+      );
+    }
 
     // Write them to .cache/{buildtype}/drupal/feature-flags.json
     fs.ensureDirSync(options.cacheDirectory);
@@ -200,7 +210,9 @@ async function setUpFeatureFlags(options) {
       : {};
   }
 
-  logDrupal(`Drupal feature flags:\n${JSON.stringify(rawFlags, null, 2)}`);
+  if (global.verbose) {
+    logDrupal(`Drupal feature flags:\n${JSON.stringify(rawFlags, null, 2)}`);
+  }
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const proxiedFlags = useFlags(rawFlags);
@@ -217,6 +229,10 @@ async function getOptions(commandLineOptions) {
   applyEnvironmentOverrides(options);
   deriveHostUrl(options);
   await setUpFeatureFlags(options);
+
+  // Setting verbosity for the whole content build process as global so we don't
+  // have to pass the buildOptions around for just that.
+  global.verbose = options.verbose;
 
   return options;
 }

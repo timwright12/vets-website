@@ -198,8 +198,8 @@ export class Modals extends React.Component {
           The number of Veterans, service members and family members using their
           GI Bill benefits attending this school in the last calendar year. This
           includes all chapters of the GI Bill program (e.g., Post-9/11,
-          Montgomery GI Bill, Reserve Education Assistance Program, and
-          Vocational Rehabilitation). Keep in mind that differences in attendee
+          Montgomery GI Bill, Reserve Education Assistance Program, and Veteran
+          Readiness and Employment). Keep in mind that differences in attendee
           numbers don’t necessarily mean one school is more military friendly
           than another. This information will be updated annually.
         </p>
@@ -337,30 +337,32 @@ export class Modals extends React.Component {
         onClose={this.props.hideModal}
         visible={this.shouldDisplayModal('onlineOnlyDistanceLearning')}
       >
-        <h3>Online and distance learning</h3>
-        <p>
+        <div>
+          <h3>
+            Your housing allowance is determined by where you take classes
+          </h3>
           <p>
-            Under the GI Bill you’re eligible to receive a monthly housing
-            allowance if you’re enrolled in an online or distance-learning
-            course.
+            <p>
+              Under the GI Bill you’re eligible to receive a monthly housing
+              allowance. We calculate this monthly housing allowance based on
+              where you take classes.
+            </p>
+            <p>
+              If you use Post-9/11 GI Bill benefits to take at least 1 in-person
+              class, your housing allowance is based on where you do most of
+              your coursework. If you take online courses only, your housing
+              allowance is based on 50% of the national average.
+            </p>
+            <p>
+              Through Dec. 21, 2020, current and new students can receive
+              in-person allowance rates if their school’s approved program
+              changed from in-person to online learning due to COVID-19.
+            </p>
+            <a href="https://www.benefits.va.gov/gibill/resources/benefits_resources/rate_tables.asp?_ga=2.144591223.39405460.1542131207-1582256389.1508352376">
+              View the current housing allowance payment rates
+            </a>
           </p>
-          <p>
-            We now calculate the monthly housing allowance based on where a
-            student takes their classes. So if you enroll in an online or
-            distance-learning class, your housing allowance payment will be
-            based on where you do most of your coursework, not on your school’s
-            location.
-          </p>
-          <p>
-            If you use your Post-9/11 GI Bill benefits while taking only
-            distance-learning courses, we’ll pay you a housing allowance based
-            on 50% of the national average.
-          </p>
-          <a href="https://www.benefits.va.gov/gibill/resources/benefits_resources/rate_tables.asp?_ga=2.144591223.39405460.1542131207-1582256389.1508352376">
-            View the current housing allowance payment rates
-          </a>
-          .
-        </p>
+        </div>
       </Modal>
 
       <Modal
@@ -547,7 +549,7 @@ export class Modals extends React.Component {
           <p>
             To learn more about this scholarship,{' '}
             <a
-              href="https://benefits.va.gov/gibill/fgib/stem.asp"
+              href="/education/other-va-education-benefits/stem-scholarship/"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -1157,56 +1159,17 @@ export class Modals extends React.Component {
         visible={this.shouldDisplayModal('cumulativeService')}
       >
         <h3>Cumulative Post-9/11 service</h3>
-        {environment.isProduction() ? (
-          <div>
-            {' '}
-            <p>
-              The{' '}
-              <a
-                title="Post-9/11 GI Bill"
-                href="../post911_gibill.asp"
-                id="anch_375"
-              >
-                Post-9/11 GI Bill
-              </a>{' '}
-              provides financial support for education and a housing allowance.
-              To qualify for this program, you must have served after September
-              10, 2001 for at least 90 days or, if you were discharged with a
-              service-connected disability, for at least 30 days. You also need
-              to have received an honorable discharge.
-            </p>
-            <p>
-              For detailed information about Cumulative Post-9/11 Service, visit{' '}
-              <a
-                href="https://www.benefits.va.gov/gibill/comparison_tool/about_this_tool.asp#cumulativeservice"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                this page
-              </a>
-              .
-            </p>
-          </div>
-        ) : (
-          <div>
-            <p>
-              The{' '}
-              <a
-                href="https://www.va.gov/education/about-gi-bill-benefits/post-9-11/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Post-9/11 GI Bill
-              </a>{' '}
-              education benefits you receive depend on how much active duty
-              service you’ve completed since September 10, 2001. We calculate
-              the amount based on the total (cumulative) time you’ve spent on
-              active duty. If you’re a Purple Heart or Fry Scholarship
-              recipient, or have a service-connected discharge, you’ll receive
-              100% of the benefits.
-            </p>
-          </div>
-        )}
+        <div>
+          <p>
+            The Post-9/11 GI Bill provides financial support for education and a
+            housing allowance. To qualify for this program, you must have served
+            after September 10, 2001 for at least 90 days or, if you were
+            discharged with a service-connected disability, for at least 30
+            days. The service period for these benefits doesn't include your
+            entry and initial skill training. You also need to have received an
+            honorable discharge.
+          </p>
+        </div>
       </Modal>
 
       <Modal
@@ -1326,6 +1289,7 @@ export class Modals extends React.Component {
 }
 
 const mapStateToProps = state => state;
+
 const mapDispatchToProps = dispatch => ({
   showModal: name => {
     dispatch(actions.showModal(name));

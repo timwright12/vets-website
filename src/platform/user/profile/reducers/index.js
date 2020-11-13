@@ -29,6 +29,7 @@ const initialState = {
   dob: null,
   gender: null,
   accountType: null,
+  isCernerPatient: false,
   loa: {
     current: null,
     highest: null,
@@ -41,11 +42,12 @@ const initialState = {
     loading: false,
     termsAndConditionsAccepted: false,
   },
-  vet360: {},
+  vapContactInfo: {},
   savedForms: [],
   prefillsAvailable: [],
   loading: true,
   services: [],
+  session: {},
 };
 
 const updateMhvAccountState = (state, mhvAccount) =>

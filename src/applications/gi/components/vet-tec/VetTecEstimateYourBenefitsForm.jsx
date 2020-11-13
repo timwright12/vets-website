@@ -90,13 +90,14 @@ class VetTecEstimateYourBenefitsForm extends React.Component {
     focusElement('.estimated-benefits-header');
   };
 
-  renderLearnMoreLabel = ({ text, modal, ariaLabel }) =>
+  renderLearnMoreLabel = ({ text, modal, ariaLabel, labelFor }) =>
     renderLearnMoreLabel({
       text,
       modal,
       ariaLabel,
       showModal: this.props.showModal,
       component: this,
+      labelFor,
     });
 
   renderScholarships = () => (
@@ -110,6 +111,7 @@ class VetTecEstimateYourBenefitsForm extends React.Component {
           text: 'Scholarships (excluding Pell Grants)',
           modal: 'scholarships',
           ariaLabel: ariaLabels.learnMore.scholarships,
+          labelFor: 'vetTecScholarships',
         })}
       </label>
       <input
@@ -118,6 +120,7 @@ class VetTecEstimateYourBenefitsForm extends React.Component {
         type="text"
         pattern="(\d*\d+)(?=\,)"
         name="vetTecScholarships"
+        id="vetTecScholarships"
         value={formatDollarAmount(this.state.scholarships)}
         onChange={e => {
           this.setState({
@@ -146,11 +149,13 @@ class VetTecEstimateYourBenefitsForm extends React.Component {
           text: 'Tuition and fees for program',
           modal: 'tuitionAndFees',
           ariaLabel: ariaLabels.learnMore.tuitionAndFees,
+          labelFor: 'vetTecTuitionFees',
         })}
       </label>
       <input
         aria-labelledby="tuition-fees-label"
         name="vetTecTuitionFees"
+        id="vetTecTuitionFees"
         pattern="(\d*\d+)(?=\,)"
         type="text"
         inputMode="decimal"
@@ -237,7 +242,6 @@ class VetTecEstimateYourBenefitsForm extends React.Component {
 
 VetTecEstimateYourBenefitsForm.propTypes = {
   inputs: PropTypes.object,
-  displayedInputs: PropTypes.object,
   showModal: PropTypes.func,
   institution: PropTypes.object,
   selectedProgram: PropTypes.string,

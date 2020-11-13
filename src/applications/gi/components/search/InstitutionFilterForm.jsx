@@ -76,7 +76,7 @@ class InstitutionFilterForm extends React.Component {
 
     return (
       <div>
-        <p>Programs</p>
+        <p className="vads-u-margin-y--3">Programs</p>
         <Checkbox
           checked={filters.studentVeteranGroup}
           name="studentVeteranGroup"
@@ -141,7 +141,7 @@ class InstitutionFilterForm extends React.Component {
 
     return (
       <Dropdown
-        label="Institution type"
+        label="Type of school or employer"
         name="type"
         options={options}
         value={this.props.filters.type}
@@ -156,10 +156,9 @@ class InstitutionFilterForm extends React.Component {
   render() {
     return (
       <div className="institution-filter-form">
-        <h2>Institution details</h2>
-        {this.renderCategoryFilter()}
         {this.renderCountryFilter()}
         {this.renderStateFilter()}
+
         {
           <CautionaryWarningsFilter
             excludeCautionFlags={this.props.filters.excludeCautionFlags}
@@ -169,8 +168,9 @@ class InstitutionFilterForm extends React.Component {
             handleInputFocus={this.props.handleInputFocus}
           />
         }
-        {this.renderProgramFilters()}
+        {this.renderCategoryFilter()}
         {this.renderTypeFilter()}
+        {this.renderProgramFilters()}
       </div>
     );
   }

@@ -54,13 +54,22 @@ export const reverseGeocode = async (lon, lat, types) => {
     .reverseGeocode({ query: [lon, lat], types })
     .send()
     .catch();
-  const {
-    features: {
-      0: { place_name: placeName },
-    },
-  } = response.body;
 
-  return placeName;
+  if (
+    response.body &&
+    response.body.features &&
+    response.body.features.length > 0
+  ) {
+    const {
+      features: {
+        0: { place_name: placeName },
+      },
+    } = response.body;
+
+    return placeName;
+  }
+
+  return null;
 };
 
 /**
@@ -80,3 +89,6 @@ export const reverseGeocodeBox = (bounds, types = 'address,postcode') => {
   const { lon, lat } = getBoxCenter(bounds);
   return reverseGeocode(lon, lat, types.split(','));
 };
+
+export const staticMapURL = (lat, long, mapboxToken) =>
+  `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-l+e31c3d(${long},${lat})/${long},${lat},16/500x300?access_token=${mapboxToken}`;

@@ -1,6 +1,10 @@
 import React from 'react';
 import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
 import recordEvent from 'platform/monitoring/record-event';
+import Telephone, {
+  CONTACTS,
+  PATTERNS,
+} from '@department-of-veterans-affairs/formation-react/Telephone';
 
 export const errorMessage = () => {
   const message = (
@@ -14,17 +18,8 @@ export const errorMessage = () => {
       </p>
       <p>
         If you get this error again, please call the VA.gov help desk at{' '}
-        <a
-          href="tel:8446982311"
-          aria-label="8 4 4. 6 9 8. 2 3 1 1."
-          title="Dial the telephone number 844-698-2311"
-        >
-          844-698-2311
-        </a>{' '}
-        (
-        <a href="tel:711" aria-label="TTY. 7 1 1.">
-          TTY: 711
-        </a>
+        <Telephone contact={CONTACTS.VA_311} /> (TTY:{' '}
+        <Telephone contact={CONTACTS['711']} pattern={PATTERNS['3_DIGIT']} />
         ). We’re here Monday-Friday, 8:00 a.m.-8:00 p.m. ET.
       </p>
     </>

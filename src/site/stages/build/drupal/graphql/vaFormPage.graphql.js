@@ -1,8 +1,10 @@
 const entityElementsFromPages = require('./entityElementsForPages.graphql');
+const { FIELD_ALERT } = require('./block-fragments/alert.block.graphql');
 
 const fragment = `
 fragment vaFormPage on NodeVaForm {
   ${entityElementsFromPages}
+  changed
   fieldVaFormName
   fieldVaFormTitle
   fieldVaFormType
@@ -17,6 +19,7 @@ fragment vaFormPage on NodeVaForm {
     processed
   }
   fieldVaFormNumber
+  ${FIELD_ALERT}
   fieldVaFormAdministration {
     targetId
     entity {

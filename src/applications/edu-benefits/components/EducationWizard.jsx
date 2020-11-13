@@ -3,8 +3,10 @@ import _ from 'lodash/fp';
 import classNames from 'classnames';
 import recordEvent from 'platform/monitoring/record-event';
 import ErrorableRadioButtons from '@department-of-veterans-affairs/formation-react/ErrorableRadioButtons';
-import { educationWizard10203 } from '../selectors/educationWizard';
-import { connect } from 'react-redux';
+import {
+  WIZARD_STATUS,
+  WIZARD_STATUS_COMPLETE,
+} from 'applications/static-pages/wizard';
 
 const levels = [
   ['newBenefit'],
@@ -15,7 +17,7 @@ const levels = [
   ['applyForScholarship'],
 ];
 
-export class EducationWizard extends React.Component {
+export default class EducationWizard extends React.Component {
   constructor(props) {
     super(props);
 
@@ -28,10 +30,18 @@ export class EducationWizard extends React.Component {
   }
 
   getButton(form) {
-    const url =
-      form === '0994'
-        ? `/education/about-gi-bill-benefits/how-to-use-benefits/vettec-high-tech-program/apply-for-vettec-form-22-0994`
-        : `/education/apply-for-education-benefits/application/${form}`;
+    let url = '';
+    switch (form) {
+      case '0994':
+        url = `/education/about-gi-bill-benefits/how-to-use-benefits/vettec-high-tech-program/apply-for-vettec-form-22-0994`;
+        break;
+      case '10203':
+        url = `/education/other-va-education-benefits/stem-scholarship/apply-for-scholarship-form-22-10203`;
+        break;
+      default:
+        url = `/education/apply-for-education-benefits/application/${form}`;
+        break;
+    }
 
     return (
       <a
@@ -98,6 +108,7 @@ export class EducationWizard extends React.Component {
   };
 
   recordWizardValues = () => {
+    sessionStorage.setItem(WIZARD_STATUS, WIZARD_STATUS_COMPLETE);
     recordEvent({
       event: 'edu-howToApply-applyNow',
       'edu-benefitUpdate': this.eduFormChange(this.state.newBenefit),
@@ -127,11 +138,6 @@ export class EducationWizard extends React.Component {
       vetTecBenefit,
       applyForScholarship,
     } = this.state;
-
-    const { showSTEMScholarship } = this.props;
-
-    const form1995 = showSTEMScholarship ? '10203' : '1995';
-
     const buttonClasses = classNames('usa-button-primary', 'wizard-button', {
       'va-button-primary': !this.state.open,
     });
@@ -354,60 +360,77 @@ export class EducationWizard extends React.Component {
             {newBenefit === 'extend' && (
               <div className="wizard-edith-nourse-content">
                 <br />
-                <strong>
-                  To be eligible for the{' '}
-                  <a
-                    href="https://benefits.va.gov/gibill/fgib/stem.asp"
-                    onClick={() =>
-                      recordEvent({
-                        event: 'edu-navigation',
-                        'edu-action': 'stem-scholarship',
-                      })
-                    }
-                  >
-                    Edith Nourse Rogers STEM Scholarship
-                  </a>
-                  , you must meet all the requirements below. You:
-                </strong>
-                <ul className="wizard-edith-nourse-content">
-                  <li>
-                    Are using or recently used Post-9/11 GI Bill or Fry
-                    Scholarship benefits
-                  </li>
-                  <li>
-                    Have used all your education benefits or are within 6 months
-                    of doing so.{' '}
+                <div>
+                  <strong>
+                    To be eligible for the{' '}
                     <a
-                      className="checkBenefitsLink"
-                      href="../gi-bill/post-9-11/ch-33-benefit/"
+                      href="/education/other-va-education-benefits/stem-scholarship/"
+                      rel="noopener noreferrer"
                       onClick={() =>
                         recordEvent({
                           event: 'edu-navigation',
-                          'edu-action': 'check-remaining-benefits',
+                          'edu-action': 'stem-scholarship',
                         })
                       }
                     >
-                      Check remaining benefits
+                      Edith Nourse Rogers STEM Scholarship
                     </a>
-                  </li>
-                  <li>
-                    Are enrolled in an undergraduate degree program for science,
-                    technology, engineering or math (STEM), <strong>or</strong>{' '}
-                    have already earned a STEM degree and are pursuing a
-                    teaching certification.{' '}
-                    <a
-                      href="https://benefits.va.gov/gibill/docs/fgib/STEM_Program_List.pdf"
-                      onClick={() =>
-                        recordEvent({
-                          event: 'edu-navigation',
-                          'edu-action': 'see-approved-stem-programs',
-                        })
-                      }
-                    >
-                      See approved STEM programs
-                    </a>
-                  </li>
-                </ul>
+                    , you must meet all the requirements below.
+                  </strong>
+                  <ul>
+                    <li className="ul-styling">
+                      <b>Education benefit:</b> You're using or recently used
+                      Post-9/11 GI Bill or Fry Scholarship benefits.
+                    </li>
+                    <li>
+                      <b>STEM degree:</b>
+                      <ul className="circle-bullet ul-styling vads-u-margin-bottom--neg1">
+                        <li className="li-styling">
+                          You're enrolled in a bachelor’s degree program for
+                          science, technology, engineering, or math (STEM),{' '}
+                          <b>or</b>
+                        </li>{' '}
+                        <li>
+                          {' '}
+                          You've already earned a STEM bachelor’s degree and are
+                          pursuing a teaching certification.{' '}
+                          <a
+                            href="https://benefits.va.gov/gibill/docs/fgib/STEM_Program_List.pdf"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                            onClick={() =>
+                              recordEvent({
+                                event: 'edu-navigation',
+                                'edu-action': 'see-approved-stem-programs',
+                              })
+                            }
+                          >
+                            See eligible degree programs
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li className="ul-styling">
+                      <b>Remaining entitlement:</b> You've used all of your
+                      education benefits or are within 6 months of using all
+                      your benefits when you submit your application.{' '}
+                      <a
+                        className="checkBenefitsLink"
+                        href="/education/gi-bill/post-9-11/ch-33-benefit/"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        onClick={() =>
+                          recordEvent({
+                            event: 'edu-navigation',
+                            'edu-action': 'check-remaining-benefits',
+                          })
+                        }
+                      >
+                        Check your remaining benefits
+                      </a>
+                    </li>
+                  </ul>
+                </div>
 
                 <ErrorableRadioButtons
                   additionalFieldsetClass="wizard-fieldset"
@@ -424,8 +447,7 @@ export class EducationWizard extends React.Component {
                   label="Based on the eligibility requirements above, do you want to apply for this scholarship?"
                 />
                 <div className="vads-u-padding-top--2">
-                  {(applyForScholarship === 'yes' &&
-                    this.getButton(form1995)) ||
+                  {(applyForScholarship === 'yes' && this.getButton('10203')) ||
                     (applyForScholarship === 'no' && (
                       <p>
                         Learn what other education benefits you may be eligible
@@ -466,9 +488,3 @@ export class EducationWizard extends React.Component {
     );
   }
 }
-
-const mapStateToProps = state => ({
-  showSTEMScholarship: educationWizard10203(state),
-});
-
-export default connect(mapStateToProps)(EducationWizard);
