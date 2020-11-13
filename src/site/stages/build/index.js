@@ -251,6 +251,22 @@ function build(BUILD_OPTIONS) {
   smith.use(updateRobots(BUILD_OPTIONS), 'Update robots.txt');
   smith.use(checkForCMSUrls(BUILD_OPTIONS), 'Check for CMS URLs');
 
+  const terms = [
+    '/sign-in-faq',
+  ]
+
+    smith.use((files) => {
+      for (const [fileName, file] of Object.entries(files)) {
+        if (fileName.endsWith('html')) {
+          const hasKeyword = terms.filter(t => file.contents.toString().toLowerCase().includes(t.toLowerCase()))
+          if (hasKeyword.length > 0) {
+            console.log(`| ${fileName} | ${hasKeyword.join()} |`)
+          }
+        }
+      }
+    })
+
+
   /**
    * Parse the HTML into a JS data structure for use in later plugins.
    * Important: Only plugins that use the parsedContent to modify the
@@ -258,22 +274,22 @@ function build(BUILD_OPTIONS) {
    * the content is modified directly between those two plugins, any
    * changes will be overwritten during the outputHtml step.
    */
-  smith.use(parseHtml, 'Parse HTML files');
+  // smith.use(parseHtml, 'Parse HTML files');
 
-  /**
-   * Add nonce attribute with substition string to all inline script tags
-   * Convert onclick event handles into nonced script tags
-   */
-  smith.use(addNonceToScripts, 'Add nonce to script tags');
-  smith.use(
-    processEntryNames(BUILD_OPTIONS),
-    'Process [data-entry-name] attributes into Webpack asset paths',
-  );
-  smith.use(updateExternalLinks(BUILD_OPTIONS), 'Update external links');
-  smith.use(addSubheadingsIds(BUILD_OPTIONS), 'Add IDs to subheadings');
-  smith.use(checkBrokenLinks(BUILD_OPTIONS), 'Check for broken links');
-  smith.use(injectAxeCore(BUILD_OPTIONS), 'Inject axe-core for accessibility');
-  smith.use(replaceContentsWithDom, 'Save the changes from the modified DOM');
+  // /**
+  //  * Add nonce attribute with substition string to all inline script tags
+  //  * Convert onclick event handles into nonced script tags
+  //  */
+  // smith.use(addNonceToScripts, 'Add nonce to script tags');
+  // smith.use(
+  //   processEntryNames(BUILD_OPTIONS),
+  //   'Process [data-entry-name] attributes into Webpack asset paths',
+  // );
+  // smith.use(updateExternalLinks(BUILD_OPTIONS), 'Update external links');
+  // smith.use(addSubheadingsIds(BUILD_OPTIONS), 'Add IDs to subheadings');
+  // smith.use(checkBrokenLinks(BUILD_OPTIONS), 'Check for broken links');
+  // smith.use(injectAxeCore(BUILD_OPTIONS), 'Inject axe-core for accessibility');
+  // smith.use(replaceContentsWithDom, 'Save the changes from the modified DOM');
 
   /* eslint-disable no-console */
   smith.build(err => {
