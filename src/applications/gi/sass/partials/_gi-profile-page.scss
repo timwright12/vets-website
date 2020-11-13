@@ -162,6 +162,10 @@
     hr {
       border: 1px solid $color-primary-darkest;
     }
+    .eyb-value-header {
+      margin-top: 22.5px;
+      margin-bottom: 7.5px;
+    }
   }
 
   .program-name {
@@ -365,10 +369,6 @@
     }
   }
 
-  #estimated-benefits {
-    outline: none;
-  }
-
   .eyb-sheet {
     background-color: $color-gray-lightest;
     position: fixed;
@@ -439,5 +439,14 @@
 
   .secondary-sco-list {
     padding-left: 0;
+  }
+
+  .eyb-skip-link {
+    position: absolute;
+    top: -100rem;
+
+    &:focus {
+      top: auto;
+    }
   }
 }

@@ -5,27 +5,22 @@ import recordEvent from 'platform/monitoring/record-event';
 import { resetDataLayer } from '../utils/events';
 
 import {
-  getPendingAppointments,
   getCancelReasons,
   getRequestMessages,
   updateAppointment,
   updateRequest,
-  getClinicInstitutions,
 } from '../api';
 import { getLocations } from '../services/location';
 
 import {
   getBookedAppointments,
+  getAppointmentRequests,
   getVARClinicId,
   getVARFacilityId,
   getVAAppointmentLocationId,
+  getVideoAppointmentLocation,
+  isVideoAppointment,
 } from '../services/appointment';
-
-// Only use this when we need to pass data that comes back from one of our
-// services files to one of the older api functions
-function parseFakeFHIRId(id) {
-  return id.replace('var', '');
-}
 
 import { captureError, getErrorCodes } from '../utils/error';
 import { STARTED_NEW_APPOINTMENT_FLOW } from './sitewide';
@@ -91,21 +86,29 @@ async function getAdditionalFacilityInfo(futureAppointments) {
   // Get facility ids from non-VA appts or requests
   const nonVaFacilityAppointmentIds = futureAppointments
     .filter(
-      appt => appt.vaos?.videoType || appt.vaos?.isCommunityCare || !appt.vaos,
+      appt =>
+        !isVideoAppointment(appt) && (appt.vaos?.isCommunityCare || !appt.vaos),
     )
     .map(appt => appt.facilityId || appt.facility?.facilityCode);
+
+  const videoAppointmentIds = futureAppointments
+    .filter(appt => isVideoAppointment(appt))
+    .map(getVideoAppointmentLocation);
 
   // Get facility ids from VA appointments
   const vaFacilityAppointmentIds = futureAppointments
     .filter(
-      appt => appt.vaos && !appt.vaos.videoType && !appt.vaos.isCommunityCare,
+      appt =>
+        appt.vaos && !isVideoAppointment(appt) && !appt.vaos.isCommunityCare,
     )
     .map(getVAAppointmentLocationId);
 
   const uniqueFacilityIds = new Set(
-    [...nonVaFacilityAppointmentIds, ...vaFacilityAppointmentIds].filter(
-      id => !!id,
-    ),
+    [
+      ...nonVaFacilityAppointmentIds,
+      ...videoAppointmentIds,
+      ...vaFacilityAppointmentIds,
+    ].filter(id => !!id),
   );
   let facilityData = null;
   if (uniqueFacilityIds.size > 0) {
@@ -132,18 +135,17 @@ export function fetchFutureAppointments() {
               .add(13, 'months')
               .format('YYYY-MM-DD'),
           }),
-          getPendingAppointments(
-            moment()
+          getAppointmentRequests({
+            startDate: moment()
               .subtract(30, 'days')
               .format('YYYY-MM-DD'),
-            moment().format('YYYY-MM-DD'),
-          ),
+            endDate: moment().format('YYYY-MM-DD'),
+          }),
         ]);
 
         dispatch({
           type: FETCH_FUTURE_APPOINTMENTS_SUCCEEDED,
           data,
-          today: moment(),
         });
 
         try {
@@ -255,7 +257,7 @@ export function confirmCancelAppointment() {
 
       if (!isConfirmedAppointment) {
         apiData = await updateRequest({
-          ...appointment.apiData,
+          ...appointment.legacyVAR.apiData,
           status: CANCELLED_REQUEST,
           appointmentRequestDetailCode: ['DETCODE8'],
         });

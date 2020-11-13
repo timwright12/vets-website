@@ -12,6 +12,11 @@ export const APPOINTMENT_TYPES = {
   ccRequest: 'ccRequest',
 };
 
+export const CONFIRMED_APPOINTMENT_TYPES = new Set([
+  APPOINTMENT_TYPES.ccAppointment,
+  APPOINTMENT_TYPES.vaAppointment,
+]);
+
 export const APPOINTMENT_STATUS = {
   arrived: 'arrived',
   booked: 'booked',
@@ -327,6 +332,7 @@ export const CALENDAR_INDICATOR_TYPES = {
 export const DISABLED_LIMIT_VALUE = 0;
 export const PRIMARY_CARE = '323';
 export const MENTAL_HEALTH = '502';
+export const EXPRESS_CARE = 'CR1';
 
 export const GA_PREFIX = 'vaos';
 export const GA_FLOWS = {
@@ -343,3 +349,5 @@ export const FREE_BUSY_TYPES = {
   busyUnavailable: 'busy-unavailable',
   busyTentative: 'busy-tentative',
 };
+
+export const UNABLE_TO_REACH_VETERAN_DETCODE = 'DETCODE23';

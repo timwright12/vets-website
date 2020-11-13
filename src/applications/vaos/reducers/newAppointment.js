@@ -46,6 +46,7 @@ import {
   FORM_SUBMIT_FAILED,
   FORM_TYPE_OF_CARE_PAGE_OPENED,
   FORM_UPDATE_CC_ELIGIBILITY,
+  CLICKED_UPDATE_ADDRESS_BUTTON,
 } from '../actions/newAppointment';
 
 import {
@@ -89,6 +90,7 @@ const initialState = {
   fetchedAppointmentSlotMonths: [],
   submitStatus: FETCH_STATUS.notStarted,
   isCCEligible: false,
+  hideUpdateAddressAlert: false,
 };
 
 function getFacilities(state, typeOfCareId, vaParent) {
@@ -198,6 +200,7 @@ export default function formReducer(state = initialState, action) {
         facilities: state.facilities,
         pastAppointments: state.pastAppointments,
         submitStatus: FETCH_STATUS.notStarted,
+        hideUpdateAddressAlert: state.hideUpdateAddressAlert,
       };
     }
     case FORM_PAGE_CHANGE_STARTED: {
@@ -262,6 +265,12 @@ export default function formReducer(state = initialState, action) {
       return {
         ...state,
         showTypeOfCareUnavailableModal: false,
+      };
+    }
+    case CLICKED_UPDATE_ADDRESS_BUTTON: {
+      return {
+        ...state,
+        hideUpdateAddressAlert: true,
       };
     }
     case FORM_UPDATE_FACILITY_TYPE: {
@@ -647,7 +656,8 @@ export default function formReducer(state = initialState, action) {
         });
 
         clinics = clinics.filter(clinic =>
-          pastAppointmentDateMap.has(clinic.clinicId),
+          // Get clinic portion of id
+          pastAppointmentDateMap.has(clinic.id?.split('_')[1]),
         );
       }
 
@@ -658,9 +668,10 @@ export default function formReducer(state = initialState, action) {
           properties: {
             clinicId: {
               type: 'string',
-              title: `Would you like to make an appointment at ${clinic.clinicFriendlyLocationName ||
-                clinic.clinicName}?`,
-              enum: [clinic.clinicId, 'NONE'],
+              title: `Would you like to make an appointment at ${
+                clinic.serviceName
+              }?`,
+              enum: [clinic.id, 'NONE'],
               enumNames: [
                 'Yes, make my appointment here',
                 'No, I need a different clinic',
@@ -676,12 +687,9 @@ export default function formReducer(state = initialState, action) {
               type: 'string',
               title:
                 'You can choose a clinic where you’ve been seen or request an appointment at a different clinic.',
-              enum: clinics.map(clinic => clinic.clinicId).concat('NONE'),
+              enum: clinics.map(clinic => clinic.id).concat('NONE'),
               enumNames: clinics
-                .map(
-                  clinic =>
-                    clinic.clinicFriendlyLocationName || clinic.clinicName,
-                )
+                .map(clinic => clinic.serviceName)
                 .concat('I need a different clinic'),
             },
           },

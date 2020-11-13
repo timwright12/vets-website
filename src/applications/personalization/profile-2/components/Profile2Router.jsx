@@ -4,6 +4,16 @@ import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import LoadingIndicator from '@department-of-veterans-affairs/formation-react/LoadingIndicator';
 
+import DowntimeNotification, {
+  externalServices,
+  externalServiceStatus,
+} from 'platform/monitoring/DowntimeNotification';
+import DowntimeApproaching from 'platform/monitoring/DowntimeNotification/components/DowntimeApproaching';
+import {
+  initializeDowntimeWarnings,
+  dismissDowntimeWarning,
+} from 'platform/monitoring/DowntimeNotification/actions';
+
 import RequiredLoginView from 'platform/user/authorization/components/RequiredLoginView';
 import backendServices from 'platform/user/profile/constants/backendServices';
 import {
@@ -24,6 +34,7 @@ import {
 } from 'applications/personalization/profile360/selectors';
 import { fetchPaymentInformation as fetchPaymentInformationAction } from 'applications/personalization/profile360/actions/paymentInformation';
 import getRoutes from '../routes';
+import { PROFILE_PATHS } from '../constants';
 
 import Profile2Wrapper from './Profile2Wrapper';
 
@@ -36,13 +47,17 @@ class Profile2Router extends Component {
       fetchPersonalInformation,
       fetchPaymentInformation,
       shouldFetchDirectDepositInformation,
+      shouldShowMilitaryInformation,
     } = this.props;
     fetchMHVAccount();
-    fetchMilitaryInformation();
     fetchFullName();
     fetchPersonalInformation();
     if (shouldFetchDirectDepositInformation) {
       fetchPaymentInformation();
+    }
+
+    if (shouldShowMilitaryInformation) {
+      fetchMilitaryInformation();
     }
   }
 
@@ -53,7 +68,40 @@ class Profile2Router extends Component {
     ) {
       this.props.fetchPaymentInformation();
     }
+
+    if (
+      this.props.shouldShowMilitaryInformation &&
+      !prevProps.shouldShowMilitaryInformation
+    ) {
+      this.props.fetchMilitaryInformation();
+    }
   }
+
+  handleDowntimeApproaching = (downtime, children) => {
+    if (downtime.status === externalServiceStatus.downtimeApproaching) {
+      return (
+        <DowntimeApproaching
+          {...downtime}
+          appTitle="profile"
+          isDowntimeWarningDismissed={this.props.isDowntimeWarningDismissed}
+          dismissDowntimeWarning={this.props.dismissDowntimeWarning}
+          initializeDowntimeWarnings={this.props.initializeDowntimeWarnings}
+          messaging={{
+            title: (
+              <h3>
+                Some parts of the profile will be down for maintenance soon
+              </h3>
+            ),
+          }}
+          // default for className prop is `row-padded` and we do not want that
+          // class applied to the wrapper div DowntimeApproaching renders
+          className=""
+          content={children}
+        />
+      );
+    }
+    return children;
+  };
 
   // content to show if the component is waiting for data to load. This loader
   // matches the loader shown by the RequiredLoginView component, so when the
@@ -67,10 +115,21 @@ class Profile2Router extends Component {
 
   // content to show after data has loaded
   mainContent = () => {
-    const routes = getRoutes(this.props.shouldShowDirectDeposit);
+    const routesOptions = {
+      removeDirectDeposit: !this.props.shouldShowDirectDeposit,
+      removeMilitaryInformation: !this.props.shouldShowMilitaryInformation,
+    };
+
+    // We need to pass in a config to hide forbidden routes
+    const routes = getRoutes(routesOptions);
+
     return (
       <BrowserRouter>
-        <Profile2Wrapper routes={routes}>
+        <Profile2Wrapper
+          routes={routes}
+          isLOA3={this.props.isLOA3}
+          isInMVI={this.props.isInMVI}
+        >
           <Switch>
             {/* Redirect users to Account Security to upgrade their account if they need to */}
             {routes.map(route => {
@@ -81,9 +140,18 @@ class Profile2Router extends Component {
                 return (
                   <Redirect
                     from={route.path}
-                    key="/profile/account-security"
-                    to="/profile/account-security"
+                    to={PROFILE_PATHS.ACCOUNT_SECURITY}
+                    key={route.path}
                   />
+                );
+              }
+
+              if (
+                route.path === PROFILE_PATHS.MILITARY_INFORMATION &&
+                !this.props.shouldShowMilitaryInformation
+              ) {
+                return (
+                  <Redirect to={PROFILE_PATHS.PROFILE_ROOT} key={route.path} />
                 );
               }
 
@@ -99,14 +167,19 @@ class Profile2Router extends Component {
 
             <Redirect
               exact
-              from="/profile"
-              key="/profile/personal-information"
-              to="/profile/personal-information"
+              from="/profile#contact-information"
+              to={PROFILE_PATHS.PERSONAL_INFORMATION}
+            />
+
+            <Redirect
+              exact
+              from={PROFILE_PATHS.PROFILE_ROOT}
+              to={PROFILE_PATHS.PERSONAL_INFORMATION}
             />
 
             {/* fallback handling: redirect to root route */}
             <Route path="*">
-              <Redirect to="/profile" />
+              <Redirect to={PROFILE_PATHS.PROFILE_ROOT} />
             </Route>
           </Switch>
         </Profile2Wrapper>
@@ -127,7 +200,19 @@ class Profile2Router extends Component {
         serviceRequired={backendServices.USER_PROFILE}
         user={this.props.user}
       >
-        {this.renderContent()}
+        <DowntimeNotification
+          appTitle="profile"
+          render={this.handleDowntimeApproaching}
+          loadingIndicator={this.loadingContent()}
+          dependencies={[
+            externalServices.emis,
+            externalServices.evss,
+            externalServices.mvi,
+            externalServices.vet360,
+          ]}
+        >
+          {this.renderContent()}
+        </DowntimeNotification>
       </RequiredLoginView>
     );
   }
@@ -138,6 +223,7 @@ Profile2Router.propTypes = {
   showLoader: PropTypes.bool.isRequired,
   shouldFetchDirectDepositInformation: PropTypes.bool.isRequired,
   shouldShowDirectDeposit: PropTypes.bool.isRequired,
+  shouldShowMilitaryInformation: PropTypes.bool.isRequired,
   fetchFullName: PropTypes.func.isRequired,
   fetchMHVAccount: PropTypes.func.isRequired,
   fetchMilitaryInformation: PropTypes.func.isRequired,
@@ -155,6 +241,8 @@ const mapStateToProps = state => {
   const isEligibleToSignUp = directDepositAddressIsSetUp(state);
   const is2faEnabled = isMultifactorEnabled(state);
   const shouldFetchDirectDepositInformation = isEvssAvailable && is2faEnabled;
+  const shouldShowMilitaryInformation =
+    selectProfile(state)?.veteranStatus?.servedInMilitary || false;
 
   // this piece of state will be set if the call to load military info succeeds
   // or fails:
@@ -181,8 +269,8 @@ const mapStateToProps = state => {
   const hasLoadedAllData =
     hasLoadedFullName &&
     hasLoadedMHVInformation &&
-    hasLoadedMilitaryInformation &&
     hasLoadedPersonalInformation &&
+    (shouldShowMilitaryInformation ? hasLoadedMilitaryInformation : true) &&
     (shouldFetchDirectDepositInformation ? hasLoadedPaymentInformation : true);
 
   return {
@@ -193,6 +281,10 @@ const mapStateToProps = state => {
       shouldFetchDirectDepositInformation &&
       !isDirectDepositBlocked &&
       (isDirectDepositSetUp || isEligibleToSignUp),
+    shouldShowMilitaryInformation,
+    isDowntimeWarningDismissed: state.scheduledDowntime?.dismissedDowntimeWarnings?.includes(
+      'profile',
+    ),
   };
 };
 
@@ -202,6 +294,8 @@ const mapDispatchToProps = {
   fetchMilitaryInformation: fetchMilitaryInformationAction,
   fetchPersonalInformation: fetchPersonalInformationAction,
   fetchPaymentInformation: fetchPaymentInformationAction,
+  initializeDowntimeWarnings,
+  dismissDowntimeWarning,
 };
 
 export { Profile2Router as Profile2, mapStateToProps };

@@ -7,133 +7,78 @@ import recordEvent from 'platform/monitoring/record-event';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { BATTERIES } from '../constants';
+import { BATTERY } from '../constants';
 
 class Batteries extends Component {
-  handleChecked = (checked, batterySupply) => {
-    const { selectedProducts, formData } = this.props;
-    let updatedSelectedProducts;
-    if (checked) {
-      updatedSelectedProducts = [
-        ...selectedProducts,
-        { productId: batterySupply.productId },
-      ];
-    } else {
-      updatedSelectedProducts = selectedProducts.filter(
-        selectedProduct =>
-          selectedProduct.productId !== batterySupply.productId,
-      );
-    }
-    const updatedFormData = {
-      ...formData,
-      selectedProducts: updatedSelectedProducts,
-    };
-    return this.props.setData(updatedFormData);
-  };
-
-  render() {
-    const { supplies, selectedProducts, eligibility } = this.props;
-    const currentDate = moment();
-    const batterySupplies = supplies.filter(
-      batterySupply => batterySupply.productGroup === BATTERIES,
-    );
-    const areBatterySuppliesEligible = eligibility.batteries;
-    const haveBatteriesBeenOrderedInLastFiveMonths =
-      batterySupplies.length > 0 &&
-      batterySupplies.every(
-        battery => currentDate.diff(battery.lastOrderDate, 'months') <= 5,
-      );
-    const haveBatteriesBeenOrderedInLastTwoYears =
-      batterySupplies.length > 0 &&
-      batterySupplies.every(
-        battery => currentDate.diff(battery.lastOrderDate, 'years') <= 2,
-      );
-    const isBatterySelected = batteryProductId => {
-      const selectedProductIds = selectedProducts.map(
-        selectedProduct => selectedProduct.productId,
-      );
-      return selectedProductIds.includes(batteryProductId);
-    };
-
+  componentDidMount(props) {
+    const areBatterySuppliesEligible = this.props.eligibility?.batteries;
     if (!areBatterySuppliesEligible) {
       recordEvent({
         event: 'bam-error',
         'error-key': 'batteries_bam-ineligibility-no-prescription',
       });
     }
+  }
+
+  handleChecked = (checked, batterySupply) => {
+    const { order, formData } = this.props;
+    let updatedOrder;
+    const isSupplyChecked = checked ? 'yes' : 'no';
+    recordEvent({
+      event: 'bam-form-change',
+      'bam-form-field': 'batteries-for-this-device',
+      'bam-product-selected': isSupplyChecked,
+      'device-name': batterySupply.deviceName,
+      'product-name': batterySupply.productName,
+      'product-id': batterySupply.productId,
+    });
+    if (checked) {
+      updatedOrder = [...order, { productId: batterySupply.productId }];
+    } else {
+      updatedOrder = order.filter(
+        selectedProduct =>
+          selectedProduct.productId !== batterySupply.productId,
+      );
+    }
+    const updatedFormData = {
+      ...formData,
+      order: updatedOrder,
+    };
+    return this.props.setData(updatedFormData);
+  };
+
+  render() {
+    const { supplies, order, eligibility } = this.props;
+    const currentDate = moment();
+    const batterySupplies = supplies.filter(
+      batterySupply => batterySupply.productGroup === BATTERY,
+    );
+    const areBatterySuppliesEligible = eligibility.batteries;
+    const haveBatteriesBeenOrderedInLastTwoYears =
+      batterySupplies.length > 0 &&
+      batterySupplies.every(
+        battery => currentDate.diff(battery.lastOrderDate, 'years') <= 2,
+      );
+    const isBatterySelected = batteryProductId => {
+      const selectedProductIds = order.map(
+        selectedProduct => selectedProduct.productId,
+      );
+      return selectedProductIds.includes(batteryProductId);
+    };
 
     return (
       <div className="battery-page">
-        {areBatterySuppliesEligible && (
-          <>
-            <h3 className="vads-u-font-size--h4">
-              Select the hearing aids that need batteries
-            </h3>
-            <p>
-              You&apos;ll be sent a 6-month supply of batteries for each device
-              you choose below. You can only order batteries for each device
-              once every 5 months.
-            </p>
-            <p>
-              If you need unavailable batteries sooner, call the DLC Customer
-              Service Section at{' '}
-              <a aria-label="3 0 3. 2 7 3. 6 2 0 0." href="tel:303-273-6200">
-                303-273-6200
-              </a>{' '}
-              or email <a href="mailto:dalc.css@va.gov">dalc.css@va.gov</a>.
-            </p>
-          </>
+        {batterySupplies.length > 0 && (
+          <h3 className="vads-u-font-size--h4 vads-u-margin-bottom--2p5">
+            Select the hearing aids that need batteries
+          </h3>
         )}
-        {haveBatteriesBeenOrderedInLastFiveMonths &&
-          !areBatterySuppliesEligible && (
-            <>
-              <AlertBox
-                headline="You can't add batteries to your order at this time"
-                content={
-                  <>
-                    <p>
-                      You can't add batteries for your hearing aids because:
-                    </p>
-                    <ul>
-                      <li>
-                        They don't require batteries,{' '}
-                        <span className="vads-u-font-weight--bold">or</span>
-                      </li>
-                      <li>
-                        You recently reordered batteries for this device. You
-                        can only reorder batteries for each device once every 5
-                        months.
-                      </li>
-                    </ul>
-                    <p>
-                      If you need unavailable batteries sooner, call the DLC
-                      Customer Service Section at{' '}
-                      <a
-                        aria-label="3 0 3. 2 7 3. 6 2 0 0."
-                        href="tel:303-273-6200"
-                      >
-                        303-273-6200
-                      </a>{' '}
-                      or email{' '}
-                      <a href="mailto:dalc.css@va.gov">dalc.css@va.gov</a>.
-                    </p>
-                  </>
-                }
-                status="info"
-                isVisible
-              />
-              <p className="vads-u-font-weight--bold">
-                These are the hearing aids we have on file fo you:
-              </p>
-            </>
-          )}
-        {!haveBatteriesBeenOrderedInLastFiveMonths &&
-          !haveBatteriesBeenOrderedInLastTwoYears &&
+        {!haveBatteriesBeenOrderedInLastTwoYears &&
           !areBatterySuppliesEligible && (
             <AlertBox
               headline="Your batteries aren't available for online ordering"
               content={
-                <>
+                <div className="batteries-two-year-alert-content">
                   <p>You can't add batteries for your hearing aids because:</p>
                   <ul>
                     <li>
@@ -157,7 +102,7 @@ class Batteries extends Component {
                     or email{' '}
                     <a href="mailto:dalc.css@va.gov">dalc.css@va.gov</a>.
                   </p>
-                </>
+                </div>
               }
               status="info"
               isVisible
@@ -169,8 +114,11 @@ class Batteries extends Component {
             <div
               key={batterySupply.productId}
               className={classnames({
-                'vads-u-background-color--gray-lightest vads-u-padding--3 vads-u-margin-bottom--2': true,
-                'vads-u-border-color--primary vads-u-border--3px': isBatterySelected(
+                'vads-u-background-color--gray-lightest vads-u-margin-bottom--2 vads-u-margin-top--3': true,
+                'vads-u-border-color--primary vads-u-border--3px vads-u-padding--21': isBatterySelected(
+                  batterySupply.productId,
+                ),
+                'vads-u-padding--3': !isBatterySelected(
                   batterySupply.productId,
                 ),
               })}
@@ -202,13 +150,16 @@ class Batteries extends Component {
               </div>
               {currentDate.diff(batterySupply.nextAvailabilityDate, 'days') <
               0 ? (
-                <AlertBox
-                  className="vads-u-color--black vads-u-background-color--white"
-                  headline={`You can't reorder batteries for this device until ${moment(
-                    batterySupply.nextAvailabilityDate,
-                  ).format('MMMM D, YYYY')}`}
-                  status="warning"
-                />
+                <div className="usa-alert usa-alert-warning vads-u-background-color--white vads-u-padding-x--2p5 vads-u-padding-y--2 vads-u-width--full">
+                  <div className="usa-alert-body">
+                    <h3 className="usa-alert-heading vads-u-font-family--sans">
+                      You can't reorder batteries for this device until{' '}
+                      {moment(batterySupply.nextAvailabilityDate).format(
+                        'MMMM D, YYYY',
+                      )}
+                    </h3>
+                  </div>
+                </div>
               ) : (
                 <div className="vads-u-max-width--293">
                   <input
@@ -239,7 +190,7 @@ class Batteries extends Component {
             </div>
           ))}
         {batterySupplies.length > 0 && (
-          <AdditionalInfo triggerText="What if I don't see my hearing aid?">
+          <AdditionalInfo triggerText="What if I don't see my device?">
             <p>
               You may not see your hearing aid device if you haven’t placed an
               order for resupply items within the last 2 years. If you need to
@@ -270,7 +221,7 @@ class Batteries extends Component {
 Batteries.defaultProps = {
   formData: {},
   supplies: [],
-  selectedProducts: [],
+  order: [],
   eligibility: {},
 };
 
@@ -289,7 +240,7 @@ Batteries.propTypes = {
       prescribedDate: PropTypes.string,
     }),
   ),
-  selectedProducts: PropTypes.arrayOf(
+  order: PropTypes.arrayOf(
     PropTypes.shape({
       productId: PropTypes.number,
     }),
@@ -301,7 +252,7 @@ Batteries.propTypes = {
 const mapStateToProps = state => ({
   supplies: state.form?.data?.supplies,
   formData: state.form?.data,
-  selectedProducts: state.form?.data?.selectedProducts,
+  order: state.form?.data?.order,
   eligibility: state.form?.data?.eligibility,
 });
 

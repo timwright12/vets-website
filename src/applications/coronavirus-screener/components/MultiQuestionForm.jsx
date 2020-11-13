@@ -4,10 +4,18 @@ import FormQuestion from './FormQuestion';
 import FormResult from './FormResult';
 import recordEvent from 'platform/monitoring/record-event';
 import moment from 'moment';
-import _ from 'lodash/fp';
-import { getEnabledQuestions, checkFormStatus } from '../lib';
+import { isEqual } from 'lodash/fp';
+import {
+  getEnabledQuestions,
+  checkFormStatus,
+  updateEnabledQuestions,
+} from '../lib';
 
-export default function MultiQuestionForm({ questions, defaultOptions }) {
+export default function MultiQuestionForm({
+  questions,
+  defaultOptions,
+  customId,
+}) {
   const [formState, setFormState] = useState({
     status: 'incomplete',
     startTime: null,
@@ -21,13 +29,13 @@ export default function MultiQuestionForm({ questions, defaultOptions }) {
   useEffect(
     () => {
       let completed = formState.completed;
-      const newStatus = checkFormStatus(questionState);
+      const newStatus = checkFormStatus({ questionState, customId });
       if (formState.status !== newStatus) {
         // record first completion of form
         if (completed === false) {
           recordEvent({
             event: 'covid-screening-tool-result-displayed',
-            'screening-tool-result': formState.result,
+            'screening-tool-result': newStatus,
             'time-to-complete': moment().unix() - formState.startTime,
           });
           completed = true;
@@ -42,24 +50,15 @@ export default function MultiQuestionForm({ questions, defaultOptions }) {
     [questionState, formState],
   );
 
-  function checkEnabled(question) {
-    if (Object.hasOwnProperty.call(question, 'dependsOn')) {
-      const dependsOnQuestion = questionState.find(
-        el => el.id === question.dependsOn.id,
-      );
-      const match = dependsOnQuestion.value === question.dependsOn.value;
-      return { ...question, enabled: match };
-    } else return question;
-  }
-
   // sets enabled status of questions in state
   // note: investigate https://reactjs.org/docs/hooks-reference.html#usereducer
   useEffect(
     () => {
-      const newQuestionState = questionState.map(question =>
-        checkEnabled(question),
-      );
-      if (!_.isEqual(newQuestionState, questionState)) {
+      const newQuestionState = updateEnabledQuestions({
+        questionState,
+        customId,
+      });
+      if (!isEqual(newQuestionState, questionState)) {
         setQuestionState(newQuestionState);
       }
     },
@@ -80,8 +79,6 @@ export default function MultiQuestionForm({ questions, defaultOptions }) {
       });
     }
   }
-
-  const enabledQuestions = getEnabledQuestions(questionState);
 
   function setQuestionValue({ event, questionId }) {
     // sets the question value in question state
@@ -108,19 +105,20 @@ export default function MultiQuestionForm({ questions, defaultOptions }) {
     setQuestionState([...newQuestionState]);
   }
 
+  const enabledQuestions = getEnabledQuestions({ questionState, customId });
+
   const formQuestions = enabledQuestions.map(
     (question, index) =>
       (index === 0 ||
-        Object.hasOwnProperty.call(questionState[index - 1], 'value')) && (
-        <div key={`question-${question.id}`}>
-          <FormQuestion
-            question={question}
-            recordStart={recordStart}
-            optionsConfig={defaultOptions}
-            setQuestionValue={setQuestionValue}
-            clearQuestionValues={clearQuestionValues}
-          />
-        </div>
+        Object.hasOwnProperty.call(enabledQuestions[index - 1], 'value')) && (
+        <FormQuestion
+          question={question}
+          recordStart={recordStart}
+          optionsConfig={defaultOptions}
+          setQuestionValue={setQuestionValue}
+          clearQuestionValues={clearQuestionValues}
+          key={`question-${question.id}`}
+        />
       ),
   );
 

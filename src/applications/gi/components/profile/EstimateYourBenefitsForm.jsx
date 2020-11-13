@@ -21,7 +21,7 @@ import {
 import { renderLearnMoreLabel } from '../../utils/render';
 import OnlineClassesFilter from '../search/OnlineClassesFilter';
 import Checkbox from '../Checkbox';
-import { ariaLabels, SMALL_SCREEN_WIDTH } from '../../constants';
+import { ariaLabels } from '../../constants';
 import AccordionItem from '../AccordionItem';
 import BenefitsForm from './BenefitsForm';
 
@@ -98,28 +98,34 @@ class EstimateYourBenefitsForm extends React.Component {
     }
   };
 
-  handleCalculateBenefitsClick = () => {
-    const {
-      beneficiaryZIPError,
-      beneficiaryZIP,
-      extension,
-      classesOutsideUS,
-    } = this.props.inputs;
+  handleCalculateBenefitsClick = childSection => {
+    const accordionButtonId = `${createId(childSection)}-accordion-button`;
+    const { beneficiaryZIPError, beneficiaryZIP } = this.props.inputs;
+
     if (
       this.props.eligibility.giBillChapter === '33' &&
-      this.props.inputs.beneficiaryLocationQuestion === 'other' &&
-      !classesOutsideUS &&
+      this.displayExtensionBeneficiaryInternationalCheckbox() &&
+      this.displayExtensionBeneficiaryZipcode() &&
       (beneficiaryZIPError || beneficiaryZIP.length !== 5)
     ) {
       this.toggleLearningFormatAndSchedule(true);
       setTimeout(() => {
         scroller.scrollTo('beneficiary-zip-question', getScrollOptions());
         focusElement('input[name=beneficiaryZIPCode]');
-      }, 1);
+      }, 50);
     } else {
       this.setState({ inputUpdated: false });
       this.props.updateEstimatedBenefits();
+      setTimeout(() => {
+        focusElement(`#${accordionButtonId}`);
+      }, 50);
     }
+
+    recordEvent({
+      event: 'cta-default-button-click',
+      'gibct-parent-accordion-section': 'Estimate your benefits',
+      'gibct-child-accordion-section': childSection,
+    });
   };
 
   updateEligibility = e => {
@@ -170,22 +176,24 @@ class EstimateYourBenefitsForm extends React.Component {
     this.setState({ inputUpdated: true });
     this.props.calculatorInputChange({ field, value });
 
-    if (value === 'extension' || value === profile.attributes.name) {
-      recordEvent({
-        event: 'gibct-form-change',
-        'gibct-form-field': 'gibctExtensionCampusSelection',
-        'gibct-form-value':
-          value === 'extension'
-            ? 'An extension campus'
-            : profile.attributes.name,
-      });
-    }
-    if (value === 'other') {
-      recordEvent({
-        event: 'gibct-form-change',
-        'gibct-form-field': 'gibctOtherCampusLocation ',
-        'gibct-form-value': 'other location',
-      });
+    if (field === 'beneficiaryLocationQuestion' || field === 'extension') {
+      if (value === 'extension' || value === profile.attributes.name) {
+        recordEvent({
+          event: 'gibct-form-change',
+          'gibct-form-field': 'gibctExtensionCampusSelection',
+          'gibct-form-value':
+            value === 'extension'
+              ? 'An extension campus'
+              : profile.attributes.name,
+        });
+      }
+      if (value === 'other') {
+        recordEvent({
+          event: 'gibct-form-change',
+          'gibct-form-field': 'gibctOtherCampusLocation ',
+          'gibct-form-value': 'other location',
+        });
+      }
     }
   };
 
@@ -290,6 +298,13 @@ class EstimateYourBenefitsForm extends React.Component {
     this.handleAccordionFocus();
   };
 
+  handleEYBSkipLinkOnClick = () => {
+    scroller.scrollTo('estimated-benefits', getScrollOptions());
+    setTimeout(() => {
+      focusElement('#estimated-benefits');
+    }, 50);
+  };
+
   /**
    * Renders a learn more label with common props for this component being set
    * @param text
@@ -356,7 +371,7 @@ class EstimateYourBenefitsForm extends React.Component {
         <input
           type="text"
           inputMode="decimal"
-          pattern="[0-9]*"
+          pattern="(\d*\d+)(?=\,)"
           name={inStateTuitionFeesId}
           id={inStateTuitionFeesId}
           value={formatCurrency(this.props.inputs.inStateTuitionFees)}
@@ -383,7 +398,7 @@ class EstimateYourBenefitsForm extends React.Component {
         })}
         <input
           inputMode="decimal"
-          pattern="[0-9]*"
+          pattern="(\d*\d+)(?=\,)"
           type="text"
           name={tuitionFeesId}
           id={tuitionFeesId}
@@ -404,7 +419,7 @@ class EstimateYourBenefitsForm extends React.Component {
         <label htmlFor={booksId}>Books and supplies per year</label>
         <input
           inputMode="decimal"
-          pattern="[0-9]*"
+          pattern="(\d*\d+)(?=\,)"
           type="text"
           name={booksId}
           id={booksId}
@@ -427,7 +442,7 @@ class EstimateYourBenefitsForm extends React.Component {
     yellowRibbonDegreeLevelOptions = yellowRibbonDegreeLevelOptions.map(
       value => ({ value, label: value }),
     );
-    yellowRibbonDegreeLevelOptions.unshift({
+    yellowRibbonDegreeLevelOptions.push({
       value: 'customAmount',
       label: 'Enter an amount',
     });
@@ -456,6 +471,7 @@ class EstimateYourBenefitsForm extends React.Component {
           onChange={this.handleInputChange}
           onFocus={this.handleEYBInputFocus}
         />
+
         <div>
           <Dropdown
             label="Degree Level"
@@ -472,6 +488,7 @@ class EstimateYourBenefitsForm extends React.Component {
             label="Division or school"
             name={'yellowRibbonDivision'}
             alt="Division or school"
+            disabled={yellowRibbonDivisionOptions.length <= 1}
             hideArrows={yellowRibbonDivisionOptions.length <= 1}
             options={yellowRibbonDivisionOptions}
             visible={showYellowRibbonDetails}
@@ -485,7 +502,7 @@ class EstimateYourBenefitsForm extends React.Component {
             </label>
             <input
               inputMode="decimal"
-              pattern="[0-9]*"
+              pattern="(\d*\d+)(?=\,)"
               id="yellowRibbonContributionAmount"
               type="text"
               name="yellowRibbonAmount"
@@ -525,7 +542,7 @@ class EstimateYourBenefitsForm extends React.Component {
       <div id={scholarshipsFieldId}>
         <label htmlFor={scholarshipsId}>
           {this.renderLearnMoreLabel({
-            text: 'Scholarships (excluding Pell)',
+            text: 'Scholarships (excluding Pell Grants)',
             modal: 'calcScholarships',
             ariaLabel: ariaLabels.learnMore.calcScholarships,
           })}
@@ -533,7 +550,7 @@ class EstimateYourBenefitsForm extends React.Component {
         <input
           inputMode="decimal"
           type="text"
-          pattern="[0-9]*"
+          pattern="(\d*\d+)(?=\,)"
           name={scholarshipsId}
           id={scholarshipsId}
           value={formatCurrency(this.props.inputs.scholarships)}
@@ -559,7 +576,7 @@ class EstimateYourBenefitsForm extends React.Component {
         </label>
         <input
           inputMode="decimal"
-          pattern="[0-9]*"
+          pattern="(\d*\d+)(?=\,)"
           type="text"
           name={tuitionAssistId}
           id={tuitionAssistId}
@@ -707,7 +724,7 @@ class EstimateYourBenefitsForm extends React.Component {
         <label htmlFor={kickerAmountId}>How much is your kicker?</label>
         <input
           inputMode="decimal"
-          pattern="[0-9]*"
+          pattern="(\d*\d+)(?=\,)"
           type="text"
           name={kickerAmountId}
           id={kickerAmountId}
@@ -740,6 +757,17 @@ class EstimateYourBenefitsForm extends React.Component {
     );
   };
 
+  displayExtensionBeneficiaryInternationalCheckbox = () => {
+    const { beneficiaryLocationQuestion, extension } = this.props.inputs;
+    return (
+      beneficiaryLocationQuestion === 'other' ||
+      (beneficiaryLocationQuestion === 'extension' && extension === 'other')
+    );
+  };
+
+  displayExtensionBeneficiaryZipcode = () =>
+    !this.props.inputs.classesOutsideUS;
+
   renderExtensionBeneficiaryZIP = () => {
     if (!this.props.displayedInputs.beneficiaryLocationQuestion) {
       return null;
@@ -752,7 +780,7 @@ class EstimateYourBenefitsForm extends React.Component {
     let extensionSelector;
     let zipcodeLocation;
     let extensionOptions = [];
-    const zipcodeRadioOptions = [
+    const beneficiaryLocationQuestionOptions = [
       {
         value: profile.attributes.name,
         label: profile.attributes.name,
@@ -766,12 +794,15 @@ class EstimateYourBenefitsForm extends React.Component {
       });
       extensionOptions.push({ value: 'other', label: 'Other...' });
 
-      zipcodeRadioOptions.push({
+      beneficiaryLocationQuestionOptions.push({
         value: 'extension',
         label: 'An extension campus',
       });
     } else {
-      zipcodeRadioOptions.push({ value: 'other', label: 'Other location' });
+      beneficiaryLocationQuestionOptions.push({
+        value: 'other',
+        label: 'Other location',
+      });
     }
 
     const displayExtensionSelector =
@@ -791,19 +822,13 @@ class EstimateYourBenefitsForm extends React.Component {
       );
     }
 
-    const displayInternationalCheckbox =
-      inputs.beneficiaryLocationQuestion === 'other' ||
-      (inputs.beneficiaryLocationQuestion === 'extension' &&
-        inputs.extension === 'other');
-    const displayZipcode = !inputs.classesOutsideUS;
-
-    if (displayInternationalCheckbox) {
+    if (this.displayExtensionBeneficiaryInternationalCheckbox()) {
       const errorMessage = this.state.invalidZip;
 
       const errorMessageCheck =
         errorMessage !== '' ? errorMessage : inputs.beneficiaryZIPError;
 
-      if (displayZipcode) {
+      if (this.displayExtensionBeneficiaryZipcode()) {
         const label = this.isCountryInternational()
           ? "If you're taking classes in the U.S., enter the location's postal code"
           : "Please enter the postal code where you'll take your classes";
@@ -842,13 +867,16 @@ class EstimateYourBenefitsForm extends React.Component {
         />
       );
     }
-    const selectedValue = inputs.beneficiaryLocationQuestion
+    const selectedBeneficiaryLocationQuestion = inputs.beneficiaryLocationQuestion
       ? inputs.beneficiaryLocationQuestion
       : profile.attributes.name;
 
     return (
       <ExpandingGroup
-        open={displayExtensionSelector || displayInternationalCheckbox}
+        open={
+          displayExtensionSelector ||
+          this.displayExtensionBeneficiaryInternationalCheckbox()
+        }
       >
         <RadioButtons
           label={this.renderLearnMoreLabel({
@@ -857,8 +885,8 @@ class EstimateYourBenefitsForm extends React.Component {
             ariaLabel: ariaLabels.learnMore.majorityOfClasses,
           })}
           name="beneficiaryLocationQuestion"
-          options={zipcodeRadioOptions}
-          value={selectedValue}
+          options={beneficiaryLocationQuestionOptions}
+          value={selectedBeneficiaryLocationQuestion}
           onChange={this.handleInputChange}
           onFocus={this.handleEYBInputFocus}
         />
@@ -884,7 +912,7 @@ class EstimateYourBenefitsForm extends React.Component {
         </label>
         <input
           inputMode="decimal"
-          pattern="[0-9]*"
+          pattern="(\d*\d+)(?=\,)"
           type="text"
           name={buyUpAmountId}
           id={buyUpAmountId}
@@ -925,21 +953,21 @@ class EstimateYourBenefitsForm extends React.Component {
         name="working"
         alt="Will be working"
         options={[
-          { value: '30', label: '30+ hrs / week' },
-          { value: '28', label: '28 hrs / week' },
-          { value: '26', label: '26 hrs / week' },
-          { value: '24', label: '24 hrs / week' },
-          { value: '22', label: '22 hrs / week' },
-          { value: '20', label: '20 hrs / week' },
-          { value: '18', label: '18 hrs / week' },
-          { value: '16', label: '16 hrs / week' },
-          { value: '14', label: '14 hrs / week' },
-          { value: '12', label: '12 hrs / week' },
-          { value: '10', label: '10 hrs / week' },
-          { value: '8', label: '8 hrs / week' },
-          { value: '6', label: '6 hrs / week' },
-          { value: '4', label: '4 hrs / week' },
-          { value: '2', label: '2 hrs / week' },
+          { value: '30', label: '30 plus hours per week' },
+          { value: '28', label: '28 hours per week' },
+          { value: '26', label: '26 hours per week' },
+          { value: '24', label: '24 hours per week' },
+          { value: '22', label: '22 hours per week' },
+          { value: '20', label: '20 hours per week' },
+          { value: '18', label: '18 hours per week' },
+          { value: '16', label: '16 hours per week' },
+          { value: '14', label: '14 hours per week' },
+          { value: '12', label: '12 hours per week' },
+          { value: '10', label: '10 hours per week' },
+          { value: '8', label: '8 hours per week' },
+          { value: '6', label: '6 hours per week' },
+          { value: '4', label: '4 hours per week' },
+          { value: '2', label: '2 hours per week' },
         ]}
         visible
         value={this.props.inputs.working}
@@ -979,12 +1007,26 @@ class EstimateYourBenefitsForm extends React.Component {
     );
   };
 
+  renderEYBSkipLink = () => {
+    return (
+      <div className="vads-u-padding-bottom--2p5">
+        <button
+          type="button"
+          className="va-button-link learn-more-button eyb-skip-link"
+          aria-label="Skip to your estimated benefits"
+          onClick={this.handleEYBSkipLinkOnClick}
+        >
+          Skip to your estimated benefits
+        </button>
+      </div>
+    );
+  };
+
   renderMilitaryDetails = () => {
     const name = 'Your military details';
     return (
       <AccordionItem
         button={name}
-        id={`eyb-${createId(name)}`}
         section
         expanded={this.state.yourBenefitsExpanded}
         onClick={this.toggleYourBenefits}
@@ -1004,17 +1046,19 @@ class EstimateYourBenefitsForm extends React.Component {
           </BenefitsForm>
         </div>
         <button
+          id="update-benefits-button"
           className="calculate-button"
-          onClick={this.handleCalculateBenefitsClick}
+          onClick={() => this.handleCalculateBenefitsClick(name)}
           disabled={!this.state.inputUpdated}
         >
           Update benefits
         </button>
+        {this.renderEYBSkipLink()}
       </AccordionItem>
     );
   };
 
-  renderSchoolCostsAndCalendar = () => {
+  hideSchoolCostsAndCalendar = () => {
     const {
       inState,
       tuition,
@@ -1024,15 +1068,23 @@ class EstimateYourBenefitsForm extends React.Component {
       enrolledOld,
     } = this.props.displayedInputs;
 
-    if (!(inState || tuition || books || calendar || enrolled || enrolledOld))
-      return null;
+    return !(
+      inState ||
+      tuition ||
+      books ||
+      calendar ||
+      enrolled ||
+      enrolledOld
+    );
+  };
+
+  renderSchoolCostsAndCalendar = () => {
+    if (this.hideSchoolCostsAndCalendar()) return null;
 
     const name = 'School costs and calendar';
-
     return (
       <AccordionItem
         button={name}
-        id={`eyb-${createId(name)}`}
         expanded={this.state.aboutYourSchoolExpanded}
         section
         onClick={this.toggleAboutYourSchool}
@@ -1045,12 +1097,14 @@ class EstimateYourBenefitsForm extends React.Component {
           {this.renderEnrolled()}
         </div>
         <button
+          id="update-benefits-button"
           className="calculate-button"
-          onClick={this.handleCalculateBenefitsClick}
+          onClick={() => this.handleCalculateBenefitsClick(name)}
           disabled={!this.state.inputUpdated}
         >
           Update benefits
         </button>
+        {this.renderEYBSkipLink()}
       </AccordionItem>
     );
   };
@@ -1059,10 +1113,10 @@ class EstimateYourBenefitsForm extends React.Component {
     const name = isOjt
       ? 'Learning format and schedule'
       : 'Learning format and location';
+
     return (
       <AccordionItem
         button={name}
-        id={`eyb-${createId(name)}`}
         expanded={this.state.learningFormatAndScheduleExpanded}
         section
         onClick={this.toggleLearningFormatAndSchedule}
@@ -1073,17 +1127,19 @@ class EstimateYourBenefitsForm extends React.Component {
           {this.renderWorking()}
         </div>
         <button
+          id="update-benefits-button"
           className="calculate-button"
-          onClick={this.handleCalculateBenefitsClick}
+          onClick={() => this.handleCalculateBenefitsClick(name)}
           disabled={!this.state.inputUpdated}
         >
           Update benefits
         </button>
+        {this.renderEYBSkipLink()}
       </AccordionItem>
     );
   };
 
-  renderScholarshipsAndOtherVAFunding = () => {
+  hideScholarshipsAndOtherVAFunding = () => {
     const {
       yellowRibbon,
       tuitionAssist,
@@ -1091,13 +1147,16 @@ class EstimateYourBenefitsForm extends React.Component {
       buyUp,
       scholarships,
     } = this.props.displayedInputs;
-    if (!(yellowRibbon || tuitionAssist || kicker || buyUp || scholarships))
-      return null;
+    return !(yellowRibbon || tuitionAssist || kicker || buyUp || scholarships);
+  };
+
+  renderScholarshipsAndOtherVAFunding = () => {
+    if (this.hideScholarshipsAndOtherVAFunding()) return null;
     const name = 'Scholarships and other VA funding';
+
     return (
       <AccordionItem
         button={name}
-        id={`eyb-${createId(name)}`}
         expanded={this.state.scholarshipsAndOtherFundingExpanded}
         section
         onClick={this.toggleScholarshipsAndOtherFunding}
@@ -1110,12 +1169,14 @@ class EstimateYourBenefitsForm extends React.Component {
           {this.renderScholarships()}
         </div>
         <button
+          id="update-benefits-button"
           className="calculate-button"
-          onClick={this.handleCalculateBenefitsClick}
+          onClick={() => this.handleCalculateBenefitsClick(name)}
           disabled={!this.state.inputUpdated}
         >
           Update benefits
         </button>
+        {this.renderEYBSkipLink()}
       </AccordionItem>
     );
   };
@@ -1123,7 +1184,11 @@ class EstimateYourBenefitsForm extends React.Component {
   render() {
     const isOjt =
       _.get(this.props, 'profile.attributes.type', '').toLowerCase() === 'ojt';
-    const sectionCount = isOjt ? '3' : '4';
+
+    let sectionCount = 2;
+    if (!this.hideSchoolCostsAndCalendar()) sectionCount += 1;
+    if (!this.hideScholarshipsAndOtherVAFunding()) sectionCount += 1;
+
     const className = classNames(
       'estimate-your-benefits-form',
       'medium-5',
@@ -1132,12 +1197,14 @@ class EstimateYourBenefitsForm extends React.Component {
     );
 
     return (
-      <div className={className}>
-        <p className="vads-u-margin-bottom--3 vads-u-margin-top--0">
-          The {sectionCount} sections below include questions that will refine
-          your benefits estimate. Use the fields in each section to make your
-          updates.
-        </p>
+      <div aria-live="off" className={className}>
+        <div>
+          <p className="vads-u-margin-bottom--3 vads-u-margin-top--0">
+            The {sectionCount} sections below include questions that will refine
+            your benefits estimate. Use the fields in each section to make your
+            updates.
+          </p>
+        </div>
         <ul className="vads-u-padding--0">
           {this.renderMilitaryDetails()}
           {this.renderSchoolCostsAndCalendar()}

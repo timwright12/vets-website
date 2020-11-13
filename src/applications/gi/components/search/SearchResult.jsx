@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import appendQuery from 'append-query';
 import environment from 'platform/utilities/environment';
 import { estimatedBenefits } from '../../selectors/estimator';
 import { formatCurrency, locationInfo } from '../../utils/helpers';
@@ -43,17 +44,14 @@ export class SearchResult extends React.Component {
           pathname: `/profile/${facilityCode}`,
           query: version ? { version } : {},
         }
-      : {
-          pathname: `/profile/${facilityCode}`,
-          search: version ? `?version=${version}` : '',
-        };
+      : appendQuery(`/profile/${facilityCode}`, { version });
 
     return (
       <div id={`search-result-${facilityCode}`} className="search-result">
         <div className="outer">
           <div className="inner">
             <div className="row">
-              <div className="small-12 usa-width-seven-twelfths medium-7 columns">
+              <div className="small-12 medium-6 columns">
                 <h2>
                   <Link
                     to={linkTo}
