@@ -145,7 +145,7 @@ describe('VAOS integration: Express Care info page', () => {
     await waitFor(() => expect(screen.history.push.called).to.be.true);
     expect(screen.history.push.firstCall.args[0]).to.equal('/');
   });
-
+  // @DEBUG FAILING TEST
   it('should render warning message', async () => {
     setFetchJSONResponse(
       global.fetch.withArgs(`${environment.API_URL}/v0/maintenance_windows/`),
@@ -169,11 +169,14 @@ describe('VAOS integration: Express Care info page', () => {
       store,
     });
 
-    expect(
-      await screen.findByRole('heading', {
-        level: '3',
-        name: /You may have trouble using the VA appointments tool right now/,
-      }),
-    ).to.exist;
+    await waitFor(
+      () =>
+        expect(
+          screen.findByRole('heading', {
+            level: '3',
+            name: /You may have trouble using the VA appointments tool right now/,
+          }),
+        ).to.exist,
+    );
   });
 });

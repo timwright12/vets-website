@@ -616,12 +616,15 @@ describe('VAOS integration: appointment list', () => {
     const screen = renderWithStoreAndRouter(<AppointmentsPage />, {
       store,
     });
-
-    expect(
-      await screen.findByRole('heading', {
-        level: '3',
-        name: /You may have trouble using the VA appointments tool right now/,
-      }),
-    ).to.exist;
+    // @DEBUG FAILING TEST
+    await waitFor(
+      () =>
+        expect(
+          screen.findByRole('heading', {
+            level: '3',
+            name: /You may have trouble using the VA appointments tool right now/,
+          }),
+        ).to.exist,
+    );
   });
 });

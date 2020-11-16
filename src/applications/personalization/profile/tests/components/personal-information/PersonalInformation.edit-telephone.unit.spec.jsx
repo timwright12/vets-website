@@ -133,6 +133,7 @@ async function testTransactionCreationFails(numberName) {
   editPhoneNumber(numberName);
 
   // expect an error to be shown
+  await wait(75);
   const alert = await view.findByTestId('edit-error-alert');
   expect(alert).to.have.descendant('div.usa-alert-error');
   // TODO: would be nice to be able to check the contents against a RegExp
@@ -153,6 +154,7 @@ async function testQuickFailure(numberName) {
   editPhoneNumber(numberName);
 
   // expect an error to be shown
+  await wait(75);
   const alert = await view.findByTestId('edit-error-alert');
   expect(alert).to.have.descendant('div.usa-alert-error');
   // TODO: would be nice to be able to check the contents against a RegExp

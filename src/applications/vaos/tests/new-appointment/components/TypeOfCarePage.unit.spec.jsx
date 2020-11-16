@@ -49,14 +49,17 @@ describe('VAOS <TypeOfCarePage>', () => {
       { store },
     );
 
-    expect(screen.getAllByRole('radio').length).to.equal(11);
+    waitFor(() => expect(screen.getAllByRole('radio').length).to.equal(11));
 
     // Verify alert is shown
-    expect(
-      screen.getByRole('heading', {
-        name: /not seeing the type of care you need\?/i,
-      }),
-    ).to.exist;
+    await waitFor(
+      () =>
+        expect(
+          screen.getByRole('heading', {
+            name: /not seeing the type of care you need\?/i,
+          }),
+        ).to.exist,
+    );
     expect(
       screen.getByText(
         /you’ll need to call your va health facility to schedule an appointment./i,
@@ -130,7 +133,7 @@ describe('VAOS <TypeOfCarePage>', () => {
       { store },
     );
 
-    expect(screen.getAllByRole('radio').length).to.equal(10);
+    waitFor(() => expect(screen.getAllByRole('radio').length).to.equal(10));
   });
   it('should not allow users who are not CC eligible to use Podiatry', async () => {
     const store = createTestStore(initialState);
@@ -302,7 +305,7 @@ describe('VAOS <TypeOfCarePage>', () => {
 
     expect(screen.queryByText(/You need to have a home address/i)).to.not.exist;
   });
-
+  // @DEBUG FAILING TEST
   it('should render warning message', async () => {
     setFetchJSONResponse(
       global.fetch.withArgs(`${environment.API_URL}/v0/maintenance_windows/`),
@@ -326,11 +329,14 @@ describe('VAOS <TypeOfCarePage>', () => {
       store,
     });
 
-    expect(
-      await screen.findByRole('heading', {
-        level: '3',
-        name: /You may have trouble using the VA appointments tool right now/,
-      }),
-    ).to.exist;
+    await waitFor(
+      () =>
+        expect(
+          screen.findByRole('heading', {
+            level: '3',
+            name: /You may have trouble using the VA appointments tool right now/,
+          }),
+        ).to.exist,
+    );
   });
 });

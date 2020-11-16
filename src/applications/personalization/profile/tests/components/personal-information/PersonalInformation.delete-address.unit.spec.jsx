@@ -142,6 +142,7 @@ async function testTransactionCreationFails(addressName) {
   deleteAddress(addressName);
 
   // expect an error to be shown
+  await wait(75);
   const alert = await view.findByTestId('edit-error-alert');
   expect(alert).to.have.descendant('div.usa-alert-error');
   expect(alert).to.contain.text(
@@ -162,6 +163,7 @@ async function testQuickFailure(addressName) {
   deleteAddress(addressName);
 
   // expect an error to be shown
+  await wait(75);
   const alert = await view.findByTestId('edit-error-alert');
   expect(alert).to.have.descendant('div.usa-alert-error');
   expect(alert).to.contain.text(

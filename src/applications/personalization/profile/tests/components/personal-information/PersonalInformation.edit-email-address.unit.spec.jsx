@@ -117,6 +117,7 @@ async function testTransactionCreationFails() {
   editEmailAddress();
 
   // expect an error to be shown
+  await wait(75);
   const error = await view.findByText(errorText);
   expect(error).to.exist;
 
@@ -134,6 +135,7 @@ async function testQuickFailure() {
   editEmailAddress();
 
   // expect an error to be shown
+  await wait(75);
   const error = await view.findByText(errorText);
   expect(error).to.exist;
 

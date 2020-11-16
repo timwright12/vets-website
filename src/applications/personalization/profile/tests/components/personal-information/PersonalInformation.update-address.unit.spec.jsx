@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { waitForElementToBeRemoved } from '@testing-library/react';
+import { waitForElementToBeRemoved, waitFor } from '@testing-library/react';
 import { expect } from 'chai';
 import { setupServer } from 'msw/node';
 
@@ -136,9 +136,11 @@ async function testAddressValidation500(addressName) {
 
   // expect an error to be shown
   const alert = await view.findByTestId('edit-error-alert');
-  expect(alert).to.have.descendant('div.usa-alert-error');
-  expect(alert).to.contain.text(
-    `We’re sorry. We couldn’t update your ${addressName.toLowerCase()}. Please try again.`,
+  await waitFor(
+    () => expect(alert).to.have.descendant('div.usa-alert-error'),
+    expect(alert).to.contain.text(
+      `We’re sorry. We couldn’t update your ${addressName.toLowerCase()}. Please try again.`,
+    ),
   );
 
   // make sure that edit mode is not automatically exited
@@ -156,9 +158,11 @@ async function testTransactionCreationFails(addressName) {
 
   // expect an error to be shown
   const alert = await view.findByTestId('edit-error-alert');
-  expect(alert).to.have.descendant('div.usa-alert-error');
-  expect(alert).to.contain.text(
-    `We’re sorry. We couldn’t update your ${addressName.toLowerCase()}. Please try again.`,
+  await waitFor(
+    () => expect(alert).to.have.descendant('div.usa-alert-error'),
+    expect(alert).to.contain.text(
+      `We’re sorry. We couldn’t update your ${addressName.toLowerCase()}. Please try again.`,
+    ),
   );
 
   // make sure that edit mode is not automatically exited
@@ -175,6 +179,7 @@ async function testQuickFailure(addressName) {
   updateAddress(addressName);
 
   // expect an error to be shown
+  await wait(75);
   const alert = await view.findByTestId('edit-error-alert');
   expect(alert).to.have.descendant('div.usa-alert-error');
   expect(alert).to.contain.text(
