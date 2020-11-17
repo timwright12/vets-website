@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+import manipulateDate from './manipulateDate';
+
 export function dateToMoment(dateField) {
   return moment({
     year: dateField.year.value,
@@ -131,3 +133,5 @@ export const formatDowntime = dateTime => {
 
   return dtMoment.format(`${monthFormat} D [at] ${timeFormat} [ET]`);
 };
+
+export { manipulateDate };

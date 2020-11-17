@@ -10,6 +10,7 @@ import {
   formatDateParsedZoneLong,
   isValidDateString,
   formatDowntime,
+  manipulateDate,
 } from '../date';
 
 describe('Helpers unit tests', () => {
@@ -200,5 +201,80 @@ describe('Helpers unit tests', () => {
         'Nov. 21 at 12:35 a.m. ET',
       );
     });
+  });
+});
+
+describe('manipulateDate', () => {
+  const today = () => moment().startOf('day');
+  const template = 'YYYY-MM-DD';
+  const format = (date, templ = template) => date.format(templ);
+
+  it('should return undefined when nothing is passed', () => {
+    expect(manipulateDate()).to.be.undefined;
+  });
+  it('should return original value when it is not a valid date mod', () => {
+    expect(manipulateDate(123)).to.be.equal(123);
+  });
+  it('should return unmodified date when it is not a valid date mod', () => {
+    expect(manipulateDate('2020-10-10')).to.equal('2020-10-10');
+  });
+
+  it('should add one year to date', () => {
+    const expected = format(today().add(1, 'y'));
+    expect(manipulateDate('{+1y}')).to.equal(expected);
+  });
+  it('should subtract one year from date', () => {
+    const expected = format(today().subtract(1, 'y'));
+    expect(manipulateDate('{-1y}')).to.equal(expected);
+  });
+  it('should add zero time to date', () => {
+    const expected = format(today());
+    expect(manipulateDate('{+0y+0M+0d}')).to.equal(expected);
+  });
+
+  it('should add one month and subtract two days from today', () => {
+    const expected = format(today().add({ month: 1, d: -2 }));
+    expect(manipulateDate('{+1M-2d}')).to.equal(expected);
+  });
+  it('should subtract 3 months, add 5 days & subtract 2 years from date', () => {
+    const expected = format(today().add({ M: -3, d: +5, y: -2 }));
+    expect(manipulateDate('{+5d-2y-3M}')).to.equal(expected);
+  });
+  it('should add one quarter & subtract 2 weeks to today', () => {
+    const expected = format(today().add({ Q: 1, w: -2, y: 0 }));
+    expect(manipulateDate('{+1Q-2w+0y}')).to.equal(expected);
+  });
+  it('should add/subtract {+5d-4w+3M-2Q+1y}', () => {
+    const expected = format(
+      today().add({
+        y: 1,
+        Q: -2,
+        M: 3,
+        w: -4,
+        d: 5,
+      }),
+    );
+    expect(manipulateDate('{+5d-4w+3M-2Q+1y}')).to.equal(expected);
+  });
+
+  it('should add/subtract {-90ms+80s-70m+6h-5d+4w-3M+2Q-1y} in custom format', () => {
+    const templ = 'dddd, MMMM Do YYYY, h:mm:ss SSS';
+    const expected = format(
+      today().add({
+        ms: -90,
+        s: 80,
+        m: -70,
+        h: 6,
+        d: -5,
+        w: 4,
+        M: -3,
+        Q: 2,
+        y: -1,
+      }),
+      templ,
+    );
+    expect(manipulateDate('{-90ms+80s-70m+6h-5d+4w-3M+2Q-1y}', templ)).to.equal(
+      expected,
+    );
   });
 });
