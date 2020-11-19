@@ -7,13 +7,9 @@
   "supportFile": "src/platform/testing/e2e/cypress/support/index.js",
   "testFiles": "**/tests/**/*.cypress.spec.js?(x)",
   "waitForAnimations": false,
-  "reporter": "cypress-testrail-reporter",
+  "reporter": "junit",
   "reporterOptions": {
-    "domain": "dsvavsp.testrail.io",
-    "username": "TR_USER",
-    "password": "TR_API_KEY",
-    "projectId": "TR_PROJECTID",
-    "suiteId": "TR_SUITEID",
-    "runName": "Dashboard"
-    }
+    "mochaFile": "cypress/results/applications/debt-letters/tests/e2e/dl-debt-letters-[hash].xml",
+    "toConsole": true
+  }
 }
