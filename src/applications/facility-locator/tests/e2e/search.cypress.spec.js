@@ -48,7 +48,7 @@ describe('Facility search', () => {
     cy.route('GET', '/geocoding/**/*', 'fx:constants/mock-geocoding-data');
   });
 
-  it.only('does a simple search and finds a result on the list', () => {
+  it('does a simple search and finds a result on the list', () => {
     cy.visit('/find-locations');
 
     cy.injectAxeThenAxeCheck();
