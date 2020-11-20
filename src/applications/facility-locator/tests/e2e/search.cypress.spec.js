@@ -37,6 +37,7 @@ describe('Facility search', () => {
 
   beforeEach(() => {
     cy.server();
+
     cy.route('GET', '/v0/feature_toggles?*', []);
     cy.route('GET', '/v0/maintenance_windows', []);
     cy.route(
@@ -47,11 +48,12 @@ describe('Facility search', () => {
     cy.route('GET', '/geocoding/**/*', 'fx:constants/mock-geocoding-data');
   });
 
-  it('does a simple search and finds a result on the list', () => {
+  it.only('does a simple search and finds a result on the list', () => {
     cy.visit('/find-locations');
 
-    cy.injectAxe();
-    cy.axeCheck();
+    cy.injectAxeThenAxeCheck();
+    // cy.injectAxe();
+    // cy.axeCheck();
 
     cy.verifyOptions();
 
