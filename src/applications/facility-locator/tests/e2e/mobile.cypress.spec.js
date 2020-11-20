@@ -41,24 +41,36 @@ describe('Mobile', () => {
     });
   });
 
-  it('should render in mobile layouts and tabs actions work', () => {
+  it.only('should render in mobile layouts and tabs actions work', () => {
+    Cypress.env().vaTop5MobileViewports.forEach((viewportData) => {
+      const { name, width, height, percentTraffic, percentTrafficPeriod } = viewportData;
+
+      cy.log(`Device Group: ${name}`);
+      cy.log(`% traffic for the month of ${percentTrafficPeriod}: ${percentTraffic}%`);
+
+      cy.visit('/find-locations');
+      cy.injectAxe();
+      cy.viewport(width, height);
+      cy.checkSearch();
+    });
+
+    cy.log("Testing new 'cy.viewportPreset() custom command with default params:");
     cy.visit('/find-locations');
     cy.injectAxe();
-
-    // iPhone X
-    cy.viewport(400, 812);
+    cy.viewportPreset('mobile-top5-3');
     cy.checkSearch();
 
-    // iPhone 6/7/8 plus
-    cy.viewport(414, 736);
+    cy.log("Testing new 'cy.viewportPreset() custom command with 'orientation' param set to 'portrait' and 'options' param  set to { log: false }");
+    cy.visit('/find-locations');
+    cy.injectAxe();
+    cy.viewportPreset('mobile-top5-3', 'portrait', { log: false });
     cy.checkSearch();
 
-    // Pixel 2
-    cy.viewport(411, 731);
-    cy.checkSearch();
-
-    // Galaxy S5/Moto
-    cy.viewport(360, 640);
+    // test will fail but call to cy.viewportPreset('mobile-top5-3', 'landscape') is successful
+    cy.log("Testing new 'cy.viewportPreset() custom command with 'orientation' param set to 'landscape'");
+    cy.visit('/find-locations');
+    cy.injectAxe();
+    cy.viewportPreset('mobile-top5-3', 'landscape');
     cy.checkSearch();
   });
 
