@@ -33,6 +33,7 @@ const App = props => {
           setForm(f => {
             return {
               ...f,
+              formId: `${f.formId}-1234`,
               title: 'Primary care questionnaire',
               subTitle:
                 data?.attributes?.vdsAppointments[0]?.clinic?.facility
@@ -47,13 +48,14 @@ const App = props => {
     [setLoading, setLoadedAppointment, isLoggedIn],
   );
 
-  if (isLoading || isLoadingAppointmentDetails) {
+  if (isLoading || isLoadingAppointmentDetails || !form.formId) {
     return (
       <>
         <LoadingIndicator message="Please wait while we load your appointment details..." />
       </>
     );
   } else {
+    // console.log({ form });
     return (
       <>
         <RoutedSavableApp formConfig={form} currentLocation={location}>
