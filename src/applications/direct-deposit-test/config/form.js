@@ -2,14 +2,11 @@
 
 import IntroductionPage from '../containers/IntroductionPage';
 import ConfirmationPage from '../containers/ConfirmationPage';
+import getDirectDepositSchemas from 'platform/forms-system/src/js/definitions/directDeposit';
 
 // const { } = fullSchema.properties;
 
 // const { } = fullSchema.definitions;
-
-const formFields = {
-  firstName: 'firstName',
-};
 
 const formConfig = {
   urlPrefix: '/',
@@ -28,25 +25,12 @@ const formConfig = {
   defaultDefinitions: {},
   chapters: {
     chapter1: {
-      title: 'Personal Information',
+      title: 'Direct Deposit',
       pages: {
         page1: {
-          path: 'first-name',
-          title: 'Personal Information - Page 1',
-          uiSchema: {
-            [formFields.firstName]: {
-              'ui:title': 'First Name',
-            },
-          },
-          schema: {
-            required: [formFields.firstName],
-            type: 'object',
-            properties: {
-              [formFields.firstName]: {
-                type: 'string',
-              },
-            },
-          },
+          path: 'direct-deposit',
+          title: 'Direct Deposit - Page 1',
+          ...getDirectDepositSchemas(),
         },
       },
     },
