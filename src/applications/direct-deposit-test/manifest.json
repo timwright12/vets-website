@@ -1,0 +1,6 @@
+{
+  "appName": "Direct Deposit Test",
+  "entryFile": "./app-entry.jsx",
+  "entryName": "direct-deposit-test",
+  "rootUrl": "/direct-deposit-test"
+}

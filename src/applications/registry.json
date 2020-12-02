@@ -894,5 +894,14 @@
         }
       ]
     }
+  },
+  {
+    "appName": "Direct Deposit Test",
+    "entryName": "direct-deposit-test",
+    "rootUrl": "/direct-deposit-test",
+    "template": {
+      "vagovprod": false,
+      "layout": "page-react.html"
+    }
   }
 ]
