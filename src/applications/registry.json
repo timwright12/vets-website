@@ -923,5 +923,14 @@
       "vagovprod": false,
       "layout": "page-react.html"
     }
+  },
+  {
+    "appName": "coronavirus-vaccine",
+    "entryName": "coronavirus-vaccine",
+    "rootUrl": "/coronavirus-vaccine",
+    "template": {
+      "vagovprod": false,
+      "layout": "page-react.html"
+    }
   }
 ]

@@ -1,0 +1,6 @@
+{
+  "appName": "coronavirus-vaccine",
+  "entryFile": "./app-entry.jsx",
+  "entryName": "coronavirus-vaccine",
+  "rootUrl": "/coronavirus-vaccine"
+}
