@@ -13,6 +13,8 @@ import environment from 'platform/utilities/environment';
 import { VA_FORM_IDS } from 'platform/forms/constants';
 
 import manifest from '../manifest.json';
+import AppointmentId from '../components/appointment-id/AppointmentId';
+import DaysTillExpires from '../components/days-till-expires/DaysTillExpires';
 
 const formConfig = {
   rootUrl: manifest.rootUrl,
@@ -71,6 +73,12 @@ const formConfig = {
             veteranInfo: {
               'ui:description': VeteranInfoPage.field,
             },
+            appointmentId: {
+              'ui:field': AppointmentId,
+            },
+            daysTillExpires: {
+              'ui:field': DaysTillExpires,
+            },
           },
           schema: {
             type: 'object',
@@ -78,6 +86,12 @@ const formConfig = {
               veteranInfo: {
                 type: 'object',
                 properties: {},
+              },
+              appointmentId: {
+                type: 'string',
+              },
+              daysTillExpires: {
+                type: 'string',
               },
             },
           },
