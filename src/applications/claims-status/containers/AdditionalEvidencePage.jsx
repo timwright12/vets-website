@@ -14,7 +14,7 @@ import {
   removeFile,
   submitFiles,
   updateField,
-  showMailOrFaxModal,
+  showMailMessageModal,
   cancelUpload,
   getClaimDetail,
   setFieldsDirty,
@@ -93,7 +93,7 @@ class AdditionalEvidencePage extends React.Component {
             progress={this.props.progress}
             uploading={this.props.uploading}
             files={this.props.files}
-            showMailOrFax={this.props.showMailOrFax}
+            showMailMessage={this.props.showMailMessage}
             backUrl={this.props.lastPage || filesPath}
             onSubmit={() =>
               this.props.submitFiles(
@@ -105,7 +105,7 @@ class AdditionalEvidencePage extends React.Component {
             onAddFile={this.props.addFile}
             onRemoveFile={this.props.removeFile}
             onFieldChange={this.props.updateField}
-            onShowMailOrFax={this.props.showMailOrFaxModal}
+            onShowMailMessage={this.props.showMailMessageModal}
             onCancel={this.props.cancelUpload}
             onDirtyFields={this.props.setFieldsDirty}
           />
@@ -133,7 +133,7 @@ function mapStateToProps(state) {
     uploadError: claimsState.uploads.uploadError,
     uploadComplete: claimsState.uploads.uploadComplete,
     uploadField: claimsState.uploads.uploadField,
-    showMailOrFax: claimsState.uploads.showMailOrFax,
+    showMailMessage: claimsState.uploads.showMailMessage,
     lastPage: claimsState.routing.lastPage,
     message: claimsState.notifications.additionalEvidenceMessage,
   };
@@ -144,7 +144,7 @@ const mapDispatchToProps = {
   removeFile,
   submitFiles,
   updateField,
-  showMailOrFaxModal,
+  showMailMessageModal,
   cancelUpload,
   getClaimDetail,
   setFieldsDirty,

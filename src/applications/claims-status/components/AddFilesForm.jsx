@@ -16,7 +16,7 @@ import { toggleValues } from 'platform/site-wide/feature-toggles/selectors';
 import { checkForEncryptedPdf } from 'platform/forms-system/src/js/utilities/file';
 
 import UploadStatus from './UploadStatus';
-import MailOrFax from './MailOrFax';
+import MailMessage from './MailMessage';
 import { displayFileSize, DOC_TYPES, getTopPosition } from '../utils/helpers';
 import { getScrollOptions } from 'platform/utilities/ui';
 import {
@@ -151,10 +151,10 @@ class AddFilesForm extends React.Component {
                 recordEvent({
                   event: 'claims-mailfax-modal',
                 });
-                this.props.onShowMailOrFax(true);
+                this.props.onShowMailMessage(true);
               }}
             >
-              Need to mail or fax your files
+              Need to mail your files
             </a>
             ?
           </p>
@@ -296,12 +296,12 @@ class AddFilesForm extends React.Component {
         />
         <Modal
           onClose={() => true}
-          visible={this.props.showMailOrFax}
+          visible={this.props.showMailMessage}
           hideCloseButton
           focusSelector="button"
           cssClass=""
           contents={
-            <MailOrFax onClose={() => this.props.onShowMailOrFax(false)} />
+            <MailMessage onClose={() => this.props.onShowMailMessage(false)} />
           }
         />
       </div>
@@ -313,7 +313,7 @@ AddFilesForm.propTypes = {
   files: PropTypes.array.isRequired,
   field: PropTypes.object.isRequired,
   uploading: PropTypes.bool,
-  showMailOrFax: PropTypes.bool,
+  showMailMessage: PropTypes.bool,
   backUrl: PropTypes.string,
   onSubmit: PropTypes.func.isRequired,
   onAddFile: PropTypes.func.isRequired,
