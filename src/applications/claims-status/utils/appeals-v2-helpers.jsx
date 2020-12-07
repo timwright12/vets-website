@@ -641,6 +641,8 @@ export function getStatusContents(appeal, name = {}) {
             PO Box 27063
             <br />
             Washington, DC 20038
+            <br />
+            Fax 844-678-8979
           </p>
         </div>
       );
@@ -1795,6 +1797,8 @@ export function getAlertContent(alert, appealIsActive) {
               PO Box 27063
               <br />
               Washington, DC 20038
+              <br />
+              Fax 844-678-8979
             </p>
             <p>
               Please contact your Veterans Service Organization or
@@ -1824,6 +1828,8 @@ export function getAlertContent(alert, appealIsActive) {
               PO Box 27063
               <br />
               Washington, DC 20038
+              <br />
+              Fax 844-678-8979
             </p>
           </div>
         ),
