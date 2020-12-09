@@ -12,7 +12,7 @@ commands:
           keys:
             - << parameters.key-prefix >>-{{ checksum "yarn.lock" }}
       - run:
-          command: yarn install --frozen-lockfile
+          command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
       - save_cache:
           key: << parameters.key-prefix >>-{{ checksum "yarn.lock" }}
           paths:
