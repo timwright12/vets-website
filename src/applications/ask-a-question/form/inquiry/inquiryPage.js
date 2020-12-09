@@ -1,5 +1,4 @@
 import { validateWhiteSpace } from 'platform/forms/validations';
-import * as topic from './topic/topic';
 import { veteranStatusUI } from './status/veteranStatusUI';
 
 import fullSchema from '../0873-schema.json';
@@ -13,7 +12,6 @@ import {
 const { inquiryType, query, veteranStatus } = fullSchema.properties;
 
 const formFields = {
-  topic: 'topic',
   inquiryType: 'inquiryType',
   query: 'query',
   veteranStatus: 'veteranStatus',
@@ -21,7 +19,6 @@ const formFields = {
 
 const inquiryPage = {
   uiSchema: {
-    [formFields.topic]: topic.uiSchema(),
     [formFields.inquiryType]: {
       'ui:title': inquiryTypeTitle,
       'ui:errorMessages': {
@@ -42,9 +39,8 @@ const inquiryPage = {
   },
   schema: {
     type: 'object',
-    required: [formFields.inquiryType, formFields.topic, formFields.query],
+    required: [formFields.inquiryType, formFields.query],
     properties: {
-      [formFields.topic]: topic.schema(fullSchema),
       [formFields.inquiryType]: inquiryType,
       [formFields.query]: query,
       [formFields.veteranStatus]: veteranStatus,

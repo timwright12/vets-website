@@ -9,6 +9,7 @@ import ConfirmationPage from './confirmation/ConfirmationPage';
 import VeteranInformationPage from './veteran/veteranInformationPage';
 import ContactInformationPage from './contactInformation/contactInformationPage';
 import InquiryPage from './inquiry/inquiryPage';
+import TopicPage from './inquiry/topicPage';
 import * as topic from './inquiry/topic/topic';
 import { transformForSubmit } from 'platform/forms-system/src/js/helpers';
 import environment from 'platform/utilities/environment';
@@ -49,6 +50,7 @@ const {
 // Define all the form pages to help ensure uniqueness across all form chapters
 const formPages = {
   topic: 'topic',
+  inquiry: 'inquiry',
   veteranInformation: 'veteranInformation',
   contactInformation: 'contactInformation',
 };
@@ -125,10 +127,23 @@ const formConfig = {
   },
   chapters: {
     topicChapter: {
-      title: inquiryChapterTitle,
+      title: 'I am the topic chapter',
       pages: {
         [formPages.topic]: {
           path: 'topic',
+          title: 'I am the topic page',
+          uiSchema: TopicPage.uiSchema,
+          schema: TopicPage.schema,
+          updateFormData: topic.updateFormData,
+          initialData: setInitialTopicsData(),
+        },
+      },
+    },
+    inquiryChapter: {
+      title: inquiryChapterTitle,
+      pages: {
+        [formPages.inquiry]: {
+          path: 'inquiry',
           title: inquiryPageTitle,
           uiSchema: InquiryPage.uiSchema,
           schema: InquiryPage.schema,
