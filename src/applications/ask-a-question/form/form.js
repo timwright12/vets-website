@@ -63,6 +63,17 @@ const submitTransform = (formConfig, form) => {
   });
 };
 
+export const setInitialTopicsData = () => {
+  const params = new URL(document.location).searchParams;
+  return {
+    topic: {
+      levelOne: params.get('levelOne'),
+      levelTwo: params.get('levelTwo'),
+      levelThree: params.get('levelThree'),
+    },
+  };
+};
+
 const formConfig = {
   rootUrl: manifest.rootUrl,
   urlPrefix: '/',
@@ -122,6 +133,7 @@ const formConfig = {
           uiSchema: InquiryPage.uiSchema,
           schema: InquiryPage.schema,
           updateFormData: topic.updateFormData,
+          initialData: setInitialTopicsData(),
         },
       },
     },

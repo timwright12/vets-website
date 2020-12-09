@@ -19,6 +19,7 @@ import {
   vaMedicalCentersLabels,
   vaMedicalCentersValues,
 } from './medicalCenters';
+import JacobWidget from './JacobWidget';
 
 const topicSchemaCopy = _.clone(fullSchema.properties.topic);
 topicSchemaCopy.anyOf.pop();
@@ -29,6 +30,7 @@ const formFields = {
   levelThree: 'levelThree',
   vaMedicalCenter: 'vaMedicalCenter',
   routeToState: 'routeToState',
+  jacobWidget: 'jacobWidget',
 };
 
 const getChildSchemaFromParentTopic = (
@@ -154,6 +156,9 @@ export function schema(currentSchema, topicProperty = 'topic') {
         enum: states.USA.map(state => state.value),
         enumNames: states.USA.map(state => state.label),
       },
+      jacobWidget: {
+        type: 'string',
+      },
     }),
   };
 }
@@ -234,6 +239,7 @@ export function uiSchema() {
       'levelOne',
       'levelTwo',
       'levelThree',
+      'jacobWidget',
       'vaMedicalCenter',
       'routeToState',
     ],
@@ -293,6 +299,25 @@ export function uiSchema() {
       'ui:errorMessages': {
         required: routeToStateError,
       },
+    },
+    [formFields.jacobWidget]: {
+      'ui:title': 'Jacob',
+      'ui:options': {
+        hideIf: formData => {
+          if (formData.topic.levelThree === 'Compensation Request') {
+            const levelOne = encodeURIComponent(formData.topic.levelOne);
+            const levelTwo = encodeURIComponent(formData.topic.levelTwo);
+            const levelThree = encodeURIComponent(formData.topic.levelThree);
+            const newUrl = `${
+              window.location.pathname
+            }?levelOne=${levelOne}&levelTwo=${levelTwo}&levelThree=${levelThree}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+            return false;
+          }
+          return true;
+        },
+      },
+      'ui:widget': JacobWidget,
     },
   };
 }
