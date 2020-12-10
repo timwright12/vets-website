@@ -318,6 +318,7 @@ export function uiSchema() {
         },
       },
       'ui:widget': JacobWidget,
+      'ui:required': () => true,
     },
   };
 }

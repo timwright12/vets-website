@@ -7,6 +7,10 @@ class JacobWidget extends React.Component {
   componentDidMount() {}
 
   render() {
+    console.log(this.props);
+    if (this.props.loggedIn) {
+      this.props.onChange('I am logged in');
+    }
     return (
       <SignInLink
         toggleLoginModal={this.props.toggleLoginModal}
@@ -23,6 +27,7 @@ class JacobWidget extends React.Component {
 
 const mapStateToProps = state => ({
   showLoginModal: state.navigation.showLoginModal,
+  loggedIn: state.user.login.currentlyLoggedIn,
 });
 
 const mapDispatchToProps = {
