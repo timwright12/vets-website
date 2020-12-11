@@ -7,9 +7,9 @@ class JacobWidget extends React.Component {
   componentDidMount() {}
 
   render() {
-    console.log(this.props);
     if (this.props.loggedIn) {
       this.props.onChange('I am logged in');
+      return null;
     }
     return (
       <SignInLink

@@ -301,7 +301,7 @@ export function uiSchema() {
       },
     },
     [formFields.jacobWidget]: {
-      'ui:title': 'Jacob',
+      'ui:title': 'Sign In',
       'ui:options': {
         hideIf: formData => {
           if (formData.topic.levelThree === 'Compensation Request') {
