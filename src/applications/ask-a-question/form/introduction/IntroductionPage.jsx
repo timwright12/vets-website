@@ -22,19 +22,19 @@ class IntroductionPage extends React.Component {
       <div className="schemaform-intro">
         <FormTitle title="Contact Us" />
         <p>Equal to VA Form 0873 (Ask a Question).</p>
-        <TopicSelection />
-        <SignInWidget />
-        <SaveInProgressIntro
-          prefillEnabled={this.props.route.formConfig.prefillEnabled}
-          messages={this.props.route.formConfig.savedFormMessages}
-          pageList={this.props.route.pageList}
-          formConfig={{
-            customText: this.props.route.formConfig.customText,
-          }}
-          unauthStartText={unauthStartText}
-        >
-          Please complete the 0873 form to send a message.
-        </SaveInProgressIntro>
+        <TopicSelection>
+          <SaveInProgressIntro
+            prefillEnabled={this.props.route.formConfig.prefillEnabled}
+            messages={this.props.route.formConfig.savedFormMessages}
+            pageList={this.props.route.pageList}
+            formConfig={{
+              customText: this.props.route.formConfig.customText,
+            }}
+            unauthStartText={unauthStartText}
+          >
+            Please complete the 0873 form to send a message.
+          </SaveInProgressIntro>
+        </TopicSelection>
         <div className="omb-info--container" style={{ paddingLeft: '0px' }}>
           <OMBInfo resBurden={10} ombNumber="2900-0619" expDate="11/30/2019" />
         </div>
@@ -54,7 +54,11 @@ function getTopics(levelTwo) {
     : [];
 }
 
-function TopicSelection() {
+function requiresAuth(levelOne, levelTwo, levelThree) {
+  return levelOne === 'Education/ GI Bill';
+}
+
+function TopicSelection({ children }) {
   const [levelOne, setLevelOne] = useState();
   const [levelTwo, setLevelTwo] = useState();
   const [levelThree, setLevelThree] = useState();
@@ -67,6 +71,8 @@ function TopicSelection() {
   const levelTwoTopics = getTopics(levelOne);
 
   const levelThreeTopics = getTopics(levelTwo);
+
+  const needAuth = requiresAuth(levelOne, levelTwo, levelThree);
 
   return (
     <div>
@@ -90,6 +96,8 @@ function TopicSelection() {
           topics={levelThreeTopics}
         />
       )}
+      {needAuth && <SignInWidget />}
+      {!needAuth && children}
     </div>
   );
 }
