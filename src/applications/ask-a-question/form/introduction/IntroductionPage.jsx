@@ -43,6 +43,15 @@ class IntroductionPage extends React.Component {
 
 export default IntroductionPage;
 
+function getTopics(levelTwo) {
+  return valuesByLabelLookup[levelTwo]
+    ? valuesByLabelLookup[levelTwo].map(label => ({
+        label,
+        value: label,
+      }))
+    : [];
+}
+
 function TopicSelection() {
   const [levelOne, setLevelOne] = useState();
   const [levelTwo, setLevelTwo] = useState();
@@ -53,19 +62,9 @@ function TopicSelection() {
     value: label,
   }));
 
-  const levelTwoTopics = valuesByLabelLookup[levelOne]
-    ? valuesByLabelLookup[levelOne].map(label => ({
-        label,
-        value: label,
-      }))
-    : [];
+  const levelTwoTopics = getTopics(levelOne);
 
-  const levelThreeTopics = valuesByLabelLookup[levelTwo]
-    ? valuesByLabelLookup[levelTwo].map(label => ({
-        label,
-        value: label,
-      }))
-    : [];
+  const levelThreeTopics = getTopics(levelTwo);
 
   return (
     <div>
