@@ -68,26 +68,40 @@ function TopicSelection() {
 
   return (
     <div>
-      <SelectWidget
-        schema={{}}
+      <TopicLevel
+        label="Which category best describes your message?"
         value={levelOne}
-        onChange={value => setLevelOne(value)}
-        options={{ enumOptions: levelOneTopics }}
+        onChange={setLevelOne}
+        topics={levelOneTopics}
       />
-      <SelectWidget
-        schema={{}}
+      <TopicLevel
+        label="Which topic best describes your message?"
         value={levelTwo}
-        onChange={value => setLevelTwo(value)}
-        options={{ enumOptions: levelTwoTopics }}
+        onChange={setLevelTwo}
+        topics={levelTwoTopics}
       />
       {levelThreeTopics.length > 0 && (
-        <SelectWidget
-          schema={{}}
+        <TopicLevel
+          label="Which subtopic best describes your message?"
           value={levelThree}
-          onChange={value => setLevelThree(value)}
-          options={{ enumOptions: levelThreeTopics }}
+          onChange={setLevelThree}
+          topics={levelThreeTopics}
         />
       )}
     </div>
+  );
+}
+
+function TopicLevel({ label, value, onChange, topics }) {
+  return (
+    <>
+      <label>{label}</label>
+      <SelectWidget
+        schema={{}}
+        value={value}
+        onChange={onChange}
+        options={{ enumOptions: topics }}
+      />
+    </>
   );
 }
