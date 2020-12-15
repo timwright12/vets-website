@@ -31,6 +31,7 @@ import manifest from '../manifest.json';
 import CallMyVA311 from './review/error/CallMyVA311';
 import FormFooter from 'platform/forms/components/FormFooter';
 import NeedHelpFooter from '../components/NeedHelpFooter';
+import {getTopicState} from "./introduction/topicState";
 
 const {
   fullName,
@@ -61,6 +62,18 @@ const submitTransform = (formConfig, form) => {
       form: formData,
     },
   });
+};
+
+export const setInitialTopicsData = () => {
+  const topicState = getTopicState();
+  console.log("---topic state---", topicState)
+  return {
+    topic: {
+      levelOne: topicState.levelOne,
+      levelTwo: topicState.levelTwo,
+      levelThree: topicState.levelThree,
+    },
+  };
 };
 
 const formConfig = {
@@ -122,6 +135,7 @@ const formConfig = {
           uiSchema: InquiryPage.uiSchema,
           schema: InquiryPage.schema,
           updateFormData: topic.updateFormData,
+          initialData: setInitialTopicsData(),
         },
       },
     },

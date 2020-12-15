@@ -11,6 +11,7 @@ import {
   valuesByLabelLookup,
 } from '../inquiry/topic/topic';
 import SignInWidget from './SignInWidget';
+import { setTopicState } from './topicState';
 
 class IntroductionPage extends React.Component {
   componentDidMount() {
@@ -52,6 +53,10 @@ function getTopics(levelTwo) {
         value: label,
       }))
     : [];
+}
+
+function saveTopics(levelOne, levelTwo, levelThree) {
+  setTopicState({ levelOne, levelTwo, levelThree });
 }
 
 function requiresAuth(levelOne, levelTwo, levelThree) {
@@ -96,6 +101,7 @@ function TopicSelection({ children }) {
           topics={levelThreeTopics}
         />
       )}
+      {saveTopics(levelOne, levelTwo, levelThree)}
       {needAuth && <SignInWidget />}
       {!needAuth && children}
     </div>
