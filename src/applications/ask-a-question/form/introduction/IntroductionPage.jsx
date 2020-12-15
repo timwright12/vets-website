@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { focusElement } from 'platform/utilities/ui';
 import OMBInfo from '@department-of-veterans-affairs/formation-react/OMBInfo';
 import FormTitle from 'platform/forms-system/src/js/components/FormTitle';
 import SaveInProgressIntro from 'platform/forms/save-in-progress/SaveInProgressIntro';
 import { unauthStartText } from '../../constants/labels';
+import SelectWidget from 'platform/forms-system/src/js/widgets/SelectWidget';
 
 class IntroductionPage extends React.Component {
   componentDidMount() {
@@ -16,6 +17,7 @@ class IntroductionPage extends React.Component {
       <div className="schemaform-intro">
         <FormTitle title="Contact Us" />
         <p>Equal to VA Form 0873 (Ask a Question).</p>
+        <TopicSelection />
         <SaveInProgressIntro
           prefillEnabled={this.props.route.formConfig.prefillEnabled}
           messages={this.props.route.formConfig.savedFormMessages}
@@ -36,3 +38,24 @@ class IntroductionPage extends React.Component {
 }
 
 export default IntroductionPage;
+
+function TopicSelection() {
+  const [levelOne, setLevelOne] = useState();
+
+  const enumOptions = [
+    { label: '1', value: 'a' },
+    { label: '2', value: 'b' },
+    { label: '3', value: 'c' },
+  ];
+  return (
+    <div>
+      <SelectWidget
+        schema={{}}
+        value={levelOne}
+        onChange={value => setLevelOne(value)}
+        options={{ enumOptions }}
+      />
+      <SelectWidget schema={{}} options={{ enumOptions }} />
+    </div>
+  );
+}
