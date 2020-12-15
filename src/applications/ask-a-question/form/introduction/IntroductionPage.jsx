@@ -80,12 +80,14 @@ function TopicSelection() {
         onChange={value => setLevelTwo(value)}
         options={{ enumOptions: levelTwoTopics }}
       />
-      <SelectWidget
-        schema={{}}
-        value={levelThree}
-        onChange={value => setLevelThree(value)}
-        options={{ enumOptions: levelThreeTopics }}
-      />
+      {levelThreeTopics.length > 0 && (
+        <SelectWidget
+          schema={{}}
+          value={levelThree}
+          onChange={value => setLevelThree(value)}
+          options={{ enumOptions: levelThreeTopics }}
+        />
+      )}
     </div>
   );
 }
