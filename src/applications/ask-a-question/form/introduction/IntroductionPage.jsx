@@ -10,6 +10,7 @@ import {
   levelOneTopicLabels,
   valuesByLabelLookup,
 } from '../inquiry/topic/topic';
+import SignInWidget from './SignInWidget';
 
 class IntroductionPage extends React.Component {
   componentDidMount() {
@@ -22,6 +23,7 @@ class IntroductionPage extends React.Component {
         <FormTitle title="Contact Us" />
         <p>Equal to VA Form 0873 (Ask a Question).</p>
         <TopicSelection />
+        <SignInWidget />
         <SaveInProgressIntro
           prefillEnabled={this.props.route.formConfig.prefillEnabled}
           messages={this.props.route.formConfig.savedFormMessages}
