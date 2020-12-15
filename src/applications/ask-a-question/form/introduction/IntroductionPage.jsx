@@ -46,8 +46,9 @@ export default IntroductionPage;
 function TopicSelection() {
   const [levelOne, setLevelOne] = useState();
   const [levelTwo, setLevelTwo] = useState();
+  const [levelThree, setLevelThree] = useState();
 
-  const enumOptions = levelOneTopicLabels.map(label => ({
+  const levelOneTopics = levelOneTopicLabels.map(label => ({
     label,
     value: label,
   }));
@@ -59,19 +60,32 @@ function TopicSelection() {
       }))
     : [];
 
+  const levelThreeTopics = valuesByLabelLookup[levelTwo]
+    ? valuesByLabelLookup[levelTwo].map(label => ({
+        label,
+        value: label,
+      }))
+    : [];
+
   return (
     <div>
       <SelectWidget
         schema={{}}
         value={levelOne}
         onChange={value => setLevelOne(value)}
-        options={{ enumOptions }}
+        options={{ enumOptions: levelOneTopics }}
       />
       <SelectWidget
         schema={{}}
         value={levelTwo}
         onChange={value => setLevelTwo(value)}
         options={{ enumOptions: levelTwoTopics }}
+      />
+      <SelectWidget
+        schema={{}}
+        value={levelThree}
+        onChange={value => setLevelThree(value)}
+        options={{ enumOptions: levelThreeTopics }}
       />
     </div>
   );
