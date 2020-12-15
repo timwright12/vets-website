@@ -98,7 +98,7 @@ export const getTopicsWithSubtopicsByCategory = topicSchema => {
   return topicsWithSubtopicsByCategory;
 };
 
-const valuesByLabelLookup = {};
+export const valuesByLabelLookup = {};
 levelOneTopicLabels.forEach(label => {
   valuesByLabelLookup[label] = filterTopicArrayByLabel(topicSchemaCopy, label);
 });

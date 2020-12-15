@@ -6,7 +6,10 @@ import FormTitle from 'platform/forms-system/src/js/components/FormTitle';
 import SaveInProgressIntro from 'platform/forms/save-in-progress/SaveInProgressIntro';
 import { unauthStartText } from '../../constants/labels';
 import SelectWidget from 'platform/forms-system/src/js/widgets/SelectWidget';
-import { levelOneTopicLabels } from '../inquiry/topic/topic';
+import {
+  levelOneTopicLabels,
+  valuesByLabelLookup,
+} from '../inquiry/topic/topic';
 
 class IntroductionPage extends React.Component {
   componentDidMount() {
@@ -42,11 +45,19 @@ export default IntroductionPage;
 
 function TopicSelection() {
   const [levelOne, setLevelOne] = useState();
+  const [levelTwo, setLevelTwo] = useState();
 
   const enumOptions = levelOneTopicLabels.map(label => ({
     label,
     value: label,
   }));
+
+  const levelTwoTopics = valuesByLabelLookup[levelOne]
+    ? valuesByLabelLookup[levelOne].map(label => ({
+        label,
+        value: label,
+      }))
+    : [];
 
   return (
     <div>
@@ -56,7 +67,12 @@ function TopicSelection() {
         onChange={value => setLevelOne(value)}
         options={{ enumOptions }}
       />
-      <SelectWidget schema={{}} options={{ enumOptions }} />
+      <SelectWidget
+        schema={{}}
+        value={levelTwo}
+        onChange={value => setLevelTwo(value)}
+        options={{ enumOptions: levelTwoTopics }}
+      />
     </div>
   );
 }
