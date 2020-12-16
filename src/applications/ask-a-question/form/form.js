@@ -66,7 +66,6 @@ const submitTransform = (formConfig, form) => {
 
 export const setInitialTopicsData = () => {
   const topicState = getTopicState();
-  console.log("---topic state---", topicState)
   return {
     topic: {
       levelOne: topicState.levelOne,
