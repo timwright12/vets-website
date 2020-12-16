@@ -331,11 +331,16 @@ export function uiSchema() {
     [formFields.vaMedicalCenter]: {
       'ui:title': vaMedicalCenterTitle,
       'ui:required': formData => {
+        console.log("=====here=====")
         return !!medicalCenterRequiredTopics.has(formData.topic.levelTwo);
       },
       'ui:options': {
         expandUnder: 'levelTwo',
         expandUnderCondition: levelTwo => {
+          if(window.fail) {
+            throw new Error("expand under failed")
+          }
+          console.log("=====expand under=====")
           return !!medicalCenterRequiredTopics.has(levelTwo);
         },
       },

@@ -65,7 +65,7 @@ function requiresAuth(levelOne, levelTwo, levelThree) {
   return levelOne === 'Education/ GI Bill';
 }
 
-function UnconnectedTopicSelection({ children, setTopics }) {
+function UnconnectedTopicSelection({ children, setTopics, data }) {
   const [levelOne, setLevelOne] = useState();
   const [levelTwo, setLevelTwo] = useState();
   const [levelThree, setLevelThree] = useState();
@@ -82,8 +82,18 @@ function UnconnectedTopicSelection({ children, setTopics }) {
   const needAuth = requiresAuth(levelOne, levelTwo, levelThree);
 
   function updateLevelOne(value) {
-    setTopics({ levelOne: value, levelTwo, levelThree });
+    setTopics({ levelOne: value, levelTwo, levelThree }, data);
     setLevelOne(value);
+  }
+
+  function updateLevelTwo(value) {
+    setTopics({ levelOne, levelTwo: value, levelThree }, data);
+    setLevelTwo(value);
+  }
+
+  function updateLevelThree(value) {
+    setTopics({ levelOne, levelTwo, levelThree: value }, data);
+    setLevelThree(value);
   }
 
   return (
@@ -97,14 +107,14 @@ function UnconnectedTopicSelection({ children, setTopics }) {
       <TopicLevel
         label="Which topic best describes your message?"
         value={levelTwo}
-        onChange={setLevelTwo}
+        onChange={updateLevelTwo}
         topics={levelTwoTopics}
       />
       {levelThreeTopics.length > 0 && (
         <TopicLevel
           label="Which subtopic best describes your message?"
           value={levelThree}
-          onChange={setLevelThree}
+          onChange={updateLevelThree}
           topics={levelThreeTopics}
         />
       )}
@@ -115,8 +125,11 @@ function UnconnectedTopicSelection({ children, setTopics }) {
 }
 
 const mapDispatchToProps = { setTopics };
+const mapStateToProps = state => {
+  return { data: state.form.data };
+};
 const TopicSelection = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(UnconnectedTopicSelection);
 

@@ -1,6 +1,9 @@
-export function setTopics(topics) {
+export function setTopics(topic, data) {
   return {
-    type: 'TOPIC_SELECTED',
-    topics,
+    type: 'SET_DATA',
+    data: {
+      ...data,
+      topic,
+    },
   };
 }
