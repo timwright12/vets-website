@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 
 import { focusElement } from 'platform/utilities/ui';
 import OMBInfo from '@department-of-veterans-affairs/formation-react/OMBInfo';
@@ -12,6 +13,7 @@ import {
 } from '../inquiry/topic/topic';
 import SignInWidget from './SignInWidget';
 import { setTopicState } from './topicState';
+import { setTopics } from './actions';
 
 class IntroductionPage extends React.Component {
   componentDidMount() {
@@ -63,7 +65,7 @@ function requiresAuth(levelOne, levelTwo, levelThree) {
   return levelOne === 'Education/ GI Bill';
 }
 
-function TopicSelection({ children }) {
+function UnconnectedTopicSelection({ children, setTopics }) {
   const [levelOne, setLevelOne] = useState();
   const [levelTwo, setLevelTwo] = useState();
   const [levelThree, setLevelThree] = useState();
@@ -79,12 +81,17 @@ function TopicSelection({ children }) {
 
   const needAuth = requiresAuth(levelOne, levelTwo, levelThree);
 
+  function updateLevelOne(value) {
+    setTopics({ levelOne: value, levelTwo, levelThree });
+    setLevelOne(value);
+  }
+
   return (
     <div>
       <TopicLevel
         label="Which category best describes your message?"
         value={levelOne}
-        onChange={setLevelOne}
+        onChange={updateLevelOne}
         topics={levelOneTopics}
       />
       <TopicLevel
@@ -101,12 +108,17 @@ function TopicSelection({ children }) {
           topics={levelThreeTopics}
         />
       )}
-      {saveTopics(levelOne, levelTwo, levelThree)}
       {needAuth && <SignInWidget />}
       {!needAuth && children}
     </div>
   );
 }
+
+const mapDispatchToProps = { setTopics };
+const TopicSelection = connect(
+  null,
+  mapDispatchToProps,
+)(UnconnectedTopicSelection);
 
 function TopicLevel({ label, value, onChange, topics }) {
   return (
