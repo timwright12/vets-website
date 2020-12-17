@@ -31,6 +31,7 @@ import manifest from '../manifest.json';
 import CallMyVA311 from './review/error/CallMyVA311';
 import FormFooter from 'platform/forms/components/FormFooter';
 import NeedHelpFooter from '../components/NeedHelpFooter';
+import ForceLogin from './ForceLogin';
 
 const {
   fullName,
@@ -81,6 +82,13 @@ const formConfig = {
       // saved: 'Your [benefitType] [appType] has been saved.',
     },
   },
+  additionalRoutes: [
+    {
+      path: 'id-form',
+      component: ForceLogin,
+      pageKey: 'id-form',
+    },
+  ],
   errorText: () => (
     <p>
       If it still doesn’t work, please <CallMyVA311 />

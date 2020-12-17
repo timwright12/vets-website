@@ -182,7 +182,7 @@ export function schema(currentSchema, topicProperty = 'topic') {
   const topicSchema = currentSchema.properties[topicProperty];
   return {
     type: 'object',
-    required: ['levelOne', 'levelTwo'],
+    required: ['levelOne'],
     properties: _.assign(topicSchema.properties, {
       levelOne: {
         type: 'string',
@@ -310,7 +310,7 @@ export function uiSchema() {
     [formFields.levelTwo]: {
       'ui:title': topicLevelTwoTitle,
       'ui:errorMessages': {
-        required: topicLevelTwoError,
+        // required: topicLevelTwoError,
       },
     },
     [formFields.levelThree]: {

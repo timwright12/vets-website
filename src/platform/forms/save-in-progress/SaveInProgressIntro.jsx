@@ -260,6 +260,7 @@ class SaveInProgressIntro extends React.Component {
     const appType = formConfig?.customText?.appType || APP_TYPE_DEFAULT;
     const { profile } = this.props.user;
     const startPage = this.getStartPage();
+    console.log({ startPage });
     const savedForm =
       profile && profile.savedForms.find(f => f.form === this.props.formId);
     const prefillAvailable = !!(
