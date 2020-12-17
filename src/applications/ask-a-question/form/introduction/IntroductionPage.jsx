@@ -61,60 +61,49 @@ function saveTopics(levelOne, levelTwo, levelThree) {
   setTopicState({ levelOne, levelTwo, levelThree });
 }
 
-function requiresAuth(levelOne, levelTwo, levelThree) {
+function requiresAuth({ levelOne, levelTwo, levelThree }) {
   return levelOne === 'Education/ GI Bill';
 }
 
 function UnconnectedTopicSelection({ children, setTopics, data }) {
-  const [levelOne, setLevelOne] = useState();
-  const [levelTwo, setLevelTwo] = useState();
-  const [levelThree, setLevelThree] = useState();
+  const [topics, changeTopics] = useState({});
 
   const levelOneTopics = levelOneTopicLabels.map(label => ({
     label,
     value: label,
   }));
 
-  const levelTwoTopics = getTopics(levelOne);
+  const levelTwoTopics = getTopics(topics.levelOne);
 
-  const levelThreeTopics = getTopics(levelTwo);
+  const levelThreeTopics = getTopics(topics.levelTwo);
 
-  const needAuth = requiresAuth(levelOne, levelTwo, levelThree);
+  const needAuth = requiresAuth(topics);
 
-  function updateLevelOne(value) {
-    setTopics({ levelOne: value, levelTwo, levelThree }, data);
-    setLevelOne(value);
-  }
-
-  function updateLevelTwo(value) {
-    setTopics({ levelOne, levelTwo: value, levelThree }, data);
-    setLevelTwo(value);
-  }
-
-  function updateLevelThree(value) {
-    setTopics({ levelOne, levelTwo, levelThree: value }, data);
-    setLevelThree(value);
+  function updateTopics(topicLevel) {
+    const newState = { ...topics, ...topicLevel };
+    setTopics(newState, data);
+    changeTopics(newState);
   }
 
   return (
     <div>
       <TopicLevel
         label="Which category best describes your message?"
-        value={levelOne}
-        onChange={updateLevelOne}
+        value={topics.levelOne}
+        onChange={value => updateTopics({ levelOne: value })}
         topics={levelOneTopics}
       />
       <TopicLevel
         label="Which topic best describes your message?"
-        value={levelTwo}
-        onChange={updateLevelTwo}
+        value={topics.levelTwo}
+        onChange={value => updateTopics({ levelTwo: value })}
         topics={levelTwoTopics}
       />
       {levelThreeTopics.length > 0 && (
         <TopicLevel
           label="Which subtopic best describes your message?"
-          value={levelThree}
-          onChange={updateLevelThree}
+          value={topics.levelThree}
+          onChange={value => updateTopics({ levelThree: value })}
           topics={levelThreeTopics}
         />
       )}
