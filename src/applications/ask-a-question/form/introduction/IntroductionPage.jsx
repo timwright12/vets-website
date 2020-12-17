@@ -65,8 +65,27 @@ function requiresAuth({ levelOne, levelTwo, levelThree }) {
   return levelOne === 'Education/ GI Bill';
 }
 
+function updateQueryParams(topic) {
+  const levelOne = encodeURIComponent(topic.levelOne);
+  const levelTwo = encodeURIComponent(topic.levelTwo);
+  const levelThree = encodeURIComponent(topic.levelThree);
+  const newUrl = `${
+    window.location.pathname
+  }?levelOne=${levelOne}&levelTwo=${levelTwo}&levelThree=${levelThree}`;
+  window.history.pushState({ path: newUrl }, '', newUrl);
+}
+
+function readTopicFromQueryParams() {
+  const params = new URL(document.location).searchParams;
+  return {
+    levelOne: params.get('levelOne'),
+    levelTwo: params.get('levelTwo'),
+    levelThree: params.get('levelThree'),
+  };
+}
+
 function UnconnectedTopicSelection({ children, setTopics, data }) {
-  const [topics, changeTopics] = useState({});
+  const [topics, changeTopics] = useState(readTopicFromQueryParams());
 
   const levelOneTopics = levelOneTopicLabels.map(label => ({
     label,
@@ -83,6 +102,7 @@ function UnconnectedTopicSelection({ children, setTopics, data }) {
     const newState = { ...topics, ...topicLevel };
     setTopics(newState, data);
     changeTopics(newState);
+    updateQueryParams(newState);
   }
 
   return (
