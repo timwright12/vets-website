@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { focusElement } from 'platform/utilities/ui';
@@ -85,6 +85,12 @@ function readTopicFromQueryParams() {
 }
 
 function UnconnectedTopicSelection({ children, setTopics, data }) {
+  useEffect(() => {
+    const queryParamTopic = readTopicFromQueryParams();
+
+    setTopics(queryParamTopic, data);
+  }, []);
+
   const [topics, changeTopics] = useState(readTopicFromQueryParams());
 
   const levelOneTopics = levelOneTopicLabels.map(label => ({
@@ -150,6 +156,7 @@ function TopicLevel({ label, value, onChange, topics }) {
         schema={{}}
         value={value}
         onChange={onChange}
+        onBlur={() => {}}
         options={{ enumOptions: topics }}
       />
     </>
