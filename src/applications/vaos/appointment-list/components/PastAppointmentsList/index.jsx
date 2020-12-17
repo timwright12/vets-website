@@ -35,7 +35,9 @@ export default function PastAppointmentsList() {
   );
 
   // Once our appointments are fetched, fetch additional facility info.  SWR
-  // knows that this facilityData call is dependent on pastAppointments
+  // knows that this facilityData call is dependent on pastAppointments because
+  // a function is passed as the first parameter.  A falsy return value will
+  // prevent this fetch from occurring
   const { data: facilityData } = useSWR(
     () => (pastAppointments ? 'pastAppointmentsFacilityInfo' : null),
     () => getAdditionalFacilityInfo(pastAppointments),
