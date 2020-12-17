@@ -84,7 +84,7 @@ function readTopicFromQueryParams() {
   };
 }
 
-function UnconnectedTopicSelection({ children, setTopics, data }) {
+function UnconnectedTopicSelection({ children, setTopics, data, currentlyLoggedIn }) {
   useEffect(() => {
     const queryParamTopic = readTopicFromQueryParams();
 
@@ -133,15 +133,18 @@ function UnconnectedTopicSelection({ children, setTopics, data }) {
           topics={levelThreeTopics}
         />
       )}
-      {needAuth && <SignInWidget />}
-      {!needAuth && children}
+      {!currentlyLoggedIn && needAuth && <SignInWidget />}
+      {(currentlyLoggedIn || !needAuth) && children}
     </div>
   );
 }
 
 const mapDispatchToProps = { setTopics };
 const mapStateToProps = state => {
-  return { data: state.form.data };
+  return { 
+    data: state.form.data,
+    currentlyLoggedIn: state.user.login.currentlyLoggedIn,
+   };
 };
 const TopicSelection = connect(
   mapStateToProps,
