@@ -1,5 +1,6 @@
 {
   "baseUrl": "http://localhost:3001",
+  "projectId": "8gsmwb",
   "integrationFolder": "./src",
   "modifyObstructiveCode": false,
   "nodeVersion": "system",
