@@ -78,7 +78,7 @@ export const filterTopicArrayByLabel = (
   return isLevelThree ? labelList : _.orderBy([], 'asc', labelList);
 };
 
-const levelOneTopicLabels = topicSchemaCopy.anyOf.map(topicSchema => {
+export const levelOneTopicLabels = topicSchemaCopy.anyOf.map(topicSchema => {
   return topicSchema.properties.levelOne.enum[0];
 });
 
@@ -98,7 +98,7 @@ export const getTopicsWithSubtopicsByCategory = topicSchema => {
   return topicsWithSubtopicsByCategory;
 };
 
-const valuesByLabelLookup = {};
+export const valuesByLabelLookup = {};
 levelOneTopicLabels.forEach(label => {
   valuesByLabelLookup[label] = filterTopicArrayByLabel(topicSchemaCopy, label);
 });

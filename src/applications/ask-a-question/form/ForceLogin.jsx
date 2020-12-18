@@ -9,6 +9,11 @@ import { isLoggedIn } from 'platform/user/selectors';
 import { getNextPagePath } from 'platform/forms-system/src/js/routing';
 import { setData } from 'platform/forms-system/src/js/actions';
 import { fetchInProgressForm } from '../../../platform/forms/save-in-progress/actions';
+import SelectWidget from 'platform/forms-system/src/js/widgets/SelectWidget';
+import {
+  levelOneTopicLabels,
+  valuesByLabelLookup,
+} from './inquiry/topic/topic';
 
 const schema = topic.schema(fullSchema);
 
@@ -74,6 +79,15 @@ function readTopicFromQueryParams() {
   };
 }
 
+function getTopics(levelTwo) {
+  return valuesByLabelLookup[levelTwo]
+    ? valuesByLabelLookup[levelTwo].map(label => ({
+        label,
+        value: label,
+      }))
+    : [];
+}
+
 function setTopicForForm(topic) {
   return async (dispatch, getState) => {
     if (isLoggedIn(getState())) {
@@ -102,28 +116,83 @@ function ForceLogin({
   const [topic, setTopic] = useState(readTopicFromQueryParams());
   const loginRequired = !isLoggedIn && isLoginRequired(topic);
 
+  function updateTopics(topicLevel) {
+    const data = { ...topic, ...topicLevel };
+    updateQueryParams(data);
+    setTopic(data);
+  }
+
+  const levelOneTopics = levelOneTopicLabels.map(label => ({
+    label,
+    value: label,
+  }));
+
+  const levelTwoTopics = getTopics(topic.levelOne);
+
+  const levelThreeTopics = getTopics(topic.levelTwo);
+
   return (
-    <SchemaForm
-      // `name` and `title` are required by SchemaForm, but are only used
-      // internally in the component
-      name="ID Form"
-      title="ID Form"
-      schema={schema}
-      uiSchema={uiSchema}
-      onSubmit={() => {
-        setTopicForForm(topic);
-        goToNextPage(form, location, route, router);
-      }}
-      onChange={data => {
-        updateQueryParams(data);
-        setTopic(data);
-      }}
-      data={topic}
-    >
-      {loginRequired && (
-        <LoginRequiredAlert handleLogin={() => toggleLoginModal(true)} />
+    <div>
+      <TopicLevel
+        label="Which category best describes your message?"
+        value={topic.levelOne}
+        onChange={value => updateTopics({ levelOne: value })}
+        topics={levelOneTopics}
+      />
+      <TopicLevel
+        label="Which topic best describes your message?"
+        value={topic.levelTwo}
+        onChange={value => updateTopics({ levelTwo: value })}
+        topics={levelTwoTopics}
+      />
+      {levelThreeTopics.length > 0 && (
+        <TopicLevel
+          label="Which subtopic best describes your message?"
+          value={topic.levelThree}
+          onChange={value => updateTopics({ levelThree: value })}
+          topics={levelThreeTopics}
+        />
       )}
-    </SchemaForm>
+    </div>
+  );
+
+  // return (
+  //   <SchemaForm
+  //     // `name` and `title` are required by SchemaForm, but are only used
+  //     // internally in the component
+  //     name="ID Form"
+  //     title="ID Form"
+  //     schema={schema}
+  //     uiSchema={uiSchema}
+  //     onSubmit={() => {
+  //       setTopicForForm(topic);
+  //       goToNextPage(form, location, route, router);
+  //     }}
+  //     onChange={data => {
+  //       updateQueryParams(data);
+  //       setTopic(data);
+  //     }}
+  //     data={topic}
+  //   >
+  //     {loginRequired && (
+  //       <LoginRequiredAlert handleLogin={() => toggleLoginModal(true)} />
+  //     )}
+  //   </SchemaForm>
+  // );
+}
+
+function TopicLevel({ label, value, onChange, topics }) {
+  return (
+    <>
+      <label>{label}</label>
+      <SelectWidget
+        schema={{}}
+        value={value}
+        onChange={onChange}
+        onBlur={() => {}}
+        options={{ enumOptions: topics }}
+      />
+    </>
   );
 }
 
