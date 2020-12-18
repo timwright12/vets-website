@@ -8,6 +8,7 @@ import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
 import { isLoggedIn } from 'platform/user/selectors';
 import { getNextPagePath } from 'platform/forms-system/src/js/routing';
 import { setData } from 'platform/forms-system/src/js/actions';
+import { fetchInProgressForm } from '../../../platform/forms/save-in-progress/actions';
 
 const schema = topic.schema(fullSchema);
 
@@ -74,7 +75,11 @@ function readTopicFromQueryParams() {
 }
 
 function setTopicForForm(topic) {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
+    if (isLoggedIn(getState())) {
+      await dispatch(fetchInProgressForm('0873', [], true));
+    }
+
     const defaultFormData = getState().form.data;
     const merged = {
       ...defaultFormData,
