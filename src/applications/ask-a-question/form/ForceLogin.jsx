@@ -5,8 +5,9 @@ import * as topic from './inquiry/topic/topic';
 import fullSchema from './0873-schema.json';
 import { toggleLoginModal } from 'platform/site-wide/user-nav/actions';
 import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
-import { isLoggedIn } from '../../../platform/user/selectors';
+import { isLoggedIn } from 'platform/user/selectors';
 import { getNextPagePath } from 'platform/forms-system/src/js/routing';
+import { setData } from 'platform/forms-system/src/js/actions';
 
 const schema = topic.schema(fullSchema);
 
@@ -60,6 +61,7 @@ function ForceLogin({
   route,
   router,
   form,
+  setNextStepData
 }) {
   const [formData, setFormData] = useState();
   const loginRequired = !isLoggedIn && isLoginRequired(formData);
@@ -73,6 +75,12 @@ function ForceLogin({
       schema={schema}
       uiSchema={uiSchema}
       onSubmit={() => {
+        const defaultFormData = form.data;
+        const merged = {
+          ...defaultFormData,
+          topic: formData,
+        };
+        setNextStepData(merged);
         goToNextPage(form, location, route, router);
       }}
       onChange={setFormData}
@@ -94,6 +102,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   toggleLoginModal,
+  setNextStepData: setData,
 };
 
 export default connect(
