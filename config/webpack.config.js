@@ -129,6 +129,7 @@ module.exports = env => {
             options: {
               // Speed up compilation.
               cacheDirectory: '.babelcache',
+              presets: ['@babel/preset-env'],
               // Also see .babelrc
             },
           },
