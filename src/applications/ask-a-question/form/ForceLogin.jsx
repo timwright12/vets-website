@@ -67,9 +67,9 @@ function updateQueryParams(topic) {
 function readTopicFromQueryParams() {
   const params = new URL(document.location).searchParams;
   return {
-    levelOne: params.get('levelOne'),
-    levelTwo: params.get('levelTwo'),
-    levelThree: params.get('levelThree'),
+    levelOne: params.get('levelOne') || '',
+    levelTwo: params.get('levelTwo') || '',
+    levelThree: params.get('levelThree') || '',
   };
 }
 
