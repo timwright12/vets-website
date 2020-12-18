@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import SchemaForm from 'platform/forms-system/src/js/components/SchemaForm';
 import * as topic from './inquiry/topic/topic';
@@ -54,6 +54,25 @@ const goToNextPage = (form, location, route, router) => {
   router.push(nextPagePath);
 };
 
+function updateQueryParams(topic) {
+  const levelOne = encodeURIComponent(topic.levelOne);
+  const levelTwo = encodeURIComponent(topic.levelTwo);
+  const levelThree = encodeURIComponent(topic.levelThree);
+  const newUrl = `${
+    window.location.pathname
+  }?levelOne=${levelOne}&levelTwo=${levelTwo}&levelThree=${levelThree}`;
+  window.history.pushState({ path: newUrl }, '', newUrl);
+}
+
+function readTopicFromQueryParams() {
+  const params = new URL(document.location).searchParams;
+  return {
+    levelOne: params.get('levelOne'),
+    levelTwo: params.get('levelTwo'),
+    levelThree: params.get('levelThree'),
+  };
+}
+
 function ForceLogin({
   isLoggedIn,
   toggleLoginModal,
@@ -63,7 +82,7 @@ function ForceLogin({
   form,
   setNextStepData
 }) {
-  const [formData, setFormData] = useState();
+  const [formData, setFormData] = useState(readTopicFromQueryParams());
   const loginRequired = !isLoggedIn && isLoginRequired(formData);
 
   return (
@@ -83,7 +102,10 @@ function ForceLogin({
         setNextStepData(merged);
         goToNextPage(form, location, route, router);
       }}
-      onChange={setFormData}
+      onChange={data => {
+        updateQueryParams(data);
+        setFormData(data);
+      }}
       data={formData}
     >
       {loginRequired && (
