@@ -73,6 +73,17 @@ function readTopicFromQueryParams() {
   };
 }
 
+function setTopicForForm(topic) {
+  return (dispatch, getState) => {
+    const defaultFormData = getState().form.data;
+    const merged = {
+      ...defaultFormData,
+      topic,
+    };
+    dispatch(setData(merged));
+  };
+}
+
 function ForceLogin({
   isLoggedIn,
   toggleLoginModal,
@@ -80,10 +91,11 @@ function ForceLogin({
   route,
   router,
   form,
-  setNextStepData
+  setNextStepData,
+  setTopicForForm,
 }) {
-  const [formData, setFormData] = useState(readTopicFromQueryParams());
-  const loginRequired = !isLoggedIn && isLoginRequired(formData);
+  const [topic, setTopic] = useState(readTopicFromQueryParams());
+  const loginRequired = !isLoggedIn && isLoginRequired(topic);
 
   return (
     <SchemaForm
@@ -94,19 +106,14 @@ function ForceLogin({
       schema={schema}
       uiSchema={uiSchema}
       onSubmit={() => {
-        const defaultFormData = form.data;
-        const merged = {
-          ...defaultFormData,
-          topic: formData,
-        };
-        setNextStepData(merged);
+        setTopicForForm(topic);
         goToNextPage(form, location, route, router);
       }}
       onChange={data => {
         updateQueryParams(data);
-        setFormData(data);
+        setTopic(data);
       }}
-      data={formData}
+      data={topic}
     >
       {loginRequired && (
         <LoginRequiredAlert handleLogin={() => toggleLoginModal(true)} />
@@ -125,6 +132,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   toggleLoginModal,
   setNextStepData: setData,
+  setTopicForForm,
 };
 
 export default connect(
