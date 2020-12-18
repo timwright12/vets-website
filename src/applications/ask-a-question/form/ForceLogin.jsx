@@ -8,7 +8,7 @@ import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
 import { isLoggedIn } from 'platform/user/selectors';
 import { getNextPagePath } from 'platform/forms-system/src/js/routing';
 import { setData } from 'platform/forms-system/src/js/actions';
-import { fetchInProgressForm } from '../../../platform/forms/save-in-progress/actions';
+import { fetchInProgressForm, removeInProgressForm } from '../../../platform/forms/save-in-progress/actions';
 import SelectWidget from 'platform/forms-system/src/js/widgets/SelectWidget';
 import {
   levelOneTopicLabels,
@@ -92,6 +92,7 @@ function getTopics(levelTwo) {
 function setTopicForForm(topic) {
   return async (dispatch, getState) => {
     if (isLoggedIn(getState())) {
+      await dispatch(removeInProgressForm('0873', [], () => {}));
       await dispatch(fetchInProgressForm('0873', [], true));
     }
 
