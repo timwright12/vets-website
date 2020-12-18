@@ -14,6 +14,7 @@ import {
   levelOneTopicLabels,
   valuesByLabelLookup,
 } from './inquiry/topic/topic';
+import { submitForm } from '../../../platform/forms-system/src/js/actions';
 
 const schema = topic.schema(fullSchema);
 
@@ -131,6 +132,11 @@ function ForceLogin({
 
   const levelThreeTopics = getTopics(topic.levelTwo);
 
+  function onSubmit() {
+    setTopicForForm(topic);
+    goToNextPage(form, location, route, router);
+  }
+
   return (
     <div>
       <TopicLevel
@@ -152,6 +158,10 @@ function ForceLogin({
           onChange={value => updateTopics({ levelThree: value })}
           topics={levelThreeTopics}
         />
+      )}
+      {!loginRequired && <button onClick={onSubmit}>Ask your question</button>}
+      {loginRequired && (
+        <LoginRequiredAlert handleLogin={() => toggleLoginModal(true)} />
       )}
     </div>
   );
