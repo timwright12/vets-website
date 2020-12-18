@@ -6,6 +6,7 @@ import fullSchema from './0873-schema.json';
 import { toggleLoginModal } from 'platform/site-wide/user-nav/actions';
 import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
 import { isLoggedIn } from '../../../platform/user/selectors';
+import { getNextPagePath } from 'platform/forms-system/src/js/routing';
 
 const schema = topic.schema(fullSchema);
 
@@ -43,7 +44,23 @@ function isLoginRequired(formData) {
   return formData?.levelOne === 'Education/ GI Bill';
 }
 
-function ForceLogin({ isLoggedIn, toggleLoginModal }) {
+const goToNextPage = (form, location, route, router) => {
+  const nextPagePath = getNextPagePath(
+    route.pageList,
+    form.data,
+    location.pathname,
+  );
+  router.push(nextPagePath);
+};
+
+function ForceLogin({
+  isLoggedIn,
+  toggleLoginModal,
+  location,
+  route,
+  router,
+  form,
+}) {
   const [formData, setFormData] = useState();
   const loginRequired = !isLoggedIn && isLoginRequired(formData);
 
@@ -55,7 +72,9 @@ function ForceLogin({ isLoggedIn, toggleLoginModal }) {
       title="ID Form"
       schema={schema}
       uiSchema={uiSchema}
-      onSubmit={() => {}}
+      onSubmit={() => {
+        goToNextPage(form, location, route, router);
+      }}
       onChange={setFormData}
       data={formData}
     >
@@ -69,6 +88,7 @@ function ForceLogin({ isLoggedIn, toggleLoginModal }) {
 const mapStateToProps = state => {
   return {
     isLoggedIn: isLoggedIn(state),
+    form: state.form,
   };
 };
 
