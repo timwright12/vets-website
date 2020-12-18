@@ -30,9 +30,9 @@ function LoginRequiredAlert({ handleLogin }) {
         content={
           <>
             <p>You gotta log in, gurl.</p>
-            <button className="usa-button-primary" onClick={handleLogin}>
+            <a className="usa-button-primary" onClick={handleLogin}>
               Sign in to VA.gov
-            </button>
+            </a>
           </>
         }
       />
