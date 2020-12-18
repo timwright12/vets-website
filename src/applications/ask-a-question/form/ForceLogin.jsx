@@ -5,6 +5,7 @@ import * as topic from './inquiry/topic/topic';
 import fullSchema from './0873-schema.json';
 import { toggleLoginModal } from 'platform/site-wide/user-nav/actions';
 import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
+import { isLoggedIn } from '../../../platform/user/selectors';
 
 const schema = topic.schema(fullSchema);
 
@@ -38,9 +39,13 @@ function LoginRequiredAlert({ handleLogin }) {
   );
 }
 
-function ForceLogin({toggleLoginModal}) {
+function isLoginRequired(formData) {
+  return formData?.levelOne === 'Education/ GI Bill';
+}
+
+function ForceLogin({ isLoggedIn, toggleLoginModal }) {
   const [formData, setFormData] = useState();
-  const loginRequired = true;
+  const loginRequired = !isLoggedIn && isLoginRequired(formData);
 
   return (
     <SchemaForm
@@ -61,9 +66,17 @@ function ForceLogin({toggleLoginModal}) {
   );
 }
 
+const mapStateToProps = state => {
+  return {
+    isLoggedIn: isLoggedIn(state),
+  };
+};
 
 const mapDispatchToProps = {
   toggleLoginModal,
 };
 
-export default connect(null, mapDispatchToProps)(ForceLogin);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ForceLogin);
