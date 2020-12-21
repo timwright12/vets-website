@@ -1,9 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { FIELD_NAMES, FIELD_TITLES } from '@@vap-svc/constants';
-import PhoneField from './PhoneField';
+import { FIELD_NAMES, FIELD_TITLES, API_ROUTES } from '@@vap-svc/constants';
+
 import ProfileInfoTable from '../../ProfileInfoTable';
+
+import {
+  phoneUiSchema,
+  phoneFormSchema,
+  phoneConvertCleanDataToPayload,
+} from '~/applications/personalization/profile/util/phoneUtils';
+import ContactInformationField from '~/applications/personalization/profile/components/personal-information/ContactInformationField';
 
 const PhoneNumbersTable = ({ className }) => (
   <ProfileInfoTable
@@ -12,7 +19,12 @@ const PhoneNumbersTable = ({ className }) => (
       {
         title: 'Home',
         value: (
-          <PhoneField
+          <ContactInformationField
+            apiRoute={API_ROUTES.TELEPHONES}
+            convertCleanDataToPayload={phoneConvertCleanDataToPayload}
+            formSchema={phoneFormSchema}
+            uiSchema={phoneUiSchema}
+            type="phone"
             title={FIELD_TITLES[FIELD_NAMES.HOME_PHONE]}
             fieldName={FIELD_NAMES.HOME_PHONE}
           />
@@ -21,7 +33,12 @@ const PhoneNumbersTable = ({ className }) => (
       {
         title: 'Work',
         value: (
-          <PhoneField
+          <ContactInformationField
+            apiRoute={API_ROUTES.TELEPHONES}
+            convertCleanDataToPayload={phoneConvertCleanDataToPayload}
+            formSchema={phoneFormSchema}
+            uiSchema={phoneUiSchema}
+            type="phone"
             title={FIELD_TITLES[FIELD_NAMES.WORK_PHONE]}
             fieldName={FIELD_NAMES.WORK_PHONE}
           />
@@ -30,7 +47,12 @@ const PhoneNumbersTable = ({ className }) => (
       {
         title: 'Mobile',
         value: (
-          <PhoneField
+          <ContactInformationField
+            apiRoute={API_ROUTES.TELEPHONES}
+            convertCleanDataToPayload={phoneConvertCleanDataToPayload}
+            formSchema={phoneFormSchema}
+            uiSchema={phoneUiSchema}
+            type="phone"
             title={FIELD_TITLES[FIELD_NAMES.MOBILE_PHONE]}
             fieldName={FIELD_NAMES.MOBILE_PHONE}
           />
@@ -39,7 +61,12 @@ const PhoneNumbersTable = ({ className }) => (
       {
         title: 'Fax',
         value: (
-          <PhoneField
+          <ContactInformationField
+            apiRoute={API_ROUTES.TELEPHONES}
+            convertCleanDataToPayload={phoneConvertCleanDataToPayload}
+            formSchema={phoneFormSchema}
+            uiSchema={phoneUiSchema}
+            type="phone"
             title={FIELD_TITLES[FIELD_NAMES.FAX_NUMBER]}
             fieldName={FIELD_NAMES.FAX_NUMBER}
           />
