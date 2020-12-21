@@ -1,9 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import AddressField from './AddressField';
+import ContactInformationField from '~/applications/personalization/profile/components/personal-information/ContactInformationField';
+import { addressConvertCleanDataToPayload } from '~/applications/personalization/profile/util/addressUtils';
 
-import { FIELD_NAMES, FIELD_TITLES } from '@@vap-svc/constants';
+import { API_ROUTES, FIELD_NAMES, FIELD_TITLES } from '@@vap-svc/constants';
+import {
+  getFormSchema,
+  getUiSchema,
+} from '@@vap-svc/components/AddressField/address-schemas';
 
 import ProfileInfoTable from '../../ProfileInfoTable';
 
@@ -14,19 +19,29 @@ const AddressesTable = ({ className }) => (
       {
         title: 'Mailing address',
         value: (
-          <AddressField
+          <ContactInformationField
             title={FIELD_TITLES[FIELD_NAMES.MAILING_ADDRESS]}
             fieldName={FIELD_NAMES.MAILING_ADDRESS}
+            apiRoute={API_ROUTES.ADDRESSES}
+            convertCleanDataToPayload={addressConvertCleanDataToPayload}
             deleteDisabled
+            formSchema={getFormSchema()}
+            uiSchema={getUiSchema()}
+            type="address"
           />
         ),
       },
       {
         title: 'Home address',
         value: (
-          <AddressField
+          <ContactInformationField
             title={FIELD_TITLES[FIELD_NAMES.RESIDENTIAL_ADDRESS]}
             fieldName={FIELD_NAMES.RESIDENTIAL_ADDRESS}
+            apiRoute={API_ROUTES.ADDRESSES}
+            convertCleanDataToPayload={addressConvertCleanDataToPayload}
+            formSchema={getFormSchema()}
+            uiSchema={getUiSchema()}
+            type="address"
           />
         ),
       },
