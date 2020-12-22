@@ -87,7 +87,7 @@ const formConfig = {
     </p>
   ),
   version: 0,
-  prefillEnabled: true,
+  prefillEnabled: false,
   savedFormMessages: {
     notFound: savedFormNotFound,
     noAuth: savedFormNoAuth,

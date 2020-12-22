@@ -16,12 +16,12 @@ const testConfig = createTestConfig(
     },
     pageHooks: {
       introduction: () => {
-        cy.findAllByText(/start.+without signing in/i)
+        cy.findAllByText(/get started/i)
           .first()
           .click();
       },
     },
-    skip: true,
+    skip: false,
     setupPerTest: () => {
       cy.route({
         method: 'POST',

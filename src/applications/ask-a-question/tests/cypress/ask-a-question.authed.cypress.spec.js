@@ -24,7 +24,7 @@ const testConfig = createTestConfig(
           .click();
       },
     },
-    skip: true,
+    skip: false,
     setupPerTest: () => {
       cy.login(mockUser);
 
@@ -65,7 +65,7 @@ const testConfig = createTestConfig(
 
       cy.route({
         method: 'POST',
-        url: '/v0/contact-us/inquiries',
+        url: '/v0/contact_us/inquiries',
         status: 200,
         response: {
           confirmationNumber: '000123456000A',
