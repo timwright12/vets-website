@@ -175,37 +175,41 @@ class ContactInformationField extends React.Component {
   };
 
   onSubmit = () => {
-    if (!this.props.fieldName.toLowerCase().includes('address')) {
+    const {
+      convertCleanDataToPayload,
+      fieldName,
+      analyticsSectionName,
+      apiRoute,
+      field,
+    } = this.props;
+    if (!fieldName.toLowerCase().includes('address')) {
       this.captureEvent('update-button');
     }
 
-    let payload = this.props.field.value;
-    if (this.props.convertCleanDataToPayload) {
-      payload = this.props.convertCleanDataToPayload(
-        payload,
-        this.props.fieldName,
-      );
+    let payload = field.value;
+    if (convertCleanDataToPayload) {
+      payload = convertCleanDataToPayload(payload, fieldName);
     }
 
     const method = payload.id ? 'PUT' : 'POST';
 
-    if (this.props.fieldName.toLowerCase().includes('address')) {
+    if (fieldName.toLowerCase().includes('address')) {
       this.props.validateAddress(
-        this.props.apiRoute,
+        apiRoute,
         method,
-        this.props.fieldName,
+        fieldName,
         payload,
-        this.props.analyticsSectionName,
+        analyticsSectionName,
       );
       return;
     }
 
     this.props.createTransaction(
-      this.props.apiRoute,
+      apiRoute,
       method,
-      this.props.fieldName,
+      fieldName,
       payload,
-      this.props.analyticsSectionName,
+      analyticsSectionName,
     );
   };
 
@@ -323,11 +327,8 @@ class ContactInformationField extends React.Component {
     if (showEditView) {
       content = (
         <ContactInformationEditView
-          analyticsSectionName={this.props.analyticsSectionName}
           clearErrors={this.clearErrors}
           deleteDisabled={this.props.deleteDisabled}
-          field={this.props.field}
-          fieldName={this.props.fieldName}
           formSchema={this.props.formSchema}
           getInitialFormValues={() =>
             getInitialFormValues({
@@ -337,19 +338,16 @@ class ContactInformationField extends React.Component {
               editViewData: this.props.editViewData,
             })
           }
-          hasUnsavedEdits={this.props.hasUnsavedEdits}
           hasValidationError={this.props.hasValidationError}
-          isEmpty={this.props.isEmpty}
           onCancel={this.onCancel}
           onChangeFormDataAndSchemas={this.onChangeFormDataAndSchemas}
           onDelete={this.onDelete}
           onSubmit={this.onSubmit}
           refreshTransaction={this.refreshTransaction}
-          title={this.props.title}
-          transaction={this.props.transaction}
-          transactionRequest={this.props.transactionRequest}
+          title={title}
           uiSchema={this.props.uiSchema}
           type={this.props.type}
+          fieldName={this.props.fieldName}
         />
       );
     }
