@@ -42,7 +42,6 @@ import ContactInformationEditView from '@@profile/components/personal-informatio
 import ContactInformationView from '@@profile/components/personal-information/ContactInformationView';
 
 import { getInitialFormValues } from '@@profile/util/contact-information';
-import ContactInformationEditButton from './ContactInformationEditButton';
 
 const wrapperClasses = prefixUtilityClasses([
   'display--flex',
@@ -143,74 +142,9 @@ class ContactInformationField extends React.Component {
     this.setState({ showConfirmCancelModal: true });
   };
 
-  onChangeFormDataAndSchemas = (value, schema, uiSchema) => {
-    this.props.updateFormFieldWithSchema(
-      this.props.fieldName,
-      value,
-      schema,
-      uiSchema,
-    );
-  };
-
-  onDelete = () => {
-    let payload = this.props.data;
-    if (this.props.convertCleanDataToPayload) {
-      payload = this.props.convertCleanDataToPayload(
-        payload,
-        this.props.fieldName,
-      );
-    }
-    this.props.createTransaction(
-      this.props.apiRoute,
-      'DELETE',
-      this.props.fieldName,
-      payload,
-      this.props.analyticsSectionName,
-    );
-  };
-
   onEdit = () => {
     this.captureEvent('edit-link');
     this.openEditModal();
-  };
-
-  onSubmit = () => {
-    const {
-      convertCleanDataToPayload,
-      fieldName,
-      analyticsSectionName,
-      apiRoute,
-      field,
-    } = this.props;
-    if (!fieldName.toLowerCase().includes('address')) {
-      this.captureEvent('update-button');
-    }
-
-    let payload = field.value;
-    if (convertCleanDataToPayload) {
-      payload = convertCleanDataToPayload(payload, fieldName);
-    }
-
-    const method = payload.id ? 'PUT' : 'POST';
-
-    if (fieldName.toLowerCase().includes('address')) {
-      this.props.validateAddress(
-        apiRoute,
-        method,
-        fieldName,
-        payload,
-        analyticsSectionName,
-      );
-      return;
-    }
-
-    this.props.createTransaction(
-      apiRoute,
-      method,
-      fieldName,
-      payload,
-      analyticsSectionName,
-    );
   };
 
   justClosedModal(prevProps, props) {
@@ -228,10 +162,6 @@ class ContactInformationField extends React.Component {
       isFailedTransaction(currentTransaction)
     );
   }
-
-  clearErrors = () => {
-    this.props.clearTransactionRequest(this.props.fieldName);
-  };
 
   closeModal = () => {
     this.props.openModal(null);
@@ -301,12 +231,16 @@ class ContactInformationField extends React.Component {
         <ContactInformationView data={data} type={type} fieldName={fieldName} />
 
         {this.isEditLinkVisible() && (
-          <ContactInformationEditButton
-            onEditClick={this.onEdit}
-            fieldName={fieldName}
-            title={title}
+          <button
+            aria-label={`Edit ${title}`}
+            type="button"
+            data-action="edit"
+            onClick={this.onEdit}
+            id={`${fieldName}-edit-link`}
             className={classes.editButton}
-          />
+          >
+            Edit
+          </button>
         )}
       </div>,
     );
@@ -327,7 +261,6 @@ class ContactInformationField extends React.Component {
     if (showEditView) {
       content = (
         <ContactInformationEditView
-          clearErrors={this.clearErrors}
           deleteDisabled={this.props.deleteDisabled}
           formSchema={this.props.formSchema}
           getInitialFormValues={() =>
@@ -340,14 +273,13 @@ class ContactInformationField extends React.Component {
           }
           hasValidationError={this.props.hasValidationError}
           onCancel={this.onCancel}
-          onChangeFormDataAndSchemas={this.onChangeFormDataAndSchemas}
           onDelete={this.onDelete}
-          onSubmit={this.onSubmit}
           refreshTransaction={this.refreshTransaction}
           title={title}
           uiSchema={this.props.uiSchema}
           type={this.props.type}
           fieldName={this.props.fieldName}
+          convertCleanDataToPayload={this.props.convertCleanDataToPayload}
         />
       );
     }
@@ -359,7 +291,7 @@ class ContactInformationField extends React.Component {
           transaction={transaction}
           transactionRequest={transactionRequest}
           title={title}
-          clearErrors={this.clearErrors}
+          fieldName={this.props.fieldName}
         />
       );
     }

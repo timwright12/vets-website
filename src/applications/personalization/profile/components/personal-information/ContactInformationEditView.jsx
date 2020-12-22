@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import recordEvent from '~/platform/monitoring/record-event';
 import LoadingButton from '~/platform/site-wide/loading-button/LoadingButton';
 import { focusElement } from '~/platform/utilities/ui';
 
@@ -40,7 +40,6 @@ import { FIELD_NAMES, USA } from '@@vap-svc/constants';
 class ContactInformationEditView extends Component {
   static propTypes = {
     analyticsSectionName: PropTypes.string.isRequired,
-    clearErrors: PropTypes.func.isRequired,
     deleteDisabled: PropTypes.bool,
     field: PropTypes.shape({
       value: PropTypes.object,
@@ -49,18 +48,17 @@ class ContactInformationEditView extends Component {
     uiSchema: PropTypes.object,
     formSchema: PropTypes.object,
     onCancel: PropTypes.func.isRequired,
-    onChangeFormDataAndSchemas: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired,
     refreshTransaction: PropTypes.func,
     title: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     transaction: PropTypes.object,
     transactionRequest: PropTypes.object,
+    convertCleanDataToPayload: PropTypes.func,
   };
 
   componentDidMount() {
-    this.props.onChangeFormDataAndSchemas(
+    this.onChangeFormDataAndSchemas(
       this.props.getInitialFormValues(),
       this.props.formSchema,
       this.props.uiSchema,
@@ -96,7 +94,7 @@ class ContactInformationEditView extends Component {
     // displayed in this modal, rather than on the page. Once the modal is closed, reset the state
     // for the next time the modal is opened by removing any existing transaction request from the store.
     if (this.props.transactionRequest?.error) {
-      this.props.clearErrors();
+      this.props.clearTransactionRequest(this.props.fieldName);
     }
 
     // AS DONE IN ADDRESSEDITVIEW, CHECK FOR CORRECTNESS
@@ -105,8 +103,51 @@ class ContactInformationEditView extends Component {
     }
   }
 
+  captureEvent(actionName) {
+    recordEvent({
+      event: 'profile-navigation',
+      'profile-action': actionName,
+      'profile-section': this.props.analyticsSectionName,
+    });
+  }
+
   onSubmit = () => {
-    this.props.onSubmit(this.props.field.value);
+    const {
+      convertCleanDataToPayload,
+      fieldName,
+      analyticsSectionName,
+      apiRoute,
+      field,
+    } = this.props;
+    if (!fieldName.toLowerCase().includes('address')) {
+      this.captureEvent('update-button');
+    }
+
+    let payload = field.value;
+    if (convertCleanDataToPayload) {
+      payload = convertCleanDataToPayload(payload, fieldName);
+    }
+
+    const method = payload.id ? 'PUT' : 'POST';
+
+    if (fieldName.toLowerCase().includes('address')) {
+      this.props.validateAddress(
+        apiRoute,
+        method,
+        fieldName,
+        payload,
+        analyticsSectionName,
+      );
+      return;
+    }
+
+    this.props.createTransaction(
+      apiRoute,
+      method,
+      fieldName,
+      payload,
+      analyticsSectionName,
+    );
   };
 
   onInput = (value, schema, uiSchema) => {
@@ -116,12 +157,38 @@ class ContactInformationEditView extends Component {
     if (newFieldValue['view:livesOnMilitaryBase']) {
       newFieldValue.countryCodeIso3 = USA.COUNTRY_ISO3_CODE;
     }
-    this.props.onChangeFormDataAndSchemas(newFieldValue, schema, uiSchema);
+    this.onChangeFormDataAndSchemas(newFieldValue, schema, uiSchema);
+  };
+
+  onChangeFormDataAndSchemas = (value, schema, uiSchema) => {
+    this.props.updateFormFieldWithSchema(
+      this.props.fieldName,
+      value,
+      schema,
+      uiSchema,
+    );
+  };
+
+  onDelete = () => {
+    let payload = this.props.data;
+    if (this.props.convertCleanDataToPayload) {
+      payload = this.props.convertCleanDataToPayload(
+        payload,
+        this.props.fieldName,
+      );
+    }
+    this.props.createTransaction(
+      this.props.apiRoute,
+      'DELETE',
+      this.props.fieldName,
+      payload,
+      this.props.analyticsSectionName,
+    );
   };
 
   copyMailingAddress = mailingAddress => {
     const newAddressValue = { ...this.props.field.value, ...mailingAddress };
-    this.props.onChangeFormDataAndSchemas(
+    this.onChangeFormDataAndSchemas(
       transformInitialFormValues(newAddressValue),
       this.props.field.formSchema,
       this.props.field.uiSchema,
@@ -133,7 +200,6 @@ class ContactInformationEditView extends Component {
       onSubmit,
       props: {
         analyticsSectionName,
-        clearErrors,
         data,
         deleteDisabled,
         field,
@@ -144,6 +210,7 @@ class ContactInformationEditView extends Component {
         title,
         transaction,
         transactionRequest,
+        fieldName,
       },
     } = this;
 
@@ -196,14 +263,14 @@ class ContactInformationEditView extends Component {
             <VAPServiceEditModalErrorMessage
               title={title}
               error={error}
-              clearErrors={clearErrors}
+              clearErrors={this.props.clearTransactionRequest(fieldName)}
             />
           </div>
         )}
 
         {!!field && (
           <div>
-            {this.props.fieldName === FIELD_NAMES.RESIDENTIAL_ADDRESS && (
+            {fieldName === FIELD_NAMES.RESIDENTIAL_ADDRESS && (
               <CopyMailingAddress
                 copyMailingAddress={this.copyMailingAddress}
               />
@@ -215,7 +282,7 @@ class ContactInformationEditView extends Component {
               onUpdateFormData={
                 type === 'address'
                   ? this.onInput
-                  : this.props.onChangeFormDataAndSchemas
+                  : this.onChangeFormDataAndSchemas
               }
               onSubmit={onSubmit}
             >
@@ -237,8 +304,6 @@ export const mapStateToProps = (state, ownProps) => {
   const data = selectVAPContactInfoField(state, fieldName);
   // const addressValidationType = selectAddressValidationType(state);
   const activeEditView = selectCurrentlyOpenEditModal(state);
-
-  console.log('This is fieldName', fieldName);
 
   return {
     hasUnsavedEdits: state.vapService.hasUnsavedEdits,
@@ -263,54 +328,16 @@ export const mapStateToProps = (state, ownProps) => {
   };
 };
 
-// const mapDispatchToProps = {
-//   clearTransactionRequest,
-//   refreshTransaction,
-//   openModal,
-//   createTransaction,
-//   updateFormFieldWithSchema,
-//   validateAddress,
-// };
+const mapDispatchToProps = {
+  clearTransactionRequest,
+  refreshTransaction,
+  openModal,
+  createTransaction,
+  updateFormFieldWithSchema,
+  validateAddress,
+};
 
-export default connect(mapStateToProps)(ContactInformationEditView);
-
-// WE ARE STILL PASSING THE PROPS BELOW TO THE COMPONENT
-// static propTypes = {
-//   clearErrors: PropTypes.func.isRequired,
-//   deleteDisabled: PropTypes.bool,
-//   field: PropTypes.shape({
-//     value: PropTypes.object,
-//     validations: PropTypes.object,
-//   }),
-//   uiSchema: PropTypes.object,
-//   formSchema: PropTypes.object,
-//   onCancel: PropTypes.func.isRequired,
-//   onChangeFormDataAndSchemas: PropTypes.func.isRequired,
-//   onDelete: PropTypes.func.isRequired,
-//   onSubmit: PropTypes.func.isRequired,
-//   refreshTransaction: PropTypes.func,
-//   title: PropTypes.string.isRequired,
-//   type: PropTypes.string.isRequired,
-// };
-
-// <ContactInformationEditView
-// clearErrors={this.clearErrors} // FROM CONTACTINFORMATIONFIELD
-// deleteDisabled={this.props.deleteDisabled} // FROM 2 levels UP
-// formSchema={this.props.formSchema} // FROM 2 levels UP
-// getInitialFormValues={() =>
-//   getInitialFormValues({
-//     type: this.props.type, // FROM 2 levels UP
-//     data: this.props.data,
-//     showSMSCheckbox: this.props.showSMSCheckbox,  // FROM CONTACTINFORMATIONFIELD
-//     editViewData: this.props.editViewData, // CAN DERIVE FROM CONTACTINFORMATIONEDITVIEW
-//   })
-// }
-// hasValidationError={this.props.hasValidationError}
-// onCancel={this.onCancel} // FROM CONTACTINFORMATIONFIELD
-// onChangeFormDataAndSchemas={this.onChangeFormDataAndSchemas} // FROM CONTACTINFORMATIONFIELD
-// onDelete={this.onDelete} // FROM CONTACTINFORMATIONFIELD
-// onSubmit={this.onSubmit} // FROM CONTACTINFORMATIONFIELD
-// refreshTransaction={this.refreshTransaction}// FROM CONTACTINFORMATIONFIELD
-// title={title}
-// uiSchema={this.props.uiSchema} // FROM 2 levels UP
-// type={this.props.type} // FROM 2 levels UP
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ContactInformationEditView);
