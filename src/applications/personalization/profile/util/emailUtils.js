@@ -24,6 +24,6 @@ export const emailUiSchema = {
   },
 };
 
-export const emailConvertDataToPayload = value => {
+export const emailConvertCleanDataToPayload = value => {
   return { ...value, emailAddress: value.emailAddress.trim() };
 };

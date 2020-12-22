@@ -20,7 +20,6 @@ const AddressesTable = ({ className }) => (
             fieldName={FIELD_NAMES.MAILING_ADDRESS}
             apiRoute={API_ROUTES.ADDRESSES}
             convertCleanDataToPayload={addressConvertCleanDataToPayload}
-            deleteDisabled
             type="address"
           />
         ),

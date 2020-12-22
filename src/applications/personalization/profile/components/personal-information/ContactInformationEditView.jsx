@@ -10,7 +10,6 @@ import {
   refreshTransaction,
   clearTransactionRequest,
   updateFormFieldWithSchema,
-  openModal,
   validateAddress,
 } from '@@vap-svc/actions';
 
@@ -40,22 +39,24 @@ import { FIELD_NAMES, USA } from '@@vap-svc/constants';
 import {
   emailUiSchema,
   emailFormSchema,
+  emailConvertCleanDataToPayload,
 } from '~/applications/personalization/profile/util/emailUtils';
 
 import {
   phoneUiSchema,
   phoneFormSchema,
+  phoneConvertCleanDataToPayload,
 } from '~/applications/personalization/profile/util/phoneUtils';
 
 import {
   getFormSchema as addressFormSchema,
   getUiSchema as addressUiSchema,
+  addressConvertCleanDataToPayload,
 } from '@@vap-svc/components/AddressField/address-schemas';
 
 class ContactInformationEditView extends Component {
   static propTypes = {
     analyticsSectionName: PropTypes.string.isRequired,
-    deleteDisabled: PropTypes.bool,
     field: PropTypes.shape({
       value: PropTypes.object,
       validations: PropTypes.object,
@@ -74,7 +75,6 @@ class ContactInformationEditView extends Component {
   // HERE IS WHERE WE ADD UISCHEMA AND FORMSCHEMA TO FIELD
   componentDidMount() {
     const { type, getInitialFormValues } = this.props;
-    console.log('This is props', this.props);
     const formSchema = this.selectUIFormSchema(type)?.formSchema;
     const uiSchema = this.selectUIFormSchema(type)?.uiSchema;
     this.onChangeFormDataAndSchemas(
@@ -159,7 +159,9 @@ class ContactInformationEditView extends Component {
       apiRoute,
       field,
     } = this.props;
-    if (!fieldName.toLowerCase().includes('address')) {
+
+    const isAddressField = fieldName.toLowerCase().includes('address');
+    if (!isAddressField) {
       this.captureEvent('update-button');
     }
 
@@ -168,26 +170,20 @@ class ContactInformationEditView extends Component {
       payload = convertCleanDataToPayload(payload, fieldName);
     }
 
-    const method = payload.id ? 'PUT' : 'POST';
-
-    if (fieldName.toLowerCase().includes('address')) {
-      this.props.validateAddress(
-        apiRoute,
-        method,
-        fieldName,
-        payload,
-        analyticsSectionName,
-      );
-      return;
-    }
-
-    this.props.createTransaction(
+    const values = {
       apiRoute,
-      method,
+      method: payload.id ? 'PUT' : 'POST',
       fieldName,
       payload,
       analyticsSectionName,
-    );
+    };
+
+    if (isAddressField) {
+      this.props.validateAddress(values);
+      return;
+    }
+
+    this.props.createTransaction(values);
   };
 
   onInput = (value, schema, uiSchema) => {
@@ -241,7 +237,6 @@ class ContactInformationEditView extends Component {
       props: {
         analyticsSectionName,
         data,
-        deleteDisabled,
         field,
         hasUnsavedEdits,
         onCancel,
@@ -252,8 +247,6 @@ class ContactInformationEditView extends Component {
         fieldName,
       },
     } = this;
-
-    console.log('This is field', field);
 
     const isLoading =
       transactionRequest?.isPending || isPendingTransaction(transaction);
@@ -268,7 +261,7 @@ class ContactInformationEditView extends Component {
         title={title}
         analyticsSectionName={analyticsSectionName}
         isLoading={isLoading}
-        deleteEnabled={data && !deleteDisabled}
+        deleteEnabled={data && !fieldName === FIELD_NAMES.MAILING_ADDRESS}
       >
         <div>
           <LoadingButton
@@ -372,7 +365,6 @@ export const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = {
   clearTransactionRequest,
   refreshTransaction,
-  openModal,
   createTransaction,
   updateFormFieldWithSchema,
   validateAddress,

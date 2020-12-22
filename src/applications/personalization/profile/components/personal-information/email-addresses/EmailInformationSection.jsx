@@ -5,11 +5,7 @@ import React from 'react';
 
 import { API_ROUTES, FIELD_NAMES, FIELD_TITLES } from '@@vap-svc/constants';
 import ContactInformationField from '~/applications/personalization/profile/components/personal-information/ContactInformationField';
-import {
-  emailUiSchema,
-  emailFormSchema,
-  emailConvertDataToPayload,
-} from '~/applications/personalization/profile/util/emailUtils';
+import { emailConvertDataToPayload } from '~/applications/personalization/profile/util/emailUtils';
 import { signInServiceName as signInServiceNameSelector } from 'platform/user/authentication/selectors';
 
 import ProfileInfoTable from '../../ProfileInfoTable';

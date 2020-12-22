@@ -97,10 +97,6 @@ class ContactInformationField extends React.Component {
 
   closeModalTimeoutID = null;
 
-  componentDidCatch(error) {
-    console.log('err', error);
-  }
-
   componentDidUpdate(prevProps) {
     // Exit the edit view if it takes more than 5 seconds for the update/save
     // transaction to resolve. If the transaction has not resolved after 5
@@ -265,8 +261,6 @@ class ContactInformationField extends React.Component {
     if (showEditView) {
       content = (
         <ContactInformationEditView
-          deleteDisabled={this.props.deleteDisabled}
-          formSchema={this.props.formSchema}
           getInitialFormValues={() =>
             getInitialFormValues({
               type: this.props.type,
@@ -279,7 +273,6 @@ class ContactInformationField extends React.Component {
           onCancel={this.onCancel}
           refreshTransaction={this.refreshTransaction}
           title={title}
-          uiSchema={this.props.uiSchema}
           type={this.props.type}
           fieldName={this.props.fieldName}
           convertCleanDataToPayload={this.props.convertCleanDataToPayload}
