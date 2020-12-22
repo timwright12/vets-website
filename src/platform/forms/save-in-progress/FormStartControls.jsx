@@ -21,7 +21,7 @@ class FormStartControls extends React.Component {
       // TODO: Remove this; it doesn't actually run
       // The redirect is instead done in RoutedSavableApp
       // Navigate to the last page they were on
-      this.props.router.push(newProps.returnUrl);
+      // this.props.router.push(newProps.returnUrl);
     }
   };
 
