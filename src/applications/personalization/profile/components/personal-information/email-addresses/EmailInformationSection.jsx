@@ -64,8 +64,6 @@ const EmailInformationSection = ({ className, signInServiceName }) => {
                 fieldName={FIELD_NAMES.EMAIL}
                 apiRoute={API_ROUTES.EMAILS}
                 convertCleanDataToPayload={emailConvertDataToPayload}
-                formSchema={emailFormSchema}
-                uiSchema={emailUiSchema}
                 type="email"
               />
             ),

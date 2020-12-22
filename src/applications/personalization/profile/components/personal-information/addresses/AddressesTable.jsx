@@ -5,10 +5,6 @@ import ContactInformationField from '~/applications/personalization/profile/comp
 import { addressConvertCleanDataToPayload } from '~/applications/personalization/profile/util/addressUtils';
 
 import { API_ROUTES, FIELD_NAMES, FIELD_TITLES } from '@@vap-svc/constants';
-import {
-  getFormSchema,
-  getUiSchema,
-} from '@@vap-svc/components/AddressField/address-schemas';
 
 import ProfileInfoTable from '../../ProfileInfoTable';
 
@@ -25,8 +21,6 @@ const AddressesTable = ({ className }) => (
             apiRoute={API_ROUTES.ADDRESSES}
             convertCleanDataToPayload={addressConvertCleanDataToPayload}
             deleteDisabled
-            formSchema={getFormSchema()}
-            uiSchema={getUiSchema()}
             type="address"
           />
         ),
@@ -39,8 +33,6 @@ const AddressesTable = ({ className }) => (
             fieldName={FIELD_NAMES.RESIDENTIAL_ADDRESS}
             apiRoute={API_ROUTES.ADDRESSES}
             convertCleanDataToPayload={addressConvertCleanDataToPayload}
-            formSchema={getFormSchema()}
-            uiSchema={getUiSchema()}
             type="address"
           />
         ),

@@ -37,6 +37,21 @@ import { transformInitialFormValues } from '@@profile/util/contact-information';
 
 import { FIELD_NAMES, USA } from '@@vap-svc/constants';
 
+import {
+  emailUiSchema,
+  emailFormSchema,
+} from '~/applications/personalization/profile/util/emailUtils';
+
+import {
+  phoneUiSchema,
+  phoneFormSchema,
+} from '~/applications/personalization/profile/util/phoneUtils';
+
+import {
+  getFormSchema as addressFormSchema,
+  getUiSchema as addressUiSchema,
+} from '@@vap-svc/components/AddressField/address-schemas';
+
 class ContactInformationEditView extends Component {
   static propTypes = {
     analyticsSectionName: PropTypes.string.isRequired,
@@ -56,11 +71,16 @@ class ContactInformationEditView extends Component {
     convertCleanDataToPayload: PropTypes.func,
   };
 
+  // HERE IS WHERE WE ADD UISCHEMA AND FORMSCHEMA TO FIELD
   componentDidMount() {
+    const { type, getInitialFormValues } = this.props;
+    console.log('This is props', this.props);
+    const formSchema = this.selectUIFormSchema(type)?.formSchema;
+    const uiSchema = this.selectUIFormSchema(type)?.uiSchema;
     this.onChangeFormDataAndSchemas(
-      this.props.getInitialFormValues(),
-      this.props.formSchema,
-      this.props.uiSchema,
+      getInitialFormValues(),
+      formSchema,
+      uiSchema,
     );
   }
 
@@ -109,6 +129,27 @@ class ContactInformationEditView extends Component {
       'profile-section': this.props.analyticsSectionName,
     });
   }
+
+  selectUIFormSchema = type => {
+    let uiSchema;
+    let formSchema;
+    if (type === 'phone') {
+      uiSchema = phoneUiSchema;
+      formSchema = phoneFormSchema;
+    }
+
+    if (type === 'email') {
+      uiSchema = emailUiSchema;
+      formSchema = emailFormSchema;
+    }
+
+    if (type === 'address') {
+      uiSchema = addressUiSchema();
+      formSchema = addressFormSchema();
+    }
+
+    return { uiSchema, formSchema };
+  };
 
   onSubmit = () => {
     const {
@@ -211,6 +252,8 @@ class ContactInformationEditView extends Component {
         fieldName,
       },
     } = this;
+
+    console.log('This is field', field);
 
     const isLoading =
       transactionRequest?.isPending || isPendingTransaction(transaction);
