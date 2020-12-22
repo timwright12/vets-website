@@ -48,7 +48,6 @@ class ContactInformationEditView extends Component {
     uiSchema: PropTypes.object,
     formSchema: PropTypes.object,
     onCancel: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired,
     refreshTransaction: PropTypes.func,
     title: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
@@ -205,7 +204,6 @@ class ContactInformationEditView extends Component {
         field,
         hasUnsavedEdits,
         onCancel,
-        onDelete,
         type,
         title,
         transaction,
@@ -223,7 +221,7 @@ class ContactInformationEditView extends Component {
     const actionButtons = (
       <ContactInformationActionButtons
         onCancel={onCancel}
-        onDelete={onDelete}
+        onDelete={this.onDelete}
         title={title}
         analyticsSectionName={analyticsSectionName}
         isLoading={isLoading}

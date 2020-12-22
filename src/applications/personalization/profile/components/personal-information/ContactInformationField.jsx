@@ -42,6 +42,8 @@ import ContactInformationEditView from '@@profile/components/personal-informatio
 import ContactInformationView from '@@profile/components/personal-information/ContactInformationView';
 
 import { getInitialFormValues } from '@@profile/util/contact-information';
+import CannotEditModal from './CannotEditModal';
+import ConfirmCancelModal from './ConfirmCancelModal';
 
 const wrapperClasses = prefixUtilityClasses([
   'display--flex',
@@ -95,6 +97,10 @@ class ContactInformationField extends React.Component {
 
   closeModalTimeoutID = null;
 
+  componentDidCatch(error) {
+    console.log('err', error);
+  }
+
   componentDidUpdate(prevProps) {
     // Exit the edit view if it takes more than 5 seconds for the update/save
     // transaction to resolve. If the transaction has not resolved after 5
@@ -125,11 +131,6 @@ class ContactInformationField extends React.Component {
       focusElement(`button#${this.props.fieldName}-edit-link`);
     }
   }
-
-  onAdd = () => {
-    this.captureEvent('add-link');
-    this.openEditModal();
-  };
 
   onCancel = () => {
     this.captureEvent('cancel-button');
@@ -249,7 +250,10 @@ class ContactInformationField extends React.Component {
       content = wrapInTransaction(
         <button
           type="button"
-          onClick={this.onAdd}
+          onClick={() => {
+            this.captureEvent('add-link');
+            this.openEditModal();
+          }}
           className="va-button-link va-profile-btn"
           id={`${fieldName}-edit-link`}
         >
@@ -273,7 +277,6 @@ class ContactInformationField extends React.Component {
           }
           hasValidationError={this.props.hasValidationError}
           onCancel={this.onCancel}
-          onDelete={this.onDelete}
           refreshTransaction={this.refreshTransaction}
           title={title}
           uiSchema={this.props.uiSchema}
@@ -302,56 +305,22 @@ class ContactInformationField extends React.Component {
         data-field-name={fieldName}
         data-testid={fieldName}
       >
-        <Modal
-          title={'Are you sure?'}
-          status="warning"
-          visible={this.state.showConfirmCancelModal}
-          onClose={() => {
-            this.setState({ showConfirmCancelModal: false });
-          }}
-        >
-          <p>
-            {`You haven’t finished editing your ${activeSection}. If you cancel, your in-progress work won’t be saved.`}
-          </p>
-          <button
-            className="usa-button-secondary"
-            onClick={() => {
-              this.setState({ showConfirmCancelModal: false });
-            }}
-          >
-            Continue Editing
-          </button>
-          <button
-            onClick={() => {
-              this.setState({ showConfirmCancelModal: false });
-              this.closeModal();
-            }}
-          >
-            Cancel
-          </button>
-        </Modal>
+        <ConfirmCancelModal
+          activeSection={activeSection}
+          closeModal={this.closeModal}
+          hideConfirmCancelModal={() =>
+            this.setState({ showConfirmCancelModal: false })
+          }
+          showConfirmCancelModal={this.state.showConfirmCancelModal}
+        />
 
-        <Modal
-          title={`You’re currently editing your ${activeSection}`}
-          status="warning"
-          visible={this.state.showCannotEditModal}
-          onClose={() => {
-            this.setState({ showCannotEditModal: false });
-          }}
-        >
-          <p>
-            Please go back and save or cancel your work before editing a new
-            section of your profile. If you cancel, your in-progress work won’t
-            be saved.
-          </p>
-          <button
-            onClick={() => {
-              this.setState({ showCannotEditModal: false });
-            }}
-          >
-            OK
-          </button>
-        </Modal>
+        <CannotEditModal
+          activeSection={activeSection}
+          hideCannotEditModal={() =>
+            this.setState({ showCannotEditModal: false })
+          }
+          showCannotEditModal={this.state.showCannotEditModal}
+        />
 
         {content}
       </div>
