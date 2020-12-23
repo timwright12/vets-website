@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import Modal from '@department-of-veterans-affairs/formation-react/Modal';
 import { focusElement } from '~/platform/utilities/ui';
 import recordEvent from '~/platform/monitoring/record-event';
 import prefixUtilityClasses from '~/platform/utilities/prefix-utility-classes';

@@ -39,19 +39,16 @@ import { FIELD_NAMES, USA } from '@@vap-svc/constants';
 import {
   emailUiSchema,
   emailFormSchema,
-  emailConvertCleanDataToPayload,
 } from '~/applications/personalization/profile/util/emailUtils';
 
 import {
   phoneUiSchema,
   phoneFormSchema,
-  phoneConvertCleanDataToPayload,
 } from '~/applications/personalization/profile/util/phoneUtils';
 
 import {
   getFormSchema as addressFormSchema,
   getUiSchema as addressUiSchema,
-  addressConvertCleanDataToPayload,
 } from '@@vap-svc/components/AddressField/address-schemas';
 
 class ContactInformationEditView extends Component {
@@ -72,7 +69,6 @@ class ContactInformationEditView extends Component {
     convertCleanDataToPayload: PropTypes.func,
   };
 
-  // HERE IS WHERE WE ADD UISCHEMA AND FORMSCHEMA TO FIELD
   componentDidMount() {
     const { type, getInitialFormValues } = this.props;
     const formSchema = this.selectUIFormSchema(type)?.formSchema;
