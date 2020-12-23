@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+
+import contactInfoLookup from '~/applications/personalization/profile/util/contactInfoLookup';
+
 import recordEvent from '~/platform/monitoring/record-event';
 import LoadingButton from '~/platform/site-wide/loading-button/LoadingButton';
 import { focusElement } from '~/platform/utilities/ui';
@@ -20,7 +23,6 @@ import {
   isPendingTransaction,
 } from '@@vap-svc/util/transactions';
 import VAPServiceEditModalErrorMessage from '@@vap-svc/components/base/VAPServiceEditModalErrorMessage';
-import ContactInformationActionButtons from './ContactInformationActionButtons';
 import CopyMailingAddress from '@@vap-svc/containers/CopyMailingAddress';
 import ContactInfoForm from '@@vap-svc/components/ContactInfoForm';
 
@@ -32,24 +34,11 @@ import {
   selectEditViewData,
 } from '@@vap-svc/selectors';
 
-import { transformInitialFormValues } from '@@profile/util/contact-information';
-
 import { FIELD_NAMES, USA } from '@@vap-svc/constants';
 
-import {
-  emailUiSchema,
-  emailFormSchema,
-} from '~/applications/personalization/profile/util/emailUtils';
+import { transformInitialFormValues } from '@@profile/util/contact-information';
 
-import {
-  phoneUiSchema,
-  phoneFormSchema,
-} from '~/applications/personalization/profile/util/phoneUtils';
-
-import {
-  getFormSchema as addressFormSchema,
-  getUiSchema as addressUiSchema,
-} from '@@vap-svc/components/AddressField/address-schemas';
+import ContactInformationActionButtons from './ContactInformationActionButtons';
 
 class ContactInformationEditView extends Component {
   static propTypes = {
@@ -70,13 +59,11 @@ class ContactInformationEditView extends Component {
   };
 
   componentDidMount() {
-    const { type, getInitialFormValues } = this.props;
-    const formSchema = this.selectUIFormSchema(type)?.formSchema;
-    const uiSchema = this.selectUIFormSchema(type)?.uiSchema;
+    const { getInitialFormValues } = this.props;
     this.onChangeFormDataAndSchemas(
       getInitialFormValues(),
-      formSchema,
-      uiSchema,
+      this.props.formSchema,
+      this.props.uiSchema,
     );
   }
 
@@ -125,27 +112,6 @@ class ContactInformationEditView extends Component {
       'profile-section': this.props.analyticsSectionName,
     });
   }
-
-  selectUIFormSchema = type => {
-    let uiSchema;
-    let formSchema;
-    if (type === 'phone') {
-      uiSchema = phoneUiSchema;
-      formSchema = phoneFormSchema;
-    }
-
-    if (type === 'email') {
-      uiSchema = emailUiSchema;
-      formSchema = emailFormSchema;
-    }
-
-    if (type === 'address') {
-      uiSchema = addressUiSchema();
-      formSchema = addressFormSchema();
-    }
-
-    return { uiSchema, formSchema };
-  };
 
   onSubmit = () => {
     const {
@@ -341,6 +307,8 @@ export const mapStateToProps = (state, ownProps) => {
   // const addressValidationType = selectAddressValidationType(state);
   const activeEditView = selectCurrentlyOpenEditModal(state);
 
+  const { uiSchema, formSchema } = contactInfoLookup(fieldName);
+
   return {
     hasUnsavedEdits: state.vapService.hasUnsavedEdits,
     /*
@@ -361,6 +329,8 @@ export const mapStateToProps = (state, ownProps) => {
     transaction,
     transactionRequest,
     editViewData: selectEditViewData(state),
+    uiSchema,
+    formSchema,
   };
 };
 

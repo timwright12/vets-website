@@ -1,8 +1,21 @@
 import { API_ROUTES, FIELD_TITLES, FIELD_NAMES } from '@@vap-svc/constants';
 
-import { emailConvertCleanDataToPayload } from '~/applications/personalization/profile/util/emailUtils';
-import { phoneConvertCleanDataToPayload } from '~/applications/personalization/profile/util/phoneUtils';
+import {
+  emailConvertCleanDataToPayload,
+  emailUiSchema,
+  emailFormSchema,
+} from '~/applications/personalization/profile/util/emailUtils';
+import {
+  phoneConvertCleanDataToPayload,
+  phoneUiSchema,
+  phoneFormSchema,
+} from '~/applications/personalization/profile/util/phoneUtils';
 import { addressConvertCleanDataToPayload } from '~/applications/personalization/profile/util/addressUtils';
+
+import {
+  getFormSchema as addressFormSchema,
+  getUiSchema as addressUiSchema,
+} from '@@vap-svc/components/AddressField/address-schemas';
 
 const phoneNumbers = [
   FIELD_NAMES.HOME_PHONE,
@@ -21,18 +34,24 @@ export const contactInfoLookup = fieldName => {
   let convertCleanDataToPayload;
   let title;
   let type;
+  let uiSchema;
+  let formSchema;
 
   if (fieldName === FIELD_NAMES.EMAIL) {
     title = FIELD_TITLES[FIELD_NAMES.EMAIL];
     apiRoute = API_ROUTES.EMAILS;
     convertCleanDataToPayload = emailConvertCleanDataToPayload;
     type = 'email';
+    uiSchema = emailUiSchema;
+    formSchema = emailFormSchema;
   }
 
   if (phoneNumbers.includes(fieldName)) {
     apiRoute = API_ROUTES.TELEPHONES;
     convertCleanDataToPayload = phoneConvertCleanDataToPayload;
     type = 'phone';
+    uiSchema = phoneUiSchema;
+    formSchema = phoneFormSchema;
 
     if (fieldName === FIELD_NAMES.HOME_PHONE) {
       title = FIELD_TITLES[FIELD_NAMES.HOME_PHONE];
@@ -55,6 +74,8 @@ export const contactInfoLookup = fieldName => {
     apiRoute = API_ROUTES.ADDRESSES;
     convertCleanDataToPayload = addressConvertCleanDataToPayload;
     type = 'address';
+    uiSchema = addressUiSchema();
+    formSchema = addressFormSchema();
 
     if (fieldName === FIELD_NAMES[FIELD_NAMES.MAILING_ADDRESS]) {
       title = FIELD_TITLES[FIELD_NAMES.MAILING_ADDRESS];
@@ -65,7 +86,14 @@ export const contactInfoLookup = fieldName => {
     }
   }
 
-  return { apiRoute, convertCleanDataToPayload, title, type };
+  return {
+    apiRoute,
+    convertCleanDataToPayload,
+    title,
+    type,
+    uiSchema,
+    formSchema,
+  };
 };
 
 export default contactInfoLookup;
