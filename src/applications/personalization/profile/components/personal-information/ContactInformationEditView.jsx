@@ -7,6 +7,7 @@ import deriveContactInfoProperties from '~/applications/personalization/profile/
 import recordEvent from '~/platform/monitoring/record-event';
 import LoadingButton from '~/platform/site-wide/loading-button/LoadingButton';
 import { focusElement } from '~/platform/utilities/ui';
+import SchemaForm from '~/platform/forms-system/src/js/components/SchemaForm';
 
 import {
   createTransaction,
@@ -280,19 +281,32 @@ class ContactInformationEditView extends Component {
                 copyMailingAddress={this.copyMailingAddress}
               />
             )}
-            <ContactInfoForm
-              formData={field.value}
-              formSchema={field.formSchema}
+
+            <SchemaForm
+              addNameAttribute
+              // `name` and `title` are required by SchemaForm, but are only used
+              // internally by the SchemaForm component
+              name="Contact Info Form"
+              title="Contact Info Form"
+              schema={field.formSchema}
+              data={field.value}
               uiSchema={field.uiSchema}
-              onUpdateFormData={
-                addressFieldNames.includes(fieldName)
-                  ? this.onInput
-                  : this.onChangeFormDataAndSchemas
-              }
-              onSubmit={onSubmit}
+              onChange={event => {
+                if (addressFieldNames.includes(fieldName)) {
+                  this.onInput(event, field.formSchema, field.uiSchema);
+                  return;
+                }
+
+                this.onChangeFormDataAndSchemas(
+                  event,
+                  field.formSchema,
+                  field.uiSchema,
+                );
+              }}
+              onSubmit={e => onSubmit(e)}
             >
               {actionButtons}
-            </ContactInfoForm>
+            </SchemaForm>
           </div>
         )}
       </>
