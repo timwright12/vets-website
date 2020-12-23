@@ -23,7 +23,7 @@ export const contactInfoLookup = fieldName => {
   let type;
 
   if (fieldName === FIELD_NAMES.EMAIL) {
-    title = FIELD_TITLES[FIELD_NAMES].EMAIL;
+    title = FIELD_TITLES[FIELD_NAMES.EMAIL];
     apiRoute = API_ROUTES.EMAILS;
     convertCleanDataToPayload = emailConvertCleanDataToPayload;
     type = 'email';
