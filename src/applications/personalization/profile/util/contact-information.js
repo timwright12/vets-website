@@ -1,5 +1,9 @@
-import { ADDRESS_POU, USA } from '@@vap-svc/constants';
+import { ADDRESS_POU, FIELD_NAMES, USA } from '@@vap-svc/constants';
 import ADDRESS_DATA from '~/platform/forms/address/data';
+import {
+  addresses,
+  phoneNumbers,
+} from '~/applications/personalization/profile/util/deriveContactInfoProperties';
 import pickBy from 'lodash/pickBy';
 
 /**
@@ -41,12 +45,13 @@ export const transformInitialFormValues = initialFormValues => {
 };
 
 export const getInitialFormValues = options => {
-  const { type, data, showSMSCheckbox, modalData } = options;
-  if (type === 'email') {
+  const { fieldName, data, showSMSCheckbox, modalData } = options;
+
+  if (fieldName === FIELD_NAMES.EMAIL) {
     return data ? { ...data } : { emailAddress: '' };
   }
 
-  if (type === 'phone') {
+  if (phoneNumbers.includes(fieldName)) {
     let initialFormValues = {
       countryCode: '1',
       extension: '',
@@ -71,7 +76,7 @@ export const getInitialFormValues = options => {
     return initialFormValues;
   }
 
-  if (type === 'address') {
+  if (addresses.includes(fieldName)) {
     return (
       modalData ||
       transformInitialFormValues(data) || {

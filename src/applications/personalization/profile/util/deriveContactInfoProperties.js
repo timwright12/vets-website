@@ -17,23 +17,22 @@ import {
   getUiSchema as addressUiSchema,
 } from '@@vap-svc/components/AddressField/address-schemas';
 
-const phoneNumbers = [
+export const phoneNumbers = [
   FIELD_NAMES.HOME_PHONE,
   FIELD_NAMES.WORK_PHONE,
-  FIELD_NAMES.MOBOLE_PHONE,
+  FIELD_NAMES.MOBILE_PHONE,
   FIELD_NAMES.FAX_NUMBER,
 ];
 
-const addresses = [
+export const addresses = [
   FIELD_NAMES.MAILING_ADDRESS,
   FIELD_NAMES.RESIDENTIAL_ADDRESS,
 ];
 
-export const contactInfoLookup = fieldName => {
+export const deriveContactInfoProperties = fieldName => {
   let apiRoute;
   let convertCleanDataToPayload;
   let title;
-  let type;
   let uiSchema;
   let formSchema;
 
@@ -41,7 +40,6 @@ export const contactInfoLookup = fieldName => {
     title = FIELD_TITLES[FIELD_NAMES.EMAIL];
     apiRoute = API_ROUTES.EMAILS;
     convertCleanDataToPayload = emailConvertCleanDataToPayload;
-    type = 'email';
     uiSchema = emailUiSchema;
     formSchema = emailFormSchema;
   }
@@ -49,7 +47,6 @@ export const contactInfoLookup = fieldName => {
   if (phoneNumbers.includes(fieldName)) {
     apiRoute = API_ROUTES.TELEPHONES;
     convertCleanDataToPayload = phoneConvertCleanDataToPayload;
-    type = 'phone';
     uiSchema = phoneUiSchema;
     formSchema = phoneFormSchema;
 
@@ -73,7 +70,6 @@ export const contactInfoLookup = fieldName => {
   if (addresses.includes(fieldName)) {
     apiRoute = API_ROUTES.ADDRESSES;
     convertCleanDataToPayload = addressConvertCleanDataToPayload;
-    type = 'address';
     uiSchema = addressUiSchema();
     formSchema = addressFormSchema();
 
@@ -90,10 +86,9 @@ export const contactInfoLookup = fieldName => {
     apiRoute,
     convertCleanDataToPayload,
     title,
-    type,
     uiSchema,
     formSchema,
   };
 };
 
-export default contactInfoLookup;
+export default deriveContactInfoProperties;

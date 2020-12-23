@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import contactInfoLookup from '~/applications/personalization/profile/util/contactInfoLookup';
+import deriveContactInfoProperties from '~/applications/personalization/profile/util/deriveContactInfoProperties';
 
 import recordEvent from '~/platform/monitoring/record-event';
 import LoadingButton from '~/platform/site-wide/loading-button/LoadingButton';
@@ -51,8 +51,7 @@ class ContactInformationEditView extends Component {
     formSchema: PropTypes.object,
     onCancel: PropTypes.func.isRequired,
     refreshTransaction: PropTypes.func,
-    title: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
+    title: PropTypes.string,
     transaction: PropTypes.object,
     transactionRequest: PropTypes.object,
     convertCleanDataToPayload: PropTypes.func,
@@ -206,13 +205,12 @@ class ContactInformationEditView extends Component {
         analyticsSectionName,
         data,
         field,
+        fieldName,
         hasUnsavedEdits,
         onCancel,
-        type,
         title,
         transaction,
         transactionRequest,
-        fieldName,
       },
     } = this;
 
@@ -221,6 +219,11 @@ class ContactInformationEditView extends Component {
     const error =
       transactionRequest?.error ||
       (isFailedTransaction(transaction) ? {} : null);
+
+    const addressFieldNames = [
+      FIELD_NAMES.MAILING_ADDRESS,
+      FIELD_NAMES.RESIDENTIAL_ADDRESS,
+    ];
 
     const actionButtons = (
       <ContactInformationActionButtons
@@ -282,7 +285,7 @@ class ContactInformationEditView extends Component {
               formSchema={field.formSchema}
               uiSchema={field.uiSchema}
               onUpdateFormData={
-                type === 'address'
+                addressFieldNames.includes(fieldName)
                   ? this.onInput
                   : this.onChangeFormDataAndSchemas
               }
@@ -307,7 +310,13 @@ export const mapStateToProps = (state, ownProps) => {
   // const addressValidationType = selectAddressValidationType(state);
   const activeEditView = selectCurrentlyOpenEditModal(state);
 
-  const { uiSchema, formSchema } = contactInfoLookup(fieldName);
+  const {
+    apiRoute,
+    convertCleanDataToPayload,
+    uiSchema,
+    formSchema,
+    title,
+  } = deriveContactInfoProperties(fieldName);
 
   return {
     hasUnsavedEdits: state.vapService.hasUnsavedEdits,
@@ -322,10 +331,13 @@ export const mapStateToProps = (state, ownProps) => {
       activeEditView === 'addressValidation'
         ? 'addressValidation'
         : selectCurrentlyOpenEditModal(state),
+    apiRoute,
+    convertCleanDataToPayload,
     data,
     fieldName,
     analyticsSectionName: VAP_SERVICE.ANALYTICS_FIELD_MAP[fieldName],
     field: selectEditedFormField(state, fieldName),
+    title,
     transaction,
     transactionRequest,
     editViewData: selectEditViewData(state),

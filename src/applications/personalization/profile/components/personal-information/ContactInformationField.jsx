@@ -42,7 +42,7 @@ import ContactInformationView from '@@profile/components/personal-information/Co
 
 import { getInitialFormValues } from '@@profile/util/contact-information';
 
-import contactInfoLookup from '~/applications/personalization/profile/util/contactInfoLookup';
+import deriveContactInfoProperties from '~/applications/personalization/profile/util/deriveContactInfoProperties';
 
 import CannotEditModal from './CannotEditModal';
 import ConfirmCancelModal from './ConfirmCancelModal';
@@ -201,7 +201,6 @@ class ContactInformationField extends React.Component {
       title,
       transaction,
       transactionRequest,
-      type,
       data,
     } = this.props;
 
@@ -227,7 +226,7 @@ class ContactInformationField extends React.Component {
     // default the content to the read-view
     let content = wrapInTransaction(
       <div className={classes.wrapper}>
-        <ContactInformationView data={data} type={type} fieldName={fieldName} />
+        <ContactInformationView data={data} fieldName={fieldName} />
 
         {this.isEditLinkVisible() && (
           <button
@@ -265,7 +264,7 @@ class ContactInformationField extends React.Component {
         <ContactInformationEditView
           getInitialFormValues={() =>
             getInitialFormValues({
-              type: this.props.type,
+              fieldName,
               data: this.props.data,
               showSMSCheckbox: this.props.showSMSCheckbox,
               editViewData: this.props.editViewData,
@@ -274,10 +273,7 @@ class ContactInformationField extends React.Component {
           hasValidationError={this.props.hasValidationError}
           onCancel={this.onCancel}
           refreshTransaction={this.refreshTransaction}
-          title={title}
-          type={this.props.type}
           fieldName={this.props.fieldName}
-          convertCleanDataToPayload={this.props.convertCleanDataToPayload}
         />
       );
     }
@@ -341,12 +337,7 @@ export const mapStateToProps = (state, ownProps) => {
   const showSMSCheckbox =
     ownProps.fieldName === FIELD_NAMES.MOBILE_PHONE && isEnrolledInVAHealthCare;
 
-  const {
-    apiRoute,
-    convertCleanDataToPayload,
-    title,
-    type,
-  } = contactInfoLookup(fieldName);
+  const { title } = deriveContactInfoProperties(fieldName);
   return {
     hasUnsavedEdits: state.vapService.hasUnsavedEdits,
     analyticsSectionName: VAP_SERVICE.ANALYTICS_FIELD_MAP[fieldName],
@@ -372,10 +363,7 @@ export const mapStateToProps = (state, ownProps) => {
     transactionRequest,
     editViewData: selectEditViewData(state),
     showSMSCheckbox,
-    apiRoute,
-    convertCleanDataToPayload,
     title,
-    type,
   };
 };
 
@@ -392,8 +380,6 @@ const mapDispatchToProps = {
  * Container used to easily create components for VA Profile-backed contact information.
  * @property {string} fieldName The name of the property as it appears in the user.profile.vapContactInfo object.
  * @property {string} title The field name converted to a visible display, such as for labels, modal titles, etc. Example: "mailingAddress" passes "Mailing address" as the title.
- * @property {string} apiRoute The API route used to create/update/delete the VA Profile contact info field.
- * @property {func} [convertCleanDataToPayload] An optional function used to convert the clean edited data to a payload for sending to the API. Used to remove any values (especially falsy) that may cause errors in the VA Profile service.
  */
 const ContactInformationFieldContainer = connect(
   mapStateToProps,
@@ -403,8 +389,6 @@ const ContactInformationFieldContainer = connect(
 ContactInformationFieldContainer.propTypes = {
   fieldName: PropTypes.oneOf(Object.values(VAP_SERVICE.FIELD_NAMES)).isRequired,
   title: PropTypes.string.isRequired,
-  apiRoute: PropTypes.oneOf(Object.values(VAP_SERVICE.API_ROUTES)).isRequired,
-  convertCleanDataToPayload: PropTypes.func,
   hasUnsavedEdits: PropTypes.bool,
 };
 
