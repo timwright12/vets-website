@@ -25,7 +25,6 @@ import {
 } from '@@vap-svc/util/transactions';
 import VAPServiceEditModalErrorMessage from '@@vap-svc/components/base/VAPServiceEditModalErrorMessage';
 import CopyMailingAddress from '@@vap-svc/containers/CopyMailingAddress';
-import ContactInfoForm from '@@vap-svc/components/ContactInfoForm';
 
 import {
   selectCurrentlyOpenEditModal,
