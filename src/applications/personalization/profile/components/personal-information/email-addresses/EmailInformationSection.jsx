@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { API_ROUTES, FIELD_NAMES, FIELD_TITLES } from '@@vap-svc/constants';
+import { FIELD_NAMES } from '@@vap-svc/constants';
 import ContactInformationField from '~/applications/personalization/profile/components/personal-information/ContactInformationField';
-import { emailConvertDataToPayload } from '~/applications/personalization/profile/util/emailUtils';
 import { signInServiceName as signInServiceNameSelector } from 'platform/user/authentication/selectors';
 
 import ProfileInfoTable from '../../ProfileInfoTable';
@@ -54,15 +53,7 @@ const EmailInformationSection = ({ className, signInServiceName }) => {
           },
           {
             title: 'Contact email address',
-            value: (
-              <ContactInformationField
-                title={FIELD_TITLES[FIELD_NAMES.EMAIL]}
-                fieldName={FIELD_NAMES.EMAIL}
-                apiRoute={API_ROUTES.EMAILS}
-                convertCleanDataToPayload={emailConvertDataToPayload}
-                type="email"
-              />
-            ),
+            value: <ContactInformationField fieldName={FIELD_NAMES.EMAIL} />,
           },
         ]}
         list

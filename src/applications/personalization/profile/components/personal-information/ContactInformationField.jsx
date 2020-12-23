@@ -41,6 +41,9 @@ import ContactInformationEditView from '@@profile/components/personal-informatio
 import ContactInformationView from '@@profile/components/personal-information/ContactInformationView';
 
 import { getInitialFormValues } from '@@profile/util/contact-information';
+
+import contactInfoLookup from '~/applications/personalization/profile/util/contactInfoLookup';
+
 import CannotEditModal from './CannotEditModal';
 import ConfirmCancelModal from './ConfirmCancelModal';
 
@@ -337,6 +340,13 @@ export const mapStateToProps = (state, ownProps) => {
   const isEnrolledInVAHealthCare = isVAPatient(state);
   const showSMSCheckbox =
     ownProps.fieldName === FIELD_NAMES.MOBILE_PHONE && isEnrolledInVAHealthCare;
+
+  const {
+    apiRoute,
+    convertCleanDataToPayload,
+    title,
+    type,
+  } = contactInfoLookup(fieldName);
   return {
     hasUnsavedEdits: state.vapService.hasUnsavedEdits,
     analyticsSectionName: VAP_SERVICE.ANALYTICS_FIELD_MAP[fieldName],
@@ -362,6 +372,10 @@ export const mapStateToProps = (state, ownProps) => {
     transactionRequest,
     editViewData: selectEditViewData(state),
     showSMSCheckbox,
+    apiRoute,
+    convertCleanDataToPayload,
+    title,
+    type,
   };
 };
 

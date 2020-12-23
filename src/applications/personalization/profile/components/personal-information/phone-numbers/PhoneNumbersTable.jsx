@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { FIELD_NAMES, FIELD_TITLES, API_ROUTES } from '@@vap-svc/constants';
+import { FIELD_NAMES } from '@@vap-svc/constants';
 
 import ProfileInfoTable from '../../ProfileInfoTable';
 
-import { phoneConvertCleanDataToPayload } from '~/applications/personalization/profile/util/phoneUtils';
 import ContactInformationField from '~/applications/personalization/profile/components/personal-information/ContactInformationField';
 
 const PhoneNumbersTable = ({ className }) => (
@@ -14,51 +13,19 @@ const PhoneNumbersTable = ({ className }) => (
     data={[
       {
         title: 'Home',
-        value: (
-          <ContactInformationField
-            apiRoute={API_ROUTES.TELEPHONES}
-            convertCleanDataToPayload={phoneConvertCleanDataToPayload}
-            type="phone"
-            title={FIELD_TITLES[FIELD_NAMES.HOME_PHONE]}
-            fieldName={FIELD_NAMES.HOME_PHONE}
-          />
-        ),
+        value: <ContactInformationField fieldName={FIELD_NAMES.HOME_PHONE} />,
       },
       {
         title: 'Work',
-        value: (
-          <ContactInformationField
-            apiRoute={API_ROUTES.TELEPHONES}
-            convertCleanDataToPayload={phoneConvertCleanDataToPayload}
-            type="phone"
-            title={FIELD_TITLES[FIELD_NAMES.WORK_PHONE]}
-            fieldName={FIELD_NAMES.WORK_PHONE}
-          />
-        ),
+        value: <ContactInformationField fieldName={FIELD_NAMES.WORK_PHONE} />,
       },
       {
         title: 'Mobile',
-        value: (
-          <ContactInformationField
-            apiRoute={API_ROUTES.TELEPHONES}
-            convertCleanDataToPayload={phoneConvertCleanDataToPayload}
-            type="phone"
-            title={FIELD_TITLES[FIELD_NAMES.MOBILE_PHONE]}
-            fieldName={FIELD_NAMES.MOBILE_PHONE}
-          />
-        ),
+        value: <ContactInformationField fieldName={FIELD_NAMES.MOBILE_PHONE} />,
       },
       {
         title: 'Fax',
-        value: (
-          <ContactInformationField
-            apiRoute={API_ROUTES.TELEPHONES}
-            convertCleanDataToPayload={phoneConvertCleanDataToPayload}
-            type="phone"
-            title={FIELD_TITLES[FIELD_NAMES.FAX_NUMBER]}
-            fieldName={FIELD_NAMES.FAX_NUMBER}
-          />
-        ),
+        value: <ContactInformationField fieldName={FIELD_NAMES.FAX_NUMBER} />,
       },
     ]}
     list

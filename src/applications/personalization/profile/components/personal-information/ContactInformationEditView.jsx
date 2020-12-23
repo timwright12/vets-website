@@ -166,20 +166,26 @@ class ContactInformationEditView extends Component {
       payload = convertCleanDataToPayload(payload, fieldName);
     }
 
-    const values = {
-      apiRoute,
-      method: payload.id ? 'PUT' : 'POST',
-      fieldName,
-      payload,
-      analyticsSectionName,
-    };
+    const method = payload.id ? 'PUT' : 'POST';
 
     if (isAddressField) {
-      this.props.validateAddress(values);
+      this.props.validateAddress(
+        apiRoute,
+        method,
+        fieldName,
+        payload,
+        analyticsSectionName,
+      );
       return;
     }
 
-    this.props.createTransaction(values);
+    this.props.createTransaction(
+      apiRoute,
+      method,
+      fieldName,
+      payload,
+      analyticsSectionName,
+    );
   };
 
   onInput = (value, schema, uiSchema) => {
