@@ -34,7 +34,7 @@ import {
   selectEditViewData,
 } from '@@vap-svc/selectors';
 
-import { FIELD_NAMES, USA } from '@@vap-svc/constants';
+import { ACTIVE_EDIT_VIEWS, FIELD_NAMES, USA } from '@@vap-svc/constants';
 
 import { transformInitialFormValues } from '@@profile/util/contact-information';
 
@@ -74,7 +74,7 @@ class ContactInformationEditView extends Component {
       !isPendingTransaction(prevProps.transaction)
     ) {
       this.interval = window.setInterval(
-        this.props.refreshTransaction,
+        this.refreshTransactionNotProps,
         window.VetsGov.pollTimeout || 1000,
       );
     }
@@ -111,6 +111,13 @@ class ContactInformationEditView extends Component {
       'profile-section': this.props.analyticsSectionName,
     });
   }
+
+  refreshTransactionNotProps = () => {
+    this.props.refreshTransaction(
+      this.props.transaction,
+      this.props.analyticsSectionName,
+    );
+  };
 
   onSubmit = () => {
     const {
@@ -225,39 +232,6 @@ class ContactInformationEditView extends Component {
       FIELD_NAMES.RESIDENTIAL_ADDRESS,
     ];
 
-    const actionButtons = (
-      <ContactInformationActionButtons
-        onCancel={onCancel}
-        onDelete={this.onDelete}
-        title={title}
-        analyticsSectionName={analyticsSectionName}
-        isLoading={isLoading}
-        deleteEnabled={data && !fieldName === FIELD_NAMES.MAILING_ADDRESS}
-      >
-        <div>
-          <LoadingButton
-            data-action="save-edit"
-            data-testid="save-edit-button"
-            isLoading={isLoading}
-            className="vads-u-width--auto vads-u-margin-top--0"
-            disabled={!hasUnsavedEdits}
-          >
-            Update
-          </LoadingButton>
-
-          {!isLoading && (
-            <button
-              type="button"
-              className="usa-button-secondary vads-u-margin-top--0 vads-u-width--auto"
-              onClick={onCancel}
-            >
-              Cancel
-            </button>
-          )}
-        </div>
-      </ContactInformationActionButtons>
-    );
-
     return (
       <>
         {error && (
@@ -304,7 +278,38 @@ class ContactInformationEditView extends Component {
               }}
               onSubmit={e => onSubmit(e)}
             >
-              {actionButtons}
+              <ContactInformationActionButtons
+                onCancel={onCancel}
+                onDelete={this.onDelete}
+                title={title}
+                analyticsSectionName={analyticsSectionName}
+                isLoading={isLoading}
+                deleteEnabled={
+                  data && !fieldName === FIELD_NAMES.MAILING_ADDRESS
+                }
+              >
+                <div>
+                  <LoadingButton
+                    data-action="save-edit"
+                    data-testid="save-edit-button"
+                    isLoading={isLoading}
+                    className="vads-u-width--auto vads-u-margin-top--0"
+                    disabled={!hasUnsavedEdits}
+                  >
+                    Update
+                  </LoadingButton>
+
+                  {!isLoading && (
+                    <button
+                      type="button"
+                      className="usa-button-secondary vads-u-margin-top--0 vads-u-width--auto"
+                      onClick={onCancel}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </ContactInformationActionButtons>
             </SchemaForm>
           </div>
         )}
@@ -341,8 +346,8 @@ export const mapStateToProps = (state, ownProps) => {
     validation view or not.
     */
     activeEditView:
-      activeEditView === 'addressValidation'
-        ? 'addressValidation'
+      activeEditView === ACTIVE_EDIT_VIEWS.ADDRESS_VALIDATION
+        ? ACTIVE_EDIT_VIEWS.ADDRESS_VALIDATION
         : selectCurrentlyOpenEditModal(state),
     apiRoute,
     convertCleanDataToPayload,
@@ -361,10 +366,10 @@ export const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = {
   clearTransactionRequest,
-  refreshTransaction,
   createTransaction,
   updateFormFieldWithSchema,
   validateAddress,
+  refreshTransaction,
 };
 
 export default connect(

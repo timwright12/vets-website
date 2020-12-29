@@ -33,7 +33,7 @@ import {
 
 import { isVAPatient } from '~/platform/user/selectors';
 
-import { FIELD_NAMES } from '@@vap-svc/constants';
+import { ACTIVE_EDIT_VIEWS, FIELD_NAMES } from '@@vap-svc/constants';
 import VAPServiceTransaction from '@@vap-svc/components/base/VAPServiceTransaction';
 import AddressValidationView from '@@vap-svc/containers/AddressValidationView';
 
@@ -174,7 +174,7 @@ class ContactInformationField extends React.Component {
     }
   };
 
-  refreshTransaction = () => {
+  refreshTransactionNotProps = () => {
     this.props.refreshTransaction(
       this.props.transaction,
       this.props.analyticsSectionName,
@@ -216,7 +216,7 @@ class ContactInformationField extends React.Component {
           title={title}
           transaction={transaction}
           transactionRequest={transactionRequest}
-          refreshTransaction={this.refreshTransaction}
+          refreshTransaction={this.refreshTransactionNotProps}
         >
           {children}
         </VAPServiceTransaction>
@@ -272,7 +272,6 @@ class ContactInformationField extends React.Component {
           }
           hasValidationError={this.props.hasValidationError}
           onCancel={this.onCancel}
-          refreshTransaction={this.refreshTransaction}
           fieldName={this.props.fieldName}
         />
       );
@@ -281,7 +280,7 @@ class ContactInformationField extends React.Component {
     if (showValidationView) {
       content = (
         <AddressValidationView
-          refreshTransaction={this.refreshTransaction}
+          refreshTransaction={this.refreshTransactionNotProps}
           transaction={transaction}
           transactionRequest={transactionRequest}
           title={title}
@@ -331,8 +330,7 @@ export const mapStateToProps = (state, ownProps) => {
   const activeEditView = selectCurrentlyOpenEditModal(state);
   const showValidationView =
     addressValidationType === fieldName &&
-    // TODO: use a constant for 'addressValidation'
-    activeEditView === 'addressValidation';
+    activeEditView === ACTIVE_EDIT_VIEWS.ADDRESS_VALIDATION;
   const isEnrolledInVAHealthCare = isVAPatient(state);
   const showSMSCheckbox =
     ownProps.fieldName === FIELD_NAMES.MOBILE_PHONE && isEnrolledInVAHealthCare;
@@ -350,7 +348,7 @@ export const mapStateToProps = (state, ownProps) => {
     validation view or not.
     */
     activeEditView:
-      activeEditView === 'addressValidation'
+      activeEditView === ACTIVE_EDIT_VIEWS.ADDRESS_VALIDATION
         ? addressValidationType
         : activeEditView,
     data,
@@ -379,7 +377,6 @@ const mapDispatchToProps = {
 /**
  * Container used to easily create components for VA Profile-backed contact information.
  * @property {string} fieldName The name of the property as it appears in the user.profile.vapContactInfo object.
- * @property {string} title The field name converted to a visible display, such as for labels, modal titles, etc. Example: "mailingAddress" passes "Mailing address" as the title.
  */
 const ContactInformationFieldContainer = connect(
   mapStateToProps,
@@ -388,7 +385,7 @@ const ContactInformationFieldContainer = connect(
 
 ContactInformationFieldContainer.propTypes = {
   fieldName: PropTypes.oneOf(Object.values(VAP_SERVICE.FIELD_NAMES)).isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   hasUnsavedEdits: PropTypes.bool,
 };
 
