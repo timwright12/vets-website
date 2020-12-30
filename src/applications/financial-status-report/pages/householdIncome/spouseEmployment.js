@@ -1,61 +1,84 @@
 import ItemLoop from '../../components/ItemLoop';
-import CardDetailsView from '../../components/CardDetailsView';
+import TableDetailsView from '../../components/TableDetailsView';
+import currencyUI from 'platform/forms-system/src/js/definitions/currency';
+import _ from 'lodash/fp';
 
 export const uiSchema = {
   'ui:title': 'Your spouse information',
   spouseName: {
-    'ui:title': "What is your spouse's name",
+    'ui:title': "What is your spouse's name?",
+    'ui:options': {
+      widgetClassNames: 'input-size-3',
+    },
   },
-  employmentHistory: {
-    hasBeenEmployed: {
+  employment: {
+    spouseHasBeenEmployed: {
       'ui:title': 'Has your spouse been employed within the past two years?',
       'ui:widget': 'yesNo',
       'ui:required': () => true,
     },
-    isEmployed: {
+    spouseIsEmployed: {
       'ui:options': {
-        expandUnder: 'hasBeenEmployed',
+        expandUnder: 'spouseHasBeenEmployed',
       },
-      currentlyEmployed: {
+      spouseCurrentlyEmployed: {
         'ui:title': 'Is your spouse currently employed?',
         'ui:widget': 'yesNo',
+        'ui:required': formData => formData.employment.spouseHasBeenEmployed,
       },
-      isCurrentlyEmployed: {
+      isSpouseCurrentlyEmployed: {
         'ui:options': {
-          expandUnder: 'currentlyEmployed',
+          expandUnder: 'spouseCurrentlyEmployed',
         },
         'ui:description':
           'Please provide information about your spouse’s current employment.',
-        employmentType: {
+        spouseEmploymentType: {
           'ui:title': 'Type of employment',
+          'ui:options': {
+            widgetClassNames: 'input-size-3',
+          },
         },
-        employmentStart: {
+        spouseEmploymentStart: {
           'ui:title': 'Employment start date',
           'ui:widget': 'date',
+          'ui:required': formData =>
+            formData.employment.spouseIsEmployed?.spouseCurrentlyEmployed,
         },
-        employerName: {
+        spouseEmployerName: {
           'ui:title': 'Employer name',
-        },
-        monthlyIncome: {
-          'ui:title': 'Gross monthly income',
-        },
-        payrollDeductions: {
-          'ui:field': ItemLoop,
           'ui:options': {
-            viewField: CardDetailsView,
+            widgetClassNames: 'input-size-6',
+          },
+        },
+        spouseIncome: _.merge(currencyUI('Gross monthly income'), {
+          'ui:options': {
+            widgetClassNames: 'input-size-2',
+          },
+        }),
+        spousePayrollDeductions: {
+          'ui:field': ItemLoop,
+          'ui:title': 'Payroll deductions',
+          'ui:description':
+            'You can find your payroll deductions in a recent paycheck.',
+          'ui:options': {
+            viewType: 'table',
+            viewField: TableDetailsView,
             doNotScroll: true,
             showSave: true,
+            itemName: 'Add a payroll deduction',
           },
           items: {
-            'ui:title': 'Payroll deductions',
-            'ui:description':
-              'You can find your payroll deductions in a recent paycheck.',
-            deductionType: {
+            spouseDeductionType: {
               'ui:title': 'Type of payroll deduction',
+              'ui:options': {
+                widgetClassNames: 'input-size-3',
+              },
             },
-            deductionAmout: {
-              'ui:title': 'Deduction amount',
-            },
+            spouseDeductionAmount: _.merge(currencyUI('Deduction amount'), {
+              'ui:options': {
+                widgetClassNames: 'input-size-1',
+              },
+            }),
           },
         },
       },
@@ -69,42 +92,43 @@ export const schema = {
     spouseName: {
       type: 'string',
     },
-    employmentHistory: {
+    employment: {
       type: 'object',
       properties: {
-        hasBeenEmployed: {
+        spouseHasBeenEmployed: {
           type: 'boolean',
         },
-        isEmployed: {
+        spouseIsEmployed: {
           type: 'object',
           properties: {
-            currentlyEmployed: {
+            spouseCurrentlyEmployed: {
               type: 'boolean',
             },
-            isCurrentlyEmployed: {
+            isSpouseCurrentlyEmployed: {
               type: 'object',
               properties: {
-                employmentType: {
+                spouseEmploymentType: {
+                  type: 'string',
+                  enum: ['Full time', 'Part time', 'Seasonal', 'Temporary'],
+                },
+                spouseEmploymentStart: {
                   type: 'string',
                 },
-                employmentStart: {
+                spouseEmployerName: {
                   type: 'string',
                 },
-                employerName: {
-                  type: 'string',
-                },
-                monthlyIncome: {
+                spouseIncome: {
                   type: 'number',
                 },
-                payrollDeductions: {
+                spousePayrollDeductions: {
                   type: 'array',
                   items: {
                     type: 'object',
                     properties: {
-                      deductionType: {
+                      spouseDeductionType: {
                         type: 'string',
                       },
-                      deductionAmout: {
+                      spouseDeductionAmount: {
                         type: 'number',
                       },
                     },

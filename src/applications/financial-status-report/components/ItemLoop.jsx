@@ -29,14 +29,15 @@ const Header = ({
     typeof description === 'function' ? uiSchema['ui:description'] : null;
 
   return (
-    <div className="schemaform-block-header">
-      {title && !hideTitle ? (
-        <TitleField
-          id={`${idSchema.$id}__title`}
-          title={title}
-          formContext={formContext}
-        />
-      ) : null}
+    <div className="schemaform-block-header item-loop-header">
+      {title &&
+        !hideTitle && (
+          <TitleField
+            id={`${idSchema.$id}__title`}
+            title={title}
+            formContext={formContext}
+          />
+        )}
       {textDescription && <p>{textDescription}</p>}
       {DescriptionField && (
         <DescriptionField options={uiSchema['ui:options']} />
@@ -83,23 +84,23 @@ const InputSection = ({
     registry.definitions,
   );
 
+  const containerClassNames = classNames('item-loop', {
+    'vads-u-border-bottom--1px':
+      uiSchema['ui:options'].viewType === 'table' && items?.length > 1,
+  });
+
   return (
-    <div
-      className={
-        notLastOrMultipleRows
-          ? 'va-growable-background vads-u-margin-bottom--2'
-          : null
-      }
-    >
-      <ScrollElement name={`table_${itemIdPrefix}`} />
-      <div className="row small-collapse">
-        <div className="small-12 columns va-growable-expanded">
-          {items.length > 1 && uiSchema['ui:options'].itemName ? (
-            <h3 className="vads-u-font-size--h5">
-              New {uiSchema['ui:options'].itemName}
-            </h3>
-          ) : null}
-          <div className="input-section">
+    notLastOrMultipleRows && (
+      <div className={containerClassNames}>
+        <ScrollElement name={`table_${itemIdPrefix}`} />
+        <div className="row small-collapse">
+          <div className="small-12 columns">
+            {items?.length &&
+              uiSchema['ui:options'].itemName && (
+                <h3 className="vads-u-font-size--h5 vads-u-margin-bottom--2">
+                  {uiSchema['ui:options'].itemName}
+                </h3>
+              )}
             <SchemaField
               schema={itemSchema}
               uiSchema={uiSchema.items}
@@ -113,36 +114,36 @@ const InputSection = ({
               onChange={value => handleChange(index, value)}
               required={false}
             />
+            {notLastOrMultipleRows && (
+              <div className="row small-collapse">
+                <div className="small-6 left columns">
+                  {showSave && (
+                    <button
+                      className="float-left"
+                      onClick={e => handleUpdate(e, index)}
+                      aria-label={`${updateText} ${title}`}
+                    >
+                      {updateText}
+                    </button>
+                  )}
+                </div>
+                <div className="small-6 right columns">
+                  {index !== 0 && (
+                    <button
+                      className="usa-button-secondary float-right"
+                      type="button"
+                      onClick={() => handleRemove(index)}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-          {notLastOrMultipleRows && (
-            <div className="row small-collapse">
-              <div className="small-6 left columns">
-                {showSave && (
-                  <button
-                    className="float-left"
-                    onClick={e => handleUpdate(e, index)}
-                    aria-label={`${updateText} ${title}`}
-                  >
-                    {updateText}
-                  </button>
-                )}
-              </div>
-              <div className="small-6 right columns">
-                {index !== 0 && (
-                  <button
-                    className="usa-button-secondary float-right"
-                    type="button"
-                    onClick={() => handleRemove(index)}
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       </div>
-    </div>
+    )
   );
 };
 
@@ -153,21 +154,18 @@ const AddAnotherButton = ({
   handleAdd,
 }) => (
   <>
-    <button
-      type="button"
-      className={classNames(
-        'usa-button-secondary',
-        'va-growable-add-btn',
-        'vads-u-margin-top--4',
-        {
-          'usa-button-disabled': !formData || addAnotherDisabled,
-        },
-      )}
-      disabled={!formData || addAnotherDisabled}
-      onClick={() => handleAdd()}
-    >
-      Add another {uiOptions.itemName}
-    </button>
+    <div className="add-item-container">
+      <div className="add-item-link-section">
+        <i className="fas fa-plus plus-icon" />
+        <a
+          className="add-item-link"
+          disabled={!formData || addAnotherDisabled}
+          onClick={() => handleAdd()}
+        >
+          {uiOptions.itemName ? uiOptions.itemName : 'Add another'}
+        </a>
+      </div>
+    </div>
     <p>
       {addAnotherDisabled &&
         `You’ve entered the maximum number of items allowed.`}
@@ -195,6 +193,9 @@ const ItemLoop = ({
   const description = uiSchema['ui:description'];
   const hasTitleOrDescription = (!!title && !hideTitle) || !!description;
   const ViewField = uiOptions.viewField;
+  const tableHeaders = Object.values(uiSchema?.items)
+    .filter(item => item['ui:title'] !== undefined)
+    .map(item => item['ui:title']);
 
   const [editing, setEditing] = useState([true]);
   const [showTable, setShowTable] = useState(false);
@@ -226,6 +227,9 @@ const ItemLoop = ({
         : [true];
       if (formData?.length !== editing.length) {
         setEditing(isEditing);
+      }
+      if (formData?.length > 1) {
+        setShowTable(true);
       }
     },
     [errorSchema, formData, editing.length],
@@ -284,9 +288,7 @@ const ItemLoop = ({
     e.preventDefault();
     setShowTable(true);
     if (errorSchemaIsValid(errorSchema[index])) {
-      const editData = editing.map(() => {
-        return false;
-      });
+      const editData = editing.map(() => false);
       setEditing(editData);
       scrollToRow(`${idSchema.$id}_${index}`);
     } else {
@@ -301,9 +303,7 @@ const ItemLoop = ({
   const handleAdd = () => {
     const lastIndex = formData.length - 1;
     if (errorSchemaIsValid(errorSchema[lastIndex])) {
-      const editData = editing.map(() => {
-        return false;
-      });
+      const editData = editing.map(() => false);
 
       setShowTable(true);
       setEditing([...editData, true]);
@@ -340,7 +340,7 @@ const ItemLoop = ({
       : [getDefaultFormState(schema, undefined, registry.definitions)];
 
   const containerClassNames = classNames({
-    'schemaform-field-container': true,
+    'item-loop-container': true,
     'schemaform-block': hasTitleOrDescription,
   });
 
@@ -367,10 +367,11 @@ const ItemLoop = ({
             {showTable && (
               <thead className="vads-u-border-bottom--1px">
                 <tr>
-                  <th className="vads-u-border--0 vads-u-padding-left--3">
-                    Type of utility
-                  </th>
-                  <th className="vads-u-border--0">Monthly payment amount</th>
+                  {tableHeaders.map((item, i) => (
+                    <th key={i} className="vads-u-border--0">
+                      {item}
+                    </th>
+                  ))}
                   <th className="vads-u-border--0" />
                 </tr>
               </thead>

@@ -1,47 +1,44 @@
 import ItemLoop from '../../components/ItemLoop';
-import CardDetailsView from '../../components/CardDetailsView';
+import TableDetailsView from '../../components/TableDetailsView';
+import currencyUI from 'platform/forms-system/src/js/definitions/currency';
+import _ from 'lodash/fp';
 
 export const uiSchema = {
   'ui:title': 'Your other income',
   additionalIncome: {
-    socialSecurityPayments: {
-      'ui:title': 'Do you currently receive social security payments?',
+    hasAdditionalIncome: {
+      'ui:title': 'Do you currently receive any additional income?',
       'ui:widget': 'yesNo',
       'ui:required': () => true,
     },
-    hasSocialSecurity: {
+    additionalIncomeRecords: {
+      'ui:field': ItemLoop,
+      'ui:description':
+        'Please provide information about additional income you currently receive.',
       'ui:options': {
-        expandUnder: 'socialSecurityPayments',
+        viewType: 'table',
+        viewField: TableDetailsView,
+        doNotScroll: true,
+        showSave: true,
+        expandUnder: 'hasAdditionalIncome',
+        itemName: 'Add income',
       },
-      additionalIncome: {
-        'ui:title': 'Do you currently receive any additional income?',
-        'ui:widget': 'yesNo',
-        'ui:required': () => false,
-      },
-      hasAdditionalIncome: {
-        'ui:options': {
-          expandUnder: 'additionalIncome',
-        },
-        additionalIncome: {
-          'ui:field': ItemLoop,
+      items: {
+        incomeType: {
+          'ui:title': 'Type of income',
           'ui:options': {
-            viewField: CardDetailsView,
-            doNotScroll: true,
-            showSave: true,
+            widgetClassNames: 'input-size-3',
           },
-          items: {
-            'ui:title': 'Additional income:',
-            monthlyAmount: {
-              'ui:title': 'Monthly Amount',
-            },
-            incomeType: {
-              'ui:title': 'Income Type',
-            },
-            employerName: {
-              'ui:title': 'Employer Name',
-            },
-          },
+          'ui:required': formData =>
+            formData.additionalIncome.hasAdditionalIncome,
         },
+        monthlyAmount: _.merge(currencyUI('Monthly income amount'), {
+          'ui:options': {
+            widgetClassNames: 'input-size-1',
+          },
+          'ui:required': formData =>
+            formData.additionalIncome.hasAdditionalIncome,
+        }),
       },
     },
   },
@@ -52,40 +49,20 @@ export const schema = {
     additionalIncome: {
       type: 'object',
       properties: {
-        socialSecurityPayments: {
+        hasAdditionalIncome: {
           type: 'boolean',
         },
-        hasSocialSecurity: {
-          type: 'object',
-          properties: {
-            additionalIncome: {
-              type: 'boolean',
-            },
-            hasAdditionalIncome: {
-              type: 'object',
-              properties: {
-                additionalIncome: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      incomeType: {
-                        type: 'string',
-                        enum: [
-                          'Income Type 1',
-                          'Income Type 2',
-                          'Income Type 3',
-                        ],
-                      },
-                      monthlyAmount: {
-                        type: 'string',
-                      },
-                      employerName: {
-                        type: 'string',
-                      },
-                    },
-                  },
-                },
+        additionalIncomeRecords: {
+          type: 'array',
+          items: {
+            type: 'object',
+            required: ['incomeType', 'monthlyAmount'],
+            properties: {
+              incomeType: {
+                type: 'string',
+              },
+              monthlyAmount: {
+                type: 'number',
               },
             },
           },

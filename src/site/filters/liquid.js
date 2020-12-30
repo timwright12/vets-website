@@ -166,6 +166,10 @@ module.exports = function registerFilters() {
 
     return data;
   };
+  //  liquid slice filter only works on strings
+  liquid.filters.sliceArrayFromStart = (arr, startIndex) => {
+    return _.slice(arr, startIndex);
+  };
 
   liquid.filters.breakTerms = data => {
     let output = '';
@@ -445,12 +449,19 @@ module.exports = function registerFilters() {
     breadcrumbs,
     string,
     currentPath,
+    replaceLastItem = false,
   ) => {
     const last = {
       url: { path: currentPath, routed: true },
       text: string,
     };
-    breadcrumbs.push(last);
+
+    if (replaceLastItem) {
+      // replace last item in breadcrumbs with "last"
+      breadcrumbs.splice(breadcrumbs.length - 1, 1, last);
+    } else {
+      breadcrumbs.push(last);
+    }
 
     return breadcrumbs;
   };

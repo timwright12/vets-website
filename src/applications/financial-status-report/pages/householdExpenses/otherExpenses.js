@@ -1,5 +1,7 @@
 import ItemLoop from '../../components/ItemLoop';
-import CardDetailsView from '../../components/CardDetailsView';
+import TableDetailsView from '../../components/TableDetailsView';
+import currencyUI from 'platform/forms-system/src/js/definitions/currency';
+import _ from 'lodash/fp';
 
 export const uiSchema = {
   'ui:title': 'Other living expenses',
@@ -10,23 +12,31 @@ export const uiSchema = {
       'ui:required': () => true,
     },
     expenseRecords: {
-      'ui:options': {
-        expandUnder: 'hasExpenses',
-        viewField: CardDetailsView,
-        doNotScroll: true,
-        showSave: true,
-      },
       'ui:field': ItemLoop,
       'ui:description':
         'Enter other living expenses separately below. Other living expenses include cell phone, clothing, and transportation.',
+      'ui:options': {
+        expandUnder: 'hasExpenses',
+        viewType: 'table',
+        viewField: TableDetailsView,
+        doNotScroll: true,
+        showSave: true,
+        itemName: 'Add an expense',
+      },
       items: {
-        'ui:title': 'Add an expense',
         expenseType: {
           'ui:title': 'Type of expense',
+          'ui:options': {
+            widgetClassNames: 'input-size-3',
+          },
+          'ui:required': formData => formData.otherExpenses.hasExpenses,
         },
-        monthlyAmount: {
-          'ui:title': 'Monthly payment amount',
-        },
+        expenseAmount: _.merge(currencyUI('Monthly payment amount'), {
+          'ui:options': {
+            widgetClassNames: 'input-size-1',
+          },
+          'ui:required': formData => formData.otherExpenses.hasExpenses,
+        }),
       },
     },
   },
@@ -44,11 +54,12 @@ export const schema = {
           type: 'array',
           items: {
             type: 'object',
+            required: ['expenseType', 'expenseAmount'],
             properties: {
               expenseType: {
                 type: 'string',
               },
-              monthlyAmount: {
+              expenseAmount: {
                 type: 'number',
               },
             },
