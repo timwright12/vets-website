@@ -37,7 +37,7 @@ export const deriveContactInfoProperties = fieldName => {
   let formSchema;
 
   if (fieldName === FIELD_NAMES.EMAIL) {
-    title = FIELD_TITLES.EMAIL;
+    title = FIELD_TITLES[FIELD_NAMES.EMAIL];
     apiRoute = API_ROUTES.EMAILS;
     convertCleanDataToPayload = emailConvertCleanDataToPayload;
     uiSchema = emailUiSchema;
@@ -51,19 +51,19 @@ export const deriveContactInfoProperties = fieldName => {
     formSchema = phoneFormSchema;
 
     if (fieldName === FIELD_NAMES.HOME_PHONE) {
-      title = FIELD_TITLES.HOME_PHONE;
+      title = FIELD_TITLES[FIELD_NAMES.HOME_PHONE];
     }
 
     if (fieldName === FIELD_NAMES.WORK_PHONE) {
-      title = FIELD_TITLES.WORK_PHONE;
+      title = FIELD_TITLES[FIELD_NAMES.WORK_PHONE];
     }
 
     if (fieldName === FIELD_NAMES.MOBILE_PHONE) {
-      title = FIELD_TITLES.MOBILE_PHONE;
+      title = FIELD_TITLES[FIELD_NAMES.MOBILE_PHONE];
     }
 
     if (fieldName === FIELD_NAMES.FAX_NUMBER) {
-      title = FIELD_TITLES.FAX_NUMBER;
+      title = FIELD_TITLES[FIELD_NAMES.FAX_NUMBER];
     }
   }
 
@@ -73,12 +73,12 @@ export const deriveContactInfoProperties = fieldName => {
     uiSchema = addressUiSchema();
     formSchema = addressFormSchema();
 
-    if (fieldName === FIELD_NAMES.MAILING_ADDRESS) {
-      title = FIELD_TITLES.MAILING_ADDRESS;
+    if (fieldName === FIELD_NAMES[FIELD_NAMES.MAILING_ADDRESS]) {
+      title = FIELD_TITLES[FIELD_NAMES.MAILING_ADDRESS];
     }
 
-    if (fieldName === FIELD_NAMES.RESIDENTIAL_ADDRESS) {
-      title = FIELD_TITLES.RESIDENTIAL_ADDRESS;
+    if (fieldName === FIELD_NAMES[FIELD_NAMES.RESIDENTIAL_ADDRESS]) {
+      title = FIELD_TITLES[FIELD_NAMES.RESIDENTIAL_ADDRESS];
     }
   }
 

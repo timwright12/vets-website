@@ -40,7 +40,7 @@ import { transformInitialFormValues } from '@@profile/util/contact-information';
 
 import ContactInformationActionButtons from './ContactInformationActionButtons';
 
-class ContactInformationEditView extends Component {
+export class ContactInformationEditView extends Component {
   static propTypes = {
     analyticsSectionName: PropTypes.string.isRequired,
     field: PropTypes.shape({
@@ -285,7 +285,7 @@ class ContactInformationEditView extends Component {
                 analyticsSectionName={analyticsSectionName}
                 isLoading={isLoading}
                 deleteEnabled={
-                  data && !fieldName === FIELD_NAMES.MAILING_ADDRESS
+                  data && fieldName !== FIELD_NAMES.MAILING_ADDRESS
                 }
               >
                 <div>
