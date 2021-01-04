@@ -9,7 +9,7 @@ import Telephone from '@department-of-veterans-affairs/formation-react/Telephone
 import {
   addresses,
   phoneNumbers,
-} from '~/applications/personalization/profile/util/contact-information/deriveContactInfoProperties';
+} from '~/applications/personalization/profile/util/contact-information/getContactInfoFieldAttributes';
 
 const ContactInformationView = props => {
   const { data, fieldName } = props;

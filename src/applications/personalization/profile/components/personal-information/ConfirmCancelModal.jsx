@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from '@department-of-veterans-affairs/formation-react/Modal';
-import * as VAP_SERVICE from '@@vap-svc/constants';
 
 const ConfirmCancelModal = props => {
   const {

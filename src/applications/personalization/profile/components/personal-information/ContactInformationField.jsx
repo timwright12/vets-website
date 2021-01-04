@@ -42,7 +42,7 @@ import ContactInformationView from '@@profile/components/personal-information/Co
 
 import { getInitialFormValues } from '@@profile/util/contact-information/formValues';
 
-import deriveContactInfoProperties from '~/applications/personalization/profile/util/contact-information/deriveContactInfoProperties';
+import getContactInfoFieldAttributes from '~/applications/personalization/profile/util/contact-information/getContactInfoFieldAttributes';
 
 import CannotEditModal from './CannotEditModal';
 import ConfirmCancelModal from './ConfirmCancelModal';
@@ -353,7 +353,7 @@ export const mapStateToProps = (state, ownProps) => {
   const showSMSCheckbox =
     ownProps.fieldName === FIELD_NAMES.MOBILE_PHONE && isEnrolledInVAHealthCare;
 
-  const { title } = deriveContactInfoProperties(fieldName);
+  const { title } = getContactInfoFieldAttributes(fieldName);
   return {
     hasUnsavedEdits: state.vapService.hasUnsavedEdits,
     analyticsSectionName: VAP_SERVICE.ANALYTICS_FIELD_MAP[fieldName],

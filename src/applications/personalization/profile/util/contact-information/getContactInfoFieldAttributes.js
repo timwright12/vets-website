@@ -4,13 +4,13 @@ import {
   emailConvertCleanDataToPayload,
   emailUiSchema,
   emailFormSchema,
-} from '~/applications/personalization/profile/util/emailUtils';
+} from '~/applications/personalization/profile/util/contact-information/emailUtils';
 import {
   phoneConvertCleanDataToPayload,
   phoneUiSchema,
   phoneFormSchema,
-} from '~/applications/personalization/profile/util/phoneUtils';
-import { addressConvertCleanDataToPayload } from '~/applications/personalization/profile/util/addressUtils';
+} from '~/applications/personalization/profile/util/contact-information/phoneUtils';
+import { addressConvertCleanDataToPayload } from 'applications/personalization/profile/util/contact-information/addressUtils';
 
 import {
   getFormSchema as addressFormSchema,
@@ -29,7 +29,7 @@ export const addresses = [
   FIELD_NAMES.RESIDENTIAL_ADDRESS,
 ];
 
-export const deriveContactInfoProperties = fieldName => {
+export const getContactInfoFieldAttributes = fieldName => {
   let apiRoute;
   let convertCleanDataToPayload;
   let title;
@@ -91,4 +91,4 @@ export const deriveContactInfoProperties = fieldName => {
   };
 };
 
-export default deriveContactInfoProperties;
+export default getContactInfoFieldAttributes;

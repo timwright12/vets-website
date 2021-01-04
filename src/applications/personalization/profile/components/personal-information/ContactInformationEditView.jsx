@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import deriveContactInfoProperties from '~/applications/personalization/profile/util/contact-information/deriveContactInfoProperties';
+import getContactInfoFieldAttributes from '~/applications/personalization/profile/util/contact-information/getContactInfoFieldAttributes';
 
 import recordEvent from '~/platform/monitoring/record-event';
 import LoadingButton from '~/platform/site-wide/loading-button/LoadingButton';
@@ -348,7 +348,7 @@ export const mapStateToProps = (state, ownProps) => {
     uiSchema,
     formSchema,
     title,
-  } = deriveContactInfoProperties(fieldName);
+  } = getContactInfoFieldAttributes(fieldName);
 
   return {
     hasUnsavedEdits: state.vapService.hasUnsavedEdits,

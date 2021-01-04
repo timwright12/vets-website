@@ -3,7 +3,7 @@ import ADDRESS_DATA from '~/platform/forms/address/data';
 import {
   addresses,
   phoneNumbers,
-} from '~/applications/personalization/profile/util/deriveContactInfoProperties';
+} from '~/applications/personalization/profile/util/contact-information/getContactInfoFieldAttributes';
 import pickBy from 'lodash/pickBy';
 
 /**
