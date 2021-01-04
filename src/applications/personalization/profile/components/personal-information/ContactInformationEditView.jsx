@@ -74,7 +74,7 @@ export class ContactInformationEditView extends Component {
       !isPendingTransaction(prevProps.transaction)
     ) {
       this.interval = window.setInterval(
-        this.refreshTransactionNotProps,
+        this.refreshTransaction,
         window.VetsGov.pollTimeout || 1000,
       );
     }
@@ -112,7 +112,7 @@ export class ContactInformationEditView extends Component {
     });
   }
 
-  refreshTransactionNotProps = () => {
+  refreshTransaction = () => {
     this.props.refreshTransaction(
       this.props.transaction,
       this.props.analyticsSectionName,
