@@ -23,7 +23,7 @@ import {
   updateValidationKeyAndSave,
   closeModal,
   resetAddressValidation as resetAddressValidationAction,
-} from '@@vap-svc/actions';
+} from '../actions';
 import { getValidationMessageKey } from '../../utilities';
 import { ADDRESS_VALIDATION_MESSAGES } from '../../constants/addressValidationMessages';
 
@@ -250,7 +250,7 @@ class AddressValidationView extends React.Component {
             <VAPServiceEditModalErrorMessage
               title={title}
               error={error}
-              clearErrors={this.props.clearErrors}
+              clearErrors={clearErrors}
             />
           </div>
         )}
