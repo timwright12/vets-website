@@ -42,7 +42,6 @@ describe('<ContactInformationEditView/>', () => {
       convertCleanDataToPayload() {},
       data: null,
       editViewData: null,
-      field: { value: {}, validations: {} },
       fieldName: 'email',
       formSchema: {},
       getInitialFormValues() {},
@@ -67,7 +66,6 @@ describe('<ContactInformationEditView/>', () => {
       updateFormFieldWithSchema() {},
       validateAddress() {},
       refreshTransaction() {},
-      formSchema: {},
     };
   });
 
