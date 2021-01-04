@@ -73,11 +73,11 @@ export const deriveContactInfoProperties = fieldName => {
     uiSchema = addressUiSchema();
     formSchema = addressFormSchema();
 
-    if (fieldName === FIELD_NAMES[FIELD_NAMES.MAILING_ADDRESS]) {
+    if (fieldName === FIELD_NAMES.MAILING_ADDRESS) {
       title = FIELD_TITLES[FIELD_NAMES.MAILING_ADDRESS];
     }
 
-    if (fieldName === FIELD_NAMES[FIELD_NAMES.RESIDENTIAL_ADDRESS]) {
+    if (fieldName === FIELD_NAMES.RESIDENTIAL_ADDRESS) {
       title = FIELD_TITLES[FIELD_NAMES.RESIDENTIAL_ADDRESS];
     }
   }

@@ -76,13 +76,13 @@ const classes = {
 class ContactInformationField extends React.Component {
   static propTypes = {
     data: PropTypes.object,
+    editViewData: PropTypes.object,
     field: PropTypes.object,
     fieldName: PropTypes.string.isRequired,
     isEmpty: PropTypes.bool.isRequired,
-    editViewData: PropTypes.object,
     showEditView: PropTypes.bool.isRequired,
     showSMSCheckBox: PropTypes.bool,
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
     transaction: PropTypes.object,
     transactionRequest: PropTypes.object,
   };

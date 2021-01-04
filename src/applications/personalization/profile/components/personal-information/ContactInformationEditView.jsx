@@ -242,7 +242,7 @@ export class ContactInformationEditView extends Component {
             <VAPServiceEditModalErrorMessage
               title={title}
               error={error}
-              clearErrors={this.props.clearTransactionRequest(fieldName)}
+              clearErrors={() => this.props.clearTransactionRequest(fieldName)}
             />
           </div>
         )}
