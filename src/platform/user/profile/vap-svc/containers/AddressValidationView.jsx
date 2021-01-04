@@ -250,9 +250,7 @@ class AddressValidationView extends React.Component {
             <VAPServiceEditModalErrorMessage
               title={title}
               error={error}
-              clearErrors={this.props.clearTransactionRequest(
-                this.props.fieldName,
-              )}
+              clearErrors={this.props.clearErrors}
             />
           </div>
         )}

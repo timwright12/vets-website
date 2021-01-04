@@ -141,6 +141,10 @@ class ContactInformationField extends React.Component {
     this.setState({ showConfirmCancelModal: true });
   };
 
+  clearErrors = () => {
+    this.props.clearTransactionRequest(this.props.fieldName);
+  };
+
   onEdit = () => {
     this.captureEvent('edit-link');
     this.openEditModal();
@@ -284,7 +288,7 @@ class ContactInformationField extends React.Component {
           transaction={transaction}
           transactionRequest={transactionRequest}
           title={title}
-          fieldName={this.props.fieldName}
+          clearErrors={this.clearErrors}
         />
       );
     }
