@@ -212,6 +212,7 @@ class AddressValidationView extends React.Component {
     const {
       addressFromUser,
       addressValidationError,
+      clearErrors,
       confirmedSuggestions,
       resetAddressValidation,
       suggestedAddresses,
