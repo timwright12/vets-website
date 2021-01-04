@@ -1,5 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Modal from '@department-of-veterans-affairs/formation-react/Modal';
+import * as VAP_SERVICE from '@@vap-svc/constants';
 
 const ConfirmCancelModal = props => {
   const {
@@ -37,6 +39,13 @@ const ConfirmCancelModal = props => {
       </button>
     </Modal>
   );
+};
+
+ConfirmCancelModal.propTypes = {
+  activeSection: PropTypes.string,
+  closeModal: PropTypes.func.isRequired,
+  showConfirmCancelModal: PropTypes.bool.isRequired,
+  hideConfirmCancelModal: PropTypes.func.isRequired,
 };
 
 export default ConfirmCancelModal;

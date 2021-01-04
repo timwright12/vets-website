@@ -1,13 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { formatAddress } from 'platform/forms/address/helpers';
 import ReceiveTextMessages from 'platform/user/profile/vap-svc/containers/ReceiveTextMessages';
 import { FIELD_NAMES } from '@@vap-svc/constants';
+import * as VAP_SERVICE from '@@vap-svc/constants';
 import Telephone from '@department-of-veterans-affairs/formation-react/Telephone';
 
 import {
   addresses,
   phoneNumbers,
-} from '~/applications/personalization/profile/util/deriveContactInfoProperties';
+} from '~/applications/personalization/profile/util/contact-information/deriveContactInfoProperties';
 
 const ContactInformationView = props => {
   const { data, fieldName } = props;
@@ -55,6 +57,11 @@ const ContactInformationView = props => {
   }
 
   return null;
+};
+
+ContactInformationView.propTypes = {
+  data: PropTypes.object,
+  fieldName: PropTypes.oneOf(Object.values(VAP_SERVICE.FIELD_NAMES)).isRequired,
 };
 
 export default ContactInformationView;

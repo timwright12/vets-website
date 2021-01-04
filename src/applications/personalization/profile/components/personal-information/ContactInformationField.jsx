@@ -40,9 +40,9 @@ import AddressValidationView from '@@vap-svc/containers/AddressValidationView';
 import ContactInformationEditView from '@@profile/components/personal-information/ContactInformationEditView';
 import ContactInformationView from '@@profile/components/personal-information/ContactInformationView';
 
-import { getInitialFormValues } from '@@profile/util/contact-information';
+import { getInitialFormValues } from '@@profile/util/contact-information/formValues';
 
-import deriveContactInfoProperties from '~/applications/personalization/profile/util/deriveContactInfoProperties';
+import deriveContactInfoProperties from '~/applications/personalization/profile/util/contact-information/deriveContactInfoProperties';
 
 import CannotEditModal from './CannotEditModal';
 import ConfirmCancelModal from './ConfirmCancelModal';
@@ -75,16 +75,30 @@ const classes = {
 
 class ContactInformationField extends React.Component {
   static propTypes = {
+    activeEditView: PropTypes.string,
+    analyticsSectionName: PropTypes.oneOf(
+      Object.values(VAP_SERVICE.ANALYTICS_FIELD_MAP),
+    ).isRequired,
+    blockEditMode: PropTypes.bool.isRequired,
+    clearTransactionRequest: PropTypes.func.isRequired,
+    createTransaction: PropTypes.func.isRequired,
     data: PropTypes.object,
     editViewData: PropTypes.object,
     field: PropTypes.object,
-    fieldName: PropTypes.string.isRequired,
+    fieldName: PropTypes.oneOf(Object.values(VAP_SERVICE.FIELD_NAMES))
+      .isRequired,
+    hasUnsavedEdits: PropTypes.bool.isRequired,
     isEmpty: PropTypes.bool.isRequired,
+    openModal: PropTypes.func.isRequired,
+    refreshTransaction: PropTypes.func.isRequired,
     showEditView: PropTypes.bool.isRequired,
     showSMSCheckBox: PropTypes.bool,
+    showValidationView: PropTypes.bool.isRequired,
     title: PropTypes.string,
     transaction: PropTypes.object,
     transactionRequest: PropTypes.object,
+    updateFormFieldWithSchema: PropTypes.func.isRequired,
+    validateAddress: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -378,20 +392,10 @@ const mapDispatchToProps = {
   validateAddress,
 };
 
-/**
- * Container used to easily create components for VA Profile-backed contact information.
- * @property {string} fieldName The name of the property as it appears in the user.profile.vapContactInfo object.
- */
 const ContactInformationFieldContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(ContactInformationField);
-
-ContactInformationFieldContainer.propTypes = {
-  fieldName: PropTypes.oneOf(Object.values(VAP_SERVICE.FIELD_NAMES)).isRequired,
-  title: PropTypes.string,
-  hasUnsavedEdits: PropTypes.bool,
-};
 
 export default ContactInformationFieldContainer;
 export { ContactInformationField };

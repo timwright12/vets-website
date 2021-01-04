@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Modal from '@department-of-veterans-affairs/formation-react/Modal';
 
 const CannotEditModal = props => {
@@ -17,6 +18,12 @@ const CannotEditModal = props => {
       <button onClick={hideCannotEditModal}>OK</button>
     </Modal>
   );
+};
+
+CannotEditModal.propTypes = {
+  activeSection: PropTypes.string,
+  showCannotEditModal: PropTypes.bool.isRequired,
+  hideCannotEditModal: PropTypes.func.isRequired,
 };
 
 export default CannotEditModal;

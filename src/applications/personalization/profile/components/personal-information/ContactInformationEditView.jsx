@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import deriveContactInfoProperties from '~/applications/personalization/profile/util/deriveContactInfoProperties';
+import deriveContactInfoProperties from '~/applications/personalization/profile/util/contact-information/deriveContactInfoProperties';
 
 import recordEvent from '~/platform/monitoring/record-event';
 import LoadingButton from '~/platform/site-wide/loading-button/LoadingButton';
@@ -36,25 +36,39 @@ import {
 
 import { ACTIVE_EDIT_VIEWS, FIELD_NAMES, USA } from '@@vap-svc/constants';
 
-import { transformInitialFormValues } from '@@profile/util/contact-information';
+import { transformInitialFormValues } from '@@profile/util/contact-information/formValues';
 
 import ContactInformationActionButtons from './ContactInformationActionButtons';
 
 export class ContactInformationEditView extends Component {
   static propTypes = {
-    analyticsSectionName: PropTypes.string.isRequired,
+    activeEditView: PropTypes.string,
+    analyticsSectionName: PropTypes.oneOf(
+      Object.values(VAP_SERVICE.ANALYTICS_FIELD_MAP),
+    ).isRequired,
+    apiRoute: PropTypes.oneOf(Object.values(VAP_SERVICE.API_ROUTES)).isRequired,
+    clearTransactionRequest: PropTypes.func.isRequired,
+    convertCleanDataToPayload: PropTypes.func.isRequired,
+    createTransaction: PropTypes.func.isRequired,
+    data: PropTypes.object,
+    editViewData: PropTypes.object,
     field: PropTypes.shape({
       value: PropTypes.object,
       validations: PropTypes.object,
     }),
-    uiSchema: PropTypes.object,
-    formSchema: PropTypes.object,
+    fieldName: PropTypes.oneOf(Object.values(VAP_SERVICE.FIELD_NAMES))
+      .isRequired,
+    formSchema: PropTypes.object.isRequired,
+    getInitialFormValues: PropTypes.func.isRequired,
+    hasUnsavedEdits: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
-    refreshTransaction: PropTypes.func,
+    refreshTransaction: PropTypes.func.isRequired,
     title: PropTypes.string,
     transaction: PropTypes.object,
     transactionRequest: PropTypes.object,
-    convertCleanDataToPayload: PropTypes.func,
+    uiSchema: PropTypes.object.isRequired,
+    updateFormFieldWithSchema: PropTypes.func.isRequired,
+    validateAddress: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
