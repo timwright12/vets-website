@@ -18,29 +18,29 @@ class IntroductionPage extends React.Component {
   }
 
   render() {
-    const { profile } = this.props.user;
-    const prefillAvailable = !!(
-      profile && profile.prefillsAvailable.includes(this.props.formId)
-    );
+    // const profile = this.props.user?.profile;
+    // const prefillAvailable = !!(
+    //   profile && profile.prefillsAvailable.includes(this.props.formId)
+    // );
 
     return (
       <div className="schemaform-intro">
         <FormTitle title="Contact Us" />
         <p>Equal to VA Form 0873 (Ask a Question).</p>
-        {profile.loading && (
+        {/* {profile.loading && (
           <div>
             <LoadingIndicator message={'loading'} />
             <br />
           </div>
-        )}
-        <FormStartControls
+        )} */}
+        {/* <FormStartControls
           startPage={'/topic'}
           formId={this.props.route.formConfig.formId}
           fetchInProgressForm={this.props.fetchInProgressForm}
           removeInProgressForm={this.props.removeInProgressForm}
           prefillAvailable={prefillAvailable}
           formSaved={false}
-        />
+        /> */}
         <div className="omb-info--container" style={{ paddingLeft: '0px' }}>
           <OMBInfo resBurden={10} ombNumber="2900-0619" expDate="11/30/2019" />
         </div>
@@ -51,7 +51,7 @@ class IntroductionPage extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    ...getIntroState(state),
+    // ...getIntroState(state),
   };
 }
 const mapDispatchToProps = {
