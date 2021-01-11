@@ -30,7 +30,7 @@ const formConfig = {
         page1: {
           path: 'direct-deposit',
           title: 'Direct Deposit - Page 1',
-          ...getDirectDepositSchemas(),
+          ...getDirectDepositSchemas({}),
         },
       },
     },
