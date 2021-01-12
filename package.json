@@ -2,6 +2,12 @@
   "name": "vets-website",
   "version": "1.0.1",
   "description": "Frontend build for vets.gov website static assets.",
+  "bundlesize": [
+    {
+      "path": "./build/**/*.entry.js",
+      "maxSize": "2 MB"
+    }
+  ],
   "scripts": {
     "apps": "./script/app-list.sh",
     "analyze": "webpack-bundle-analyzer build/vagovprod/generated/stats.json",
@@ -15,6 +21,7 @@
     "build:webpack:staging": "yarn build:webpack --env.buildtype vagovstaging",
     "build:webpack:dev": "yarn build:webpack --env.buildtype vagovdev",
     "build:webpack:local": "yarn build:webpack --env.buildtype localhost",
+    "bundle-check": "bundlesize",
     "cms:compare": "./script/cms/compare.sh",
     "cms:diff": "./script/cms/diff.sh",
     "cms:find-node": "./script/cms/find_node.sh",
@@ -157,6 +164,7 @@
     "babel-plugin-react-transform": "^2.0.2",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.2",
     "body-parser": "^1.15.2",
+    "bundlesize": "^0.18.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-dom": "^1.8.2",
