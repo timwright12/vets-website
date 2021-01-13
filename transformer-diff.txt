@@ -1,0 +1,3258 @@
+diff --git a/build/graphql/pittsburgh-health-care/news-releases/index.html b/build/take-1/pittsburgh-health-care/news-releases/index.html
+index b3ee26a30e..40e9e7e7e7 100644
+--- a/build/graphql/pittsburgh-health-care/news-releases/index.html
++++ b/build/take-1/pittsburgh-health-care/news-releases/index.html
+@@ -13,6 +13,7 @@
+ 
+   <link rel="canonical" href="http://localhost:3001/pittsburgh-health-care/news-releases">
+ 
++<meta name="DC.Date" scheme="W3CDTF" content="2020-03-11">
+ 
+ <meta content="http://localhost:3001//pittsburgh-health-care/news-releases" property="og:url">
+ 
+@@ -1631,43 +1632,11 @@ if (module) {
+ 
+ <script nonce="**CSP_NONCE**" data-template="includes/debug">
+   window.contentData = {
++    "contentModelType": "node-press_releases_listing",
+     "entityBundle": "press_releases_listing",
+-    "entityId": "2805",
+-    "entityPublished": true,
+     "title": "News releases",
+-    "entityUrl": {
+-        "breadcrumb": [
+-            {
+-                "url": {
+-                    "path": "/",
+-                    "routed": true
+-                },
+-                "text": "Home"
+-            },
+-            {
+-                "url": {
+-                    "path": "/pittsburgh-health-care",
+-                    "routed": true
+-                },
+-                "text": "VA Pittsburgh health care"
+-            },
+-            {
+-                "url": {
+-                    "path": "",
+-                    "routed": true
+-                },
+-                "text": "News and events"
+-            },
+-            {
+-                "url": {
+-                    "path": "",
+-                    "routed": true
+-                },
+-                "text": "News releases"
+-            }
+-        ],
+-        "path": "/pittsburgh-health-care/news-releases"
+-    },
++    "created": 1583184562,
++    "changed": 1583959012,
+     "entityMetatags": [
+         {
+             "__typename": "MetaValue",
+@@ -1715,579 +1684,1144 @@ if (module) {
+             "value": "Get the latest news from Pittsburgh-area medical centers and clinics. For further information, contact our Public Affairs Office at 412-822-3536."
+         }
+     ],
++    "fieldAdministration": {
++        "contentModelType": "taxonomy_term-administration",
++        "entity": {
++            "entityType": "taxonomy_term",
++            "entityBundle": "administration",
++            "entityLabel": "VA Pittsburgh health care",
++            "name": "VA Pittsburgh health care",
++            "fieldAcronym": null,
++            "fieldDescription": null,
++            "fieldEmailUpdatesLinkText": null,
++            "fieldEmailUpdatesUrl": null,
++            "fieldIntroText": null,
++            "fieldLink": null,
++            "fieldSocialMediaLinks": {
++                "platform": null,
++                "value": null,
++                "platformValues": "{\"facebook\":{\"value\":\"\"},\"instagram\":{\"value\":\"\"},\"linkedin\":{\"value\":\"\"},\"twitter\":{\"value\":\"\"},\"youtube\":{\"value\":\"\"},\"youtube_channel\":{\"value\":\"\"}}"
++            },
++            "entityId": "12"
++        },
++        "entityType": "taxonomy_term",
++        "entityBundle": "administration",
++        "entityId": "12"
++    },
++    "fieldDescription": "Get the latest news from Pittsburgh-area medical centers and clinics. For further information, contact our Public Affairs Office at 412-822-3536.",
+     "fieldIntroText": "Get the latest news from Pittsburgh-area medical centers and clinics. For further information, contact our Public Affairs Office at 412-822-3536.",
++    "fieldMetaTitle": "VA Pittsburgh Health Care | News Releases | Veterans Affairs",
++    "fieldOffice": {
++        "entity": {
++            "entityLabel": "VA Pittsburgh health care"
++        }
++    },
++    "fieldPressReleaseBlurb": "<p>Get the latest news from Pittsburgh-area medical centers and clinics. For further information, contact our Public Affairs Office at 412-822-3536.</p>",
+     "reverseFieldListingNode": {
+         "entities": [
+             {
+                 "entityId": "15073",
+                 "title": "VA/Pitt Study Shows Telehealth Effective, Preferred for Veterans’ Wheelchair Design and Fit",
+                 "fieldReleaseDate": {
+-                    "value": "2020-12-22T16:08:39"
++                    "value": "2020-12-22T11:08:39-05:00",
++                    "date": "2020-12-22 16:08:39 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/vapitt-study-shows-telehealth-effective-preferred-for-veterans"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1608653318,
+-                "fieldIntroText": "Two recent studies published in the International Journal of Telerehabilitation show that telehealth can be effective in providing Complex Rehabilitation Technology (CRT) to Veterans, including custom-designed and custom-fitted manual and power wheelchairs."
++                "fieldIntroText": "Two recent studies published in the International Journal of Telerehabilitation show that telehealth can be effective in providing Complex Rehabilitation Technology (CRT) to Veterans, including custom-designed and custom-fitted manual and power wheelchairs.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "8139",
+                 "title": "VA Pittsburgh Physician receives 2020 David M. Worthen Rising Star Award",
+                 "fieldReleaseDate": {
+-                    "value": "2020-10-07T10:10:46"
++                    "value": "2020-10-07T06:10:46-04:00",
++                    "date": "2020-10-07 10:10:46 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-physician-receives-2020-david-m-worthen-rising"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1602065446,
+-                "fieldIntroText": "Dr. Deborah DiNardo, director of Women’s Health and an internist at VA Pittsburgh Healthcare System, received the 2020 Worthen Rising Star Award, recognizing her as an early career champion of health professions trainee education. "
++                "fieldIntroText": "Dr. Deborah DiNardo, director of Women’s Health and an internist at VA Pittsburgh Healthcare System, received the 2020 Worthen Rising Star Award, recognizing her as an early career champion of health professions trainee education. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "7640",
+                 "title": "VA Pittsburgh named ‘LGBTQ Healthcare Equality Leader’ for 8th year",
+                 "fieldReleaseDate": {
+-                    "value": "2020-09-14T11:40:46"
++                    "value": "2020-09-14T07:40:46-04:00",
++                    "date": "2020-09-14 11:40:46 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-named-lgbtq-healthcare-equality-leader-for-8th"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1600083646,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System was named a 2020 “LGBTQ Healthcare Equality Leader” by the Human Rights Campaign Foundation (HRC). The designation is the eighth time in as many years and is listed in the 13th edition of the Healthcare Equality Index (HEI). "
++                "fieldIntroText": "VA Pittsburgh Healthcare System was named a 2020 “LGBTQ Healthcare Equality Leader” by the Human Rights Campaign Foundation (HRC). The designation is the eighth time in as many years and is listed in the 13th edition of the Healthcare Equality Index (HEI). ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "6790",
+                 "title": "VA Pittsburgh Healthcare System surpasses 32,000 telehealth encounters in 2020",
+                 "fieldReleaseDate": {
+-                    "value": "2020-07-31T16:20:30"
++                    "value": "2020-07-31T12:20:30-04:00",
++                    "date": "2020-07-31 16:20:30 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-healthcare-system-surpasses-32000-telehealth"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1596212429,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) has conducted more than 32,000 telehealth encounters for over 16,000 veterans throughout western Pennsylvania and parts of Ohio and West Virginia so far this fiscal year. "
++                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) has conducted more than 32,000 telehealth encounters for over 16,000 veterans throughout western Pennsylvania and parts of Ohio and West Virginia so far this fiscal year. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "5680",
+                 "title": "Moving Forward: Safe Care is Our Mission",
+                 "fieldReleaseDate": {
+-                    "value": "2020-06-08T16:13:54"
++                    "value": "2020-06-08T12:13:54-04:00",
++                    "date": "2020-06-08 16:13:54 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/moving-forward-safe-care-is-our-mission"
+                 },
+-                "uid": {
+-                    "targetId": 33,
+-                    "entity": {
+-                        "name": "Kimberly.Graham3@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1591632834,
+-                "fieldIntroText": "Safe care is our mission. Your safety and the safety of our employees is our top priority during the COVID-19 pandemic. We are working to restore services safely at our facilities based on federal, state and local guidance."
++                "fieldIntroText": "Safe care is our mission. Your safety and the safety of our employees is our top priority during the COVID-19 pandemic. We are working to restore services safely at our facilities based on federal, state and local guidance.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "5102",
+                 "title": "VA Pittsburgh Creates First VA Dialysis Program in a Long-Term Care Facility",
+                 "fieldReleaseDate": {
+-                    "value": "2020-04-27T10:43:38"
++                    "value": "2020-04-27T06:43:38-04:00",
++                    "date": "2020-04-27 10:43:38 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-creates-first-va-dialysis-program-in-a-long-term"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1587984218,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) in April created a dialysis program at its Community Living Center (CLC) to safeguard veterans against exposure to the coronavirus. "
++                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) in April created a dialysis program at its Community Living Center (CLC) to safeguard veterans against exposure to the coronavirus. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "3015",
+                 "title": "Pittsburgh VA Implements More Measures  to Prevent COVID-19 Infection",
+                 "fieldReleaseDate": {
+-                    "value": "2020-03-17T17:06:18"
++                    "value": "2020-03-17T13:06:18-04:00",
++                    "date": "2020-03-17 17:06:18 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/pittsburgh-va-implements-more-measures-to-prevent-covid-19"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1584464777,
+-                "fieldIntroText": "As per guidance from the Centers for Disease Control, VA Pittsburgh Healthcare System (VAPHS) is taking special precautions to prevent the spread of COVID-19."
++                "fieldIntroText": "As per guidance from the Centers for Disease Control, VA Pittsburgh Healthcare System (VAPHS) is taking special precautions to prevent the spread of COVID-19.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "3006",
+                 "title": "Pittsburgh Veterans’ Hospitals Implement Further Measures to Protect Veterans and Staff from COVID-19",
+                 "fieldReleaseDate": {
+-                    "value": "2020-03-13T14:29:35"
++                    "value": "2020-03-13T10:29:35-04:00",
++                    "date": "2020-03-13 14:29:35 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/pittsburgh-veterans-hospitals-implement-further-measures-to"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1584109774,
+-                "fieldIntroText": "While the Centers for Disease Control still considers COVID-19 to be a low threat to the general American public, VA Pittsburgh Healthcare System is paying special attention to it.  \r\n"
++                "fieldIntroText": "While the Centers for Disease Control still considers COVID-19 to be a low threat to the general American public, VA Pittsburgh Healthcare System is paying special attention to it.  \r\n",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2946",
+                 "title": "Pittsburgh Veterans' Hospitals Implement Measures to Protect Veterans and Staff from COVID-19",
+                 "fieldReleaseDate": {
+-                    "value": "2020-03-09T17:01:51"
++                    "value": "2020-03-09T13:01:51-04:00",
++                    "date": "2020-03-09 17:01:51 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/pittsburgh-veterans-hospitals-implement-measures-to-protect"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1583773311,
+-                "fieldIntroText": "The Department of Veterans Affairs (VA) continues to work closely with the Centers for Disease Control and Prevention (CDC) and other federal agencies to monitor and respond to the current outbreak of Novel Coronavirus (COVID-19) in the United States."
++                "fieldIntroText": "The Department of Veterans Affairs (VA) continues to work closely with the Centers for Disease Control and Prevention (CDC) and other federal agencies to monitor and respond to the current outbreak of Novel Coronavirus (COVID-19) in the United States.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2924",
+                 "title": "Help Limit the Spread of COVID-19 and other illnesses",
+                 "fieldReleaseDate": {
+-                    "value": "2020-03-09T12:07:50"
++                    "value": "2020-03-09T08:07:50-04:00",
++                    "date": "2020-03-09 12:07:50 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/help-limit-the-spread-of-covid-19-and-other-illnesses"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1583755670,
+-                "fieldIntroText": "In an effort to reduce the impact of COVID-19 and other illnesses, VA is asking patients, staff and visitors to help slow the spread of infection. Effective immediately, visitation to the VA Pittsburgh Healthcare System Community Living Center (CLC) are limited. "
++                "fieldIntroText": "In an effort to reduce the impact of COVID-19 and other illnesses, VA is asking patients, staff and visitors to help slow the spread of infection. Effective immediately, visitation to the VA Pittsburgh Healthcare System Community Living Center (CLC) are limited. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2809",
+                 "title": "Pittsburgh Women to Continue Making History with VA",
+                 "fieldReleaseDate": {
+-                    "value": "2020-03-03T19:02:41"
++                    "value": "2020-03-03T14:02:41-05:00",
++                    "date": "2020-03-03 19:02:41 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/pittsburgh-women-to-continue-making-history-with-va"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1583262161,
+-                "fieldIntroText": "Update March 23, 2020 – The March 25 event listed below has been postponed indefinitely due to COVID precautions.   \r\n"
++                "fieldIntroText": "Update March 23, 2020 – The March 25 event listed below has been postponed indefinitely due to COVID precautions.   \r\n",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2628",
+                 "title": "Cardiology Nurse First Pick for Nursing Award",
+                 "fieldReleaseDate": {
+-                    "value": "2020-02-05T12:04:53"
++                    "value": "2020-02-05T07:04:53-05:00",
++                    "date": "2020-02-05 12:04:53 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/cardiology-nurse-first-pick-for-nursing-award"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1580904292,
+-                "fieldIntroText": "Registered nurse Elinor Donalson on Jan. 27 received VA Pittsburgh Health Care System’s first-ever DAISY Award. "
++                "fieldIntroText": "Registered nurse Elinor Donalson on Jan. 27 received VA Pittsburgh Health Care System’s first-ever DAISY Award. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2336",
+                 "title": "VA Pittsburgh Healthcare System to open second Fisher House",
+                 "fieldReleaseDate": {
+-                    "value": "2019-09-27T16:00:00"
++                    "value": "2019-09-27T12:00:00-04:00",
++                    "date": "2019-09-27 16:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-healthcare-system-to-open-second-fisher-house"
+                 },
+-                "uid": {
+-                    "targetId": 31,
+-                    "entity": {
+-                        "name": "louis.scavnicky@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1572988799,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) is pleased to announce it has been selected to receive a second Fisher House to provide temporary accommodations at no charge for the families and caregivers of veterans receiving VA care.  "
++                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) is pleased to announce it has been selected to receive a second Fisher House to provide temporary accommodations at no charge for the families and caregivers of veterans receiving VA care.  ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "840",
+                 "title": "LGBTQ Healthcare Equity Leader",
+                 "fieldReleaseDate": {
+-                    "value": "2019-08-20T19:09:52"
++                    "value": "2019-08-20T15:09:52-04:00",
++                    "date": "2019-08-20 19:09:52 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/lgbtq-healthcare-equity-leader"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1566328192,
+-                "fieldIntroText": "For the seventh year in a row, VA Pittsburgh Healthcare System was named an “LGBTQ Healthcare Equality Leader” by the Human Rights Campaign Foundation (HRC). The designation came in the 12th edition of the Healthcare Equality Index (HEI), released Friday."
++                "fieldIntroText": "For the seventh year in a row, VA Pittsburgh Healthcare System was named an “LGBTQ Healthcare Equality Leader” by the Human Rights Campaign Foundation (HRC). The designation came in the 12th edition of the Healthcare Equality Index (HEI), released Friday.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "841",
+                 "title": "Women Veterans resource fair spotlights VA and community care",
+                 "fieldReleaseDate": {
+-                    "value": "2019-08-12T19:12:40"
++                    "value": "2019-08-12T15:12:40-04:00",
++                    "date": "2019-08-12 19:12:40 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/women-veterans-resource-fair-spotlights-va-and-community-care"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1565637160,
+-                "fieldIntroText": "Veterans Affairs (VA) Pittsburgh Healthcare System is connecting women Veterans with VA and non-VA services during a resource fair on Friday, Aug. 16, from 10 a.m. to 1 p.m. "
++                "fieldIntroText": "Veterans Affairs (VA) Pittsburgh Healthcare System is connecting women Veterans with VA and non-VA services during a resource fair on Friday, Aug. 16, from 10 a.m. to 1 p.m. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "842",
+                 "title": "Inflammation and Sepsis Survivors",
+                 "fieldReleaseDate": {
+-                    "value": "2019-08-07T19:18:55"
++                    "value": "2019-08-07T15:18:55-04:00",
++                    "date": "2019-08-07 19:18:55 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/inflammation-and-sepsis-survivors"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1565205535,
+-                "fieldIntroText": "Persistent Inflammation After Hospital Discharge Linked to Higher Mortality and Readmission in Sepsis Survivors"
++                "fieldIntroText": "Persistent Inflammation After Hospital Discharge Linked to Higher Mortality and Readmission in Sepsis Survivors",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "395",
+                 "title": "Washington County VA Outpatient Clinic to move to larger space",
+                 "fieldReleaseDate": {
+-                    "value": "2019-03-12T19:00:00"
++                    "value": "2019-03-12T15:00:00-04:00",
++                    "date": "2019-03-12 19:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/washington-county-va-outpatient-clinic-to-move-to-larger"
+                 },
+-                "uid": {
+-                    "targetId": 86,
+-                    "entity": {
+-                        "name": "Howard.Brande@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1557862755,
+-                "fieldIntroText": "The Washington County VA Outpatient Clinic will move to its new, larger space in Crossroads Center, 95 West Beau\r\nSt, Suite 200, Washington, PA on April 1. "
++                "fieldIntroText": "The Washington County VA Outpatient Clinic will move to its new, larger space in Crossroads Center, 95 West Beau\r\nSt, Suite 200, Washington, PA on April 1. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "396",
+                 "title": "Belmont County Veterans getting larger, more modern VA Outpatient Clinic",
+                 "fieldReleaseDate": {
+-                    "value": "2019-02-01T20:00:00"
++                    "value": "2019-02-01T15:00:00-05:00",
++                    "date": "2019-02-01 20:00:00 UTC"
+                 },
+                 "entityUrl": {
+-                    "path": "/pittsburgh-health-care/news-releases/belmont-county-veterans-getting-larger-more-modern-va"
+-                },
+-                "uid": {
+-                    "targetId": 86,
+-                    "entity": {
+-                        "name": "Howard.Brande@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+-                "promote": false,
+-                "created": 1557863381,
+-                "fieldIntroText": "The Belmont County VA Outpatient Clinic will move to its new, larger space in in the Ohio Valley Mall,\r\n67800 Mall Ring Road, Suite 215, St. Clairsville, Ohio 43950 on March 25. "
+-            },
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
++                    "path": "/pittsburgh-health-care/news-releases/belmont-county-veterans-getting-larger-more-modern-va"
++                },
++                "promote": false,
++                "created": 1557863381,
++                "fieldIntroText": "The Belmont County VA Outpatient Clinic will move to its new, larger space in in the Ohio Valley Mall,\r\n67800 Mall Ring Road, Suite 215, St. Clairsville, Ohio 43950 on March 25. ",
++                "entityPublished": true
++            },
+             {
+                 "entityId": "845",
+                 "title": "Fayette County Veterans Getting Larger, More Modern VA Outpatient Clinic",
+                 "fieldReleaseDate": {
+-                    "value": "2018-11-26T20:57:06"
++                    "value": "2018-11-26T15:57:06-05:00",
++                    "date": "2018-11-26 20:57:06 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/fayette-county-veterans-getting-larger-more-modern-va"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1567540626,
+-                "fieldIntroText": "The Fayette County VA Outpatient Clinic will move to its new, larger space in the Fayette Plaza at 627 Pittsburgh Road, Suite 2, Uniontown, PA, on Dec. 3."
++                "fieldIntroText": "The Fayette County VA Outpatient Clinic will move to its new, larger space in the Fayette Plaza at 627 Pittsburgh Road, Suite 2, Uniontown, PA, on Dec. 3.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "846",
+                 "title": "VA Pittsburgh Announces Outstanding Physicians for 2018",
+                 "fieldReleaseDate": {
+-                    "value": "2018-05-14T19:59:10"
++                    "value": "2018-05-14T15:59:10-04:00",
++                    "date": "2018-05-14 19:59:10 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-announces-outstanding-physicians-for-2018-0"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1567540750,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System recognized an oncologist and an internist as Outstanding Physicians of the Year for 2018. Oncologist Dr. Sandra Blakowski and internist Dr. Jo-Anne Suffoletto have more than 40 years’ combined service caring for Veterans in western Pennsylvania. "
++                "fieldIntroText": "VA Pittsburgh Healthcare System recognized an oncologist and an internist as Outstanding Physicians of the Year for 2018. Oncologist Dr. Sandra Blakowski and internist Dr. Jo-Anne Suffoletto have more than 40 years’ combined service caring for Veterans in western Pennsylvania. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "401",
+                 "title": "VA Pittsburgh study on dual use of health systems nets best research paper",
+                 "fieldReleaseDate": {
+-                    "value": "2018-01-28T15:00:00"
++                    "value": "2018-01-28T10:00:00-05:00",
++                    "date": "2018-01-28 15:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-study-on-dual-use-of-health-systems-nets-best"
+                 },
+-                "uid": {
+-                    "targetId": 86,
+-                    "entity": {
+-                        "name": "Howard.Brande@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1557931371,
+-                "fieldIntroText": "VA’s Health Services Research and Development arm named VA Pittsburgh Healthcare System researcher Joshua Thorpe’s study “Dual Health Care System Use and High-Risk Prescribing in Patients with Dementia” as one of two of the best research papers of 2017."
++                "fieldIntroText": "VA’s Health Services Research and Development arm named VA Pittsburgh Healthcare System researcher Joshua Thorpe’s study “Dual Health Care System Use and High-Risk Prescribing in Patients with Dementia” as one of two of the best research papers of 2017.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "848",
+                 "title": "VA Research Prompts Changes to Angiograms for All Patients at Risk for Kidney Injury",
+                 "fieldReleaseDate": {
+-                    "value": "2017-11-16T21:02:04"
++                    "value": "2017-11-16T16:02:04-05:00",
++                    "date": "2017-11-16 21:02:04 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-research-prompts-changes-to-angiograms-for-all-patients-0"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1567540923,
+-                "fieldIntroText": "Research presented to members of the American Heart Association Sunday by VA Pittsburgh Healthcare System nephrologist Steven Weisbord, M.D., will change the way doctors perform angiograms for patients at risk for kidney injury."
++                "fieldIntroText": "Research presented to members of the American Heart Association Sunday by VA Pittsburgh Healthcare System nephrologist Steven Weisbord, M.D., will change the way doctors perform angiograms for patients at risk for kidney injury.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "850",
+                 "title": "VA Celebrates Veterans Day Every Day in November",
+                 "fieldReleaseDate": {
+-                    "value": "2017-10-31T20:03:15"
++                    "value": "2017-10-31T16:03:15-04:00",
++                    "date": "2017-10-31 20:03:15 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-celebrates-veterans-day-every-day-in-november-0"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1567540995,
+-                "fieldIntroText": "In recognition of Veterans Day 2017, VA Pittsburgh Healthcare System (VAPHS) will host or participate in events to honor veterans through November, starting with a ceremonial flag raising on Nov. 1 and culminating with a resource fair later in the month."
++                "fieldIntroText": "In recognition of Veterans Day 2017, VA Pittsburgh Healthcare System (VAPHS) will host or participate in events to honor veterans through November, starting with a ceremonial flag raising on Nov. 1 and culminating with a resource fair later in the month.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "851",
+                 "title": "Partnership for Public Service Honors VAPHS/Pitt Researcher with ‘Oscar’ of Government Service",
+                 "fieldReleaseDate": {
+-                    "value": "2017-09-22T20:07:03"
++                    "value": "2017-09-22T16:07:03-04:00",
++                    "date": "2017-09-22 20:07:03 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/partnership-for-public-service-honors-vaphspitt-researcher-0"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1567541223,
+-                "fieldIntroText": "The Partnership for Public Service will honor Rory Cooper, Ph.D., research scientist at VA Pittsburgh Healthcare System and professor at the University of Pittsburgh, with a Samuel J. Heyman Service to America Medal (Sammie) on Sept. 27."
++                "fieldIntroText": "The Partnership for Public Service will honor Rory Cooper, Ph.D., research scientist at VA Pittsburgh Healthcare System and professor at the University of Pittsburgh, with a Samuel J. Heyman Service to America Medal (Sammie) on Sept. 27.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2337",
+                 "title": "VA Pittsburgh Receives National Award for Achievements in Sustainability",
+                 "fieldReleaseDate": {
+-                    "value": "2017-05-18T12:00:00"
++                    "value": "2017-05-18T08:00:00-04:00",
++                    "date": "2017-05-18 12:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-receives-national-award-for-achievements-in"
+                 },
+-                "uid": {
+-                    "targetId": 31,
+-                    "entity": {
+-                        "name": "louis.scavnicky@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1573048026,
+-                "fieldIntroText": "In recognition of its successful programs to reduce its environmental impact, VA Pittsburgh Healthcare System was named an honoree in Practice Greenhealth's 2017 Partner for Change and Emerald awards."
++                "fieldIntroText": "In recognition of its successful programs to reduce its environmental impact, VA Pittsburgh Healthcare System was named an honoree in Practice Greenhealth's 2017 Partner for Change and Emerald awards.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "406",
+                 "title": "Lower medication copays now in effect for Veterans",
+                 "fieldReleaseDate": {
+-                    "value": "2017-02-28T16:00:00"
++                    "value": "2017-02-28T11:00:00-05:00",
++                    "date": "2017-02-28 16:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/lower-medication-copays-now-in-effect-for-veterans"
+                 },
+-                "uid": {
+-                    "targetId": 86,
+-                    "entity": {
+-                        "name": "Howard.Brande@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1557935298,
+-                "fieldIntroText": "Veterans using VA Pittsburgh Healthcare System’s outpatient pharmacy who have copays for their medication will most likely see a reduction in monthly and annual costs."
++                "fieldIntroText": "Veterans using VA Pittsburgh Healthcare System’s outpatient pharmacy who have copays for their medication will most likely see a reduction in monthly and annual costs.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "408",
+                 "title": "VA Pittsburgh Healthcare System issues water restrictions at University Drive location",
+                 "fieldReleaseDate": {
+-                    "value": "2017-01-28T16:00:00"
++                    "value": "2017-01-28T11:00:00-05:00",
++                    "date": "2017-01-28 16:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-healthcare-system-issues-water-restrictions-at"
+                 },
+-                "uid": {
+-                    "targetId": 86,
+-                    "entity": {
+-                        "name": "Howard.Brande@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1557935608,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System operates a comprehensive legionella prevention, detection and remediation program. Over the last month, during routine water testing we observed an unusual increase in water samples returning positive for legionella bacteria."
++                "fieldIntroText": "VA Pittsburgh Healthcare System operates a comprehensive legionella prevention, detection and remediation program. Over the last month, during routine water testing we observed an unusual increase in water samples returning positive for legionella bacteria.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2338",
+                 "title": "VA Pittsburgh Healthcare System Issues Water Restrictions at University Drive Location",
+                 "fieldReleaseDate": {
+-                    "value": "2017-01-28T13:00:00"
++                    "value": "2017-01-28T08:00:00-05:00",
++                    "date": "2017-01-28 13:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-healthcare-system-issues-water-restrictions-0"
+                 },
+-                "uid": {
+-                    "targetId": 31,
+-                    "entity": {
+-                        "name": "louis.scavnicky@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1573049105,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System operates a comprehensive legionella prevention, detection and remediation program. Over the last month, during routine water testing we observed an unusual increase in water samples returning positive for legionella bacteria."
++                "fieldIntroText": "VA Pittsburgh Healthcare System operates a comprehensive legionella prevention, detection and remediation program. Over the last month, during routine water testing we observed an unusual increase in water samples returning positive for legionella bacteria.",
++                "entityPublished": true
+             }
+         ]
+     },
+-    "fieldOffice": {
+-        "targetId": 318,
+-        "entity": {
+-            "entityLabel": "VA Pittsburgh health care",
+-            "title": "VA Pittsburgh health care",
+-            "fieldNicknameForThisFacility": "VA Pittsburgh health care"
+-        }
++    "entityPublished": true,
++    "status": true,
++    "entityType": "node",
++    "entityUrl": {
++        "breadcrumb": [
++            {
++                "url": {
++                    "path": "/",
++                    "routed": true
++                },
++                "text": "Home"
++            },
++            {
++                "url": {
++                    "path": "/pittsburgh-health-care",
++                    "routed": true
++                },
++                "text": "VA Pittsburgh health care"
++            },
++            {
++                "url": {
++                    "path": "",
++                    "routed": true
++                },
++                "text": "News and events"
++            },
++            {
++                "url": {
++                    "path": "",
++                    "routed": true
++                },
++                "text": "News releases"
++            }
++        ],
++        "path": "/pittsburgh-health-care/news-releases"
+     },
++    "entityId": "2805",
+     "facilitySidebar": {
+         "name": "VA Pittsburgh health care",
+         "description": "va.gov/pittsburgh-health-care",
+@@ -3895,561 +4429,1065 @@ if (module) {
+                 "entityId": "15073",
+                 "title": "VA/Pitt Study Shows Telehealth Effective, Preferred for Veterans’ Wheelchair Design and Fit",
+                 "fieldReleaseDate": {
+-                    "value": "2020-12-22T16:08:39"
++                    "value": "2020-12-22T11:08:39-05:00",
++                    "date": "2020-12-22 16:08:39 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/vapitt-study-shows-telehealth-effective-preferred-for-veterans"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1608653318,
+-                "fieldIntroText": "Two recent studies published in the International Journal of Telerehabilitation show that telehealth can be effective in providing Complex Rehabilitation Technology (CRT) to Veterans, including custom-designed and custom-fitted manual and power wheelchairs."
++                "fieldIntroText": "Two recent studies published in the International Journal of Telerehabilitation show that telehealth can be effective in providing Complex Rehabilitation Technology (CRT) to Veterans, including custom-designed and custom-fitted manual and power wheelchairs.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "8139",
+                 "title": "VA Pittsburgh Physician receives 2020 David M. Worthen Rising Star Award",
+                 "fieldReleaseDate": {
+-                    "value": "2020-10-07T10:10:46"
++                    "value": "2020-10-07T06:10:46-04:00",
++                    "date": "2020-10-07 10:10:46 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-physician-receives-2020-david-m-worthen-rising"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1602065446,
+-                "fieldIntroText": "Dr. Deborah DiNardo, director of Women’s Health and an internist at VA Pittsburgh Healthcare System, received the 2020 Worthen Rising Star Award, recognizing her as an early career champion of health professions trainee education. "
++                "fieldIntroText": "Dr. Deborah DiNardo, director of Women’s Health and an internist at VA Pittsburgh Healthcare System, received the 2020 Worthen Rising Star Award, recognizing her as an early career champion of health professions trainee education. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "7640",
+                 "title": "VA Pittsburgh named ‘LGBTQ Healthcare Equality Leader’ for 8th year",
+                 "fieldReleaseDate": {
+-                    "value": "2020-09-14T11:40:46"
++                    "value": "2020-09-14T07:40:46-04:00",
++                    "date": "2020-09-14 11:40:46 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-named-lgbtq-healthcare-equality-leader-for-8th"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1600083646,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System was named a 2020 “LGBTQ Healthcare Equality Leader” by the Human Rights Campaign Foundation (HRC). The designation is the eighth time in as many years and is listed in the 13th edition of the Healthcare Equality Index (HEI). "
++                "fieldIntroText": "VA Pittsburgh Healthcare System was named a 2020 “LGBTQ Healthcare Equality Leader” by the Human Rights Campaign Foundation (HRC). The designation is the eighth time in as many years and is listed in the 13th edition of the Healthcare Equality Index (HEI). ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "6790",
+                 "title": "VA Pittsburgh Healthcare System surpasses 32,000 telehealth encounters in 2020",
+                 "fieldReleaseDate": {
+-                    "value": "2020-07-31T16:20:30"
++                    "value": "2020-07-31T12:20:30-04:00",
++                    "date": "2020-07-31 16:20:30 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-healthcare-system-surpasses-32000-telehealth"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1596212429,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) has conducted more than 32,000 telehealth encounters for over 16,000 veterans throughout western Pennsylvania and parts of Ohio and West Virginia so far this fiscal year. "
++                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) has conducted more than 32,000 telehealth encounters for over 16,000 veterans throughout western Pennsylvania and parts of Ohio and West Virginia so far this fiscal year. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "5680",
+                 "title": "Moving Forward: Safe Care is Our Mission",
+                 "fieldReleaseDate": {
+-                    "value": "2020-06-08T16:13:54"
++                    "value": "2020-06-08T12:13:54-04:00",
++                    "date": "2020-06-08 16:13:54 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/moving-forward-safe-care-is-our-mission"
+                 },
+-                "uid": {
+-                    "targetId": 33,
+-                    "entity": {
+-                        "name": "Kimberly.Graham3@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1591632834,
+-                "fieldIntroText": "Safe care is our mission. Your safety and the safety of our employees is our top priority during the COVID-19 pandemic. We are working to restore services safely at our facilities based on federal, state and local guidance."
++                "fieldIntroText": "Safe care is our mission. Your safety and the safety of our employees is our top priority during the COVID-19 pandemic. We are working to restore services safely at our facilities based on federal, state and local guidance.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "5102",
+                 "title": "VA Pittsburgh Creates First VA Dialysis Program in a Long-Term Care Facility",
+                 "fieldReleaseDate": {
+-                    "value": "2020-04-27T10:43:38"
++                    "value": "2020-04-27T06:43:38-04:00",
++                    "date": "2020-04-27 10:43:38 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-creates-first-va-dialysis-program-in-a-long-term"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1587984218,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) in April created a dialysis program at its Community Living Center (CLC) to safeguard veterans against exposure to the coronavirus. "
++                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) in April created a dialysis program at its Community Living Center (CLC) to safeguard veterans against exposure to the coronavirus. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "3015",
+                 "title": "Pittsburgh VA Implements More Measures  to Prevent COVID-19 Infection",
+                 "fieldReleaseDate": {
+-                    "value": "2020-03-17T17:06:18"
++                    "value": "2020-03-17T13:06:18-04:00",
++                    "date": "2020-03-17 17:06:18 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/pittsburgh-va-implements-more-measures-to-prevent-covid-19"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1584464777,
+-                "fieldIntroText": "As per guidance from the Centers for Disease Control, VA Pittsburgh Healthcare System (VAPHS) is taking special precautions to prevent the spread of COVID-19."
++                "fieldIntroText": "As per guidance from the Centers for Disease Control, VA Pittsburgh Healthcare System (VAPHS) is taking special precautions to prevent the spread of COVID-19.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "3006",
+                 "title": "Pittsburgh Veterans’ Hospitals Implement Further Measures to Protect Veterans and Staff from COVID-19",
+                 "fieldReleaseDate": {
+-                    "value": "2020-03-13T14:29:35"
++                    "value": "2020-03-13T10:29:35-04:00",
++                    "date": "2020-03-13 14:29:35 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/pittsburgh-veterans-hospitals-implement-further-measures-to"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1584109774,
+-                "fieldIntroText": "While the Centers for Disease Control still considers COVID-19 to be a low threat to the general American public, VA Pittsburgh Healthcare System is paying special attention to it.  \r\n"
++                "fieldIntroText": "While the Centers for Disease Control still considers COVID-19 to be a low threat to the general American public, VA Pittsburgh Healthcare System is paying special attention to it.  \r\n",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2946",
+                 "title": "Pittsburgh Veterans' Hospitals Implement Measures to Protect Veterans and Staff from COVID-19",
+                 "fieldReleaseDate": {
+-                    "value": "2020-03-09T17:01:51"
++                    "value": "2020-03-09T13:01:51-04:00",
++                    "date": "2020-03-09 17:01:51 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/pittsburgh-veterans-hospitals-implement-measures-to-protect"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1583773311,
+-                "fieldIntroText": "The Department of Veterans Affairs (VA) continues to work closely with the Centers for Disease Control and Prevention (CDC) and other federal agencies to monitor and respond to the current outbreak of Novel Coronavirus (COVID-19) in the United States."
++                "fieldIntroText": "The Department of Veterans Affairs (VA) continues to work closely with the Centers for Disease Control and Prevention (CDC) and other federal agencies to monitor and respond to the current outbreak of Novel Coronavirus (COVID-19) in the United States.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2924",
+                 "title": "Help Limit the Spread of COVID-19 and other illnesses",
+                 "fieldReleaseDate": {
+-                    "value": "2020-03-09T12:07:50"
++                    "value": "2020-03-09T08:07:50-04:00",
++                    "date": "2020-03-09 12:07:50 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/help-limit-the-spread-of-covid-19-and-other-illnesses"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1583755670,
+-                "fieldIntroText": "In an effort to reduce the impact of COVID-19 and other illnesses, VA is asking patients, staff and visitors to help slow the spread of infection. Effective immediately, visitation to the VA Pittsburgh Healthcare System Community Living Center (CLC) are limited. "
++                "fieldIntroText": "In an effort to reduce the impact of COVID-19 and other illnesses, VA is asking patients, staff and visitors to help slow the spread of infection. Effective immediately, visitation to the VA Pittsburgh Healthcare System Community Living Center (CLC) are limited. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2809",
+                 "title": "Pittsburgh Women to Continue Making History with VA",
+                 "fieldReleaseDate": {
+-                    "value": "2020-03-03T19:02:41"
++                    "value": "2020-03-03T14:02:41-05:00",
++                    "date": "2020-03-03 19:02:41 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/pittsburgh-women-to-continue-making-history-with-va"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1583262161,
+-                "fieldIntroText": "Update March 23, 2020 – The March 25 event listed below has been postponed indefinitely due to COVID precautions.   \r\n"
++                "fieldIntroText": "Update March 23, 2020 – The March 25 event listed below has been postponed indefinitely due to COVID precautions.   \r\n",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2628",
+                 "title": "Cardiology Nurse First Pick for Nursing Award",
+                 "fieldReleaseDate": {
+-                    "value": "2020-02-05T12:04:53"
++                    "value": "2020-02-05T07:04:53-05:00",
++                    "date": "2020-02-05 12:04:53 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/cardiology-nurse-first-pick-for-nursing-award"
+                 },
+-                "uid": {
+-                    "targetId": 34,
+-                    "entity": {
+-                        "name": "Ryan.Stubblebine@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1580904292,
+-                "fieldIntroText": "Registered nurse Elinor Donalson on Jan. 27 received VA Pittsburgh Health Care System’s first-ever DAISY Award. "
++                "fieldIntroText": "Registered nurse Elinor Donalson on Jan. 27 received VA Pittsburgh Health Care System’s first-ever DAISY Award. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2336",
+                 "title": "VA Pittsburgh Healthcare System to open second Fisher House",
+                 "fieldReleaseDate": {
+-                    "value": "2019-09-27T16:00:00"
++                    "value": "2019-09-27T12:00:00-04:00",
++                    "date": "2019-09-27 16:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-healthcare-system-to-open-second-fisher-house"
+                 },
+-                "uid": {
+-                    "targetId": 31,
+-                    "entity": {
+-                        "name": "louis.scavnicky@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1572988799,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) is pleased to announce it has been selected to receive a second Fisher House to provide temporary accommodations at no charge for the families and caregivers of veterans receiving VA care.  "
++                "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) is pleased to announce it has been selected to receive a second Fisher House to provide temporary accommodations at no charge for the families and caregivers of veterans receiving VA care.  ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "840",
+                 "title": "LGBTQ Healthcare Equity Leader",
+                 "fieldReleaseDate": {
+-                    "value": "2019-08-20T19:09:52"
++                    "value": "2019-08-20T15:09:52-04:00",
++                    "date": "2019-08-20 19:09:52 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/lgbtq-healthcare-equity-leader"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1566328192,
+-                "fieldIntroText": "For the seventh year in a row, VA Pittsburgh Healthcare System was named an “LGBTQ Healthcare Equality Leader” by the Human Rights Campaign Foundation (HRC). The designation came in the 12th edition of the Healthcare Equality Index (HEI), released Friday."
++                "fieldIntroText": "For the seventh year in a row, VA Pittsburgh Healthcare System was named an “LGBTQ Healthcare Equality Leader” by the Human Rights Campaign Foundation (HRC). The designation came in the 12th edition of the Healthcare Equality Index (HEI), released Friday.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "841",
+                 "title": "Women Veterans resource fair spotlights VA and community care",
+                 "fieldReleaseDate": {
+-                    "value": "2019-08-12T19:12:40"
++                    "value": "2019-08-12T15:12:40-04:00",
++                    "date": "2019-08-12 19:12:40 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/women-veterans-resource-fair-spotlights-va-and-community-care"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1565637160,
+-                "fieldIntroText": "Veterans Affairs (VA) Pittsburgh Healthcare System is connecting women Veterans with VA and non-VA services during a resource fair on Friday, Aug. 16, from 10 a.m. to 1 p.m. "
++                "fieldIntroText": "Veterans Affairs (VA) Pittsburgh Healthcare System is connecting women Veterans with VA and non-VA services during a resource fair on Friday, Aug. 16, from 10 a.m. to 1 p.m. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "842",
+                 "title": "Inflammation and Sepsis Survivors",
+                 "fieldReleaseDate": {
+-                    "value": "2019-08-07T19:18:55"
++                    "value": "2019-08-07T15:18:55-04:00",
++                    "date": "2019-08-07 19:18:55 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/inflammation-and-sepsis-survivors"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1565205535,
+-                "fieldIntroText": "Persistent Inflammation After Hospital Discharge Linked to Higher Mortality and Readmission in Sepsis Survivors"
++                "fieldIntroText": "Persistent Inflammation After Hospital Discharge Linked to Higher Mortality and Readmission in Sepsis Survivors",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "395",
+                 "title": "Washington County VA Outpatient Clinic to move to larger space",
+                 "fieldReleaseDate": {
+-                    "value": "2019-03-12T19:00:00"
++                    "value": "2019-03-12T15:00:00-04:00",
++                    "date": "2019-03-12 19:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/washington-county-va-outpatient-clinic-to-move-to-larger"
+                 },
+-                "uid": {
+-                    "targetId": 86,
+-                    "entity": {
+-                        "name": "Howard.Brande@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1557862755,
+-                "fieldIntroText": "The Washington County VA Outpatient Clinic will move to its new, larger space in Crossroads Center, 95 West Beau\r\nSt, Suite 200, Washington, PA on April 1. "
++                "fieldIntroText": "The Washington County VA Outpatient Clinic will move to its new, larger space in Crossroads Center, 95 West Beau\r\nSt, Suite 200, Washington, PA on April 1. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "396",
+                 "title": "Belmont County Veterans getting larger, more modern VA Outpatient Clinic",
+                 "fieldReleaseDate": {
+-                    "value": "2019-02-01T20:00:00"
++                    "value": "2019-02-01T15:00:00-05:00",
++                    "date": "2019-02-01 20:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/belmont-county-veterans-getting-larger-more-modern-va"
+                 },
+-                "uid": {
+-                    "targetId": 86,
+-                    "entity": {
+-                        "name": "Howard.Brande@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1557863381,
+-                "fieldIntroText": "The Belmont County VA Outpatient Clinic will move to its new, larger space in in the Ohio Valley Mall,\r\n67800 Mall Ring Road, Suite 215, St. Clairsville, Ohio 43950 on March 25. "
++                "fieldIntroText": "The Belmont County VA Outpatient Clinic will move to its new, larger space in in the Ohio Valley Mall,\r\n67800 Mall Ring Road, Suite 215, St. Clairsville, Ohio 43950 on March 25. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "845",
+                 "title": "Fayette County Veterans Getting Larger, More Modern VA Outpatient Clinic",
+                 "fieldReleaseDate": {
+-                    "value": "2018-11-26T20:57:06"
++                    "value": "2018-11-26T15:57:06-05:00",
++                    "date": "2018-11-26 20:57:06 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/fayette-county-veterans-getting-larger-more-modern-va"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1567540626,
+-                "fieldIntroText": "The Fayette County VA Outpatient Clinic will move to its new, larger space in the Fayette Plaza at 627 Pittsburgh Road, Suite 2, Uniontown, PA, on Dec. 3."
++                "fieldIntroText": "The Fayette County VA Outpatient Clinic will move to its new, larger space in the Fayette Plaza at 627 Pittsburgh Road, Suite 2, Uniontown, PA, on Dec. 3.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "846",
+                 "title": "VA Pittsburgh Announces Outstanding Physicians for 2018",
+                 "fieldReleaseDate": {
+-                    "value": "2018-05-14T19:59:10"
++                    "value": "2018-05-14T15:59:10-04:00",
++                    "date": "2018-05-14 19:59:10 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-announces-outstanding-physicians-for-2018-0"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1567540750,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System recognized an oncologist and an internist as Outstanding Physicians of the Year for 2018. Oncologist Dr. Sandra Blakowski and internist Dr. Jo-Anne Suffoletto have more than 40 years’ combined service caring for Veterans in western Pennsylvania. "
++                "fieldIntroText": "VA Pittsburgh Healthcare System recognized an oncologist and an internist as Outstanding Physicians of the Year for 2018. Oncologist Dr. Sandra Blakowski and internist Dr. Jo-Anne Suffoletto have more than 40 years’ combined service caring for Veterans in western Pennsylvania. ",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "401",
+                 "title": "VA Pittsburgh study on dual use of health systems nets best research paper",
+                 "fieldReleaseDate": {
+-                    "value": "2018-01-28T15:00:00"
++                    "value": "2018-01-28T10:00:00-05:00",
++                    "date": "2018-01-28 15:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-study-on-dual-use-of-health-systems-nets-best"
+                 },
+-                "uid": {
+-                    "targetId": 86,
+-                    "entity": {
+-                        "name": "Howard.Brande@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1557931371,
+-                "fieldIntroText": "VA’s Health Services Research and Development arm named VA Pittsburgh Healthcare System researcher Joshua Thorpe’s study “Dual Health Care System Use and High-Risk Prescribing in Patients with Dementia” as one of two of the best research papers of 2017."
++                "fieldIntroText": "VA’s Health Services Research and Development arm named VA Pittsburgh Healthcare System researcher Joshua Thorpe’s study “Dual Health Care System Use and High-Risk Prescribing in Patients with Dementia” as one of two of the best research papers of 2017.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "848",
+                 "title": "VA Research Prompts Changes to Angiograms for All Patients at Risk for Kidney Injury",
+                 "fieldReleaseDate": {
+-                    "value": "2017-11-16T21:02:04"
++                    "value": "2017-11-16T16:02:04-05:00",
++                    "date": "2017-11-16 21:02:04 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-research-prompts-changes-to-angiograms-for-all-patients-0"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1567540923,
+-                "fieldIntroText": "Research presented to members of the American Heart Association Sunday by VA Pittsburgh Healthcare System nephrologist Steven Weisbord, M.D., will change the way doctors perform angiograms for patients at risk for kidney injury."
++                "fieldIntroText": "Research presented to members of the American Heart Association Sunday by VA Pittsburgh Healthcare System nephrologist Steven Weisbord, M.D., will change the way doctors perform angiograms for patients at risk for kidney injury.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "850",
+                 "title": "VA Celebrates Veterans Day Every Day in November",
+                 "fieldReleaseDate": {
+-                    "value": "2017-10-31T20:03:15"
++                    "value": "2017-10-31T16:03:15-04:00",
++                    "date": "2017-10-31 20:03:15 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-celebrates-veterans-day-every-day-in-november-0"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1567540995,
+-                "fieldIntroText": "In recognition of Veterans Day 2017, VA Pittsburgh Healthcare System (VAPHS) will host or participate in events to honor veterans through November, starting with a ceremonial flag raising on Nov. 1 and culminating with a resource fair later in the month."
++                "fieldIntroText": "In recognition of Veterans Day 2017, VA Pittsburgh Healthcare System (VAPHS) will host or participate in events to honor veterans through November, starting with a ceremonial flag raising on Nov. 1 and culminating with a resource fair later in the month.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "851",
+                 "title": "Partnership for Public Service Honors VAPHS/Pitt Researcher with ‘Oscar’ of Government Service",
+                 "fieldReleaseDate": {
+-                    "value": "2017-09-22T20:07:03"
++                    "value": "2017-09-22T16:07:03-04:00",
++                    "date": "2017-09-22 20:07:03 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/partnership-for-public-service-honors-vaphspitt-researcher-0"
+                 },
+-                "uid": {
+-                    "targetId": 65,
+-                    "entity": {
+-                        "name": "Jeffrey.Brauer@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1567541223,
+-                "fieldIntroText": "The Partnership for Public Service will honor Rory Cooper, Ph.D., research scientist at VA Pittsburgh Healthcare System and professor at the University of Pittsburgh, with a Samuel J. Heyman Service to America Medal (Sammie) on Sept. 27."
++                "fieldIntroText": "The Partnership for Public Service will honor Rory Cooper, Ph.D., research scientist at VA Pittsburgh Healthcare System and professor at the University of Pittsburgh, with a Samuel J. Heyman Service to America Medal (Sammie) on Sept. 27.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2337",
+                 "title": "VA Pittsburgh Receives National Award for Achievements in Sustainability",
+                 "fieldReleaseDate": {
+-                    "value": "2017-05-18T12:00:00"
++                    "value": "2017-05-18T08:00:00-04:00",
++                    "date": "2017-05-18 12:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-receives-national-award-for-achievements-in"
+                 },
+-                "uid": {
+-                    "targetId": 31,
+-                    "entity": {
+-                        "name": "louis.scavnicky@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1573048026,
+-                "fieldIntroText": "In recognition of its successful programs to reduce its environmental impact, VA Pittsburgh Healthcare System was named an honoree in Practice Greenhealth's 2017 Partner for Change and Emerald awards."
++                "fieldIntroText": "In recognition of its successful programs to reduce its environmental impact, VA Pittsburgh Healthcare System was named an honoree in Practice Greenhealth's 2017 Partner for Change and Emerald awards.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "406",
+                 "title": "Lower medication copays now in effect for Veterans",
+                 "fieldReleaseDate": {
+-                    "value": "2017-02-28T16:00:00"
++                    "value": "2017-02-28T11:00:00-05:00",
++                    "date": "2017-02-28 16:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/lower-medication-copays-now-in-effect-for-veterans"
+                 },
+-                "uid": {
+-                    "targetId": 86,
+-                    "entity": {
+-                        "name": "Howard.Brande@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1557935298,
+-                "fieldIntroText": "Veterans using VA Pittsburgh Healthcare System’s outpatient pharmacy who have copays for their medication will most likely see a reduction in monthly and annual costs."
++                "fieldIntroText": "Veterans using VA Pittsburgh Healthcare System’s outpatient pharmacy who have copays for their medication will most likely see a reduction in monthly and annual costs.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "408",
+                 "title": "VA Pittsburgh Healthcare System issues water restrictions at University Drive location",
+                 "fieldReleaseDate": {
+-                    "value": "2017-01-28T16:00:00"
++                    "value": "2017-01-28T11:00:00-05:00",
++                    "date": "2017-01-28 16:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-healthcare-system-issues-water-restrictions-at"
+                 },
+-                "uid": {
+-                    "targetId": 86,
+-                    "entity": {
+-                        "name": "Howard.Brande@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1557935608,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System operates a comprehensive legionella prevention, detection and remediation program. Over the last month, during routine water testing we observed an unusual increase in water samples returning positive for legionella bacteria."
++                "fieldIntroText": "VA Pittsburgh Healthcare System operates a comprehensive legionella prevention, detection and remediation program. Over the last month, during routine water testing we observed an unusual increase in water samples returning positive for legionella bacteria.",
++                "entityPublished": true
+             },
+             {
+                 "entityId": "2338",
+                 "title": "VA Pittsburgh Healthcare System Issues Water Restrictions at University Drive Location",
+                 "fieldReleaseDate": {
+-                    "value": "2017-01-28T13:00:00"
++                    "value": "2017-01-28T08:00:00-05:00",
++                    "date": "2017-01-28 13:00:00 UTC"
+                 },
+                 "entityUrl": {
++                    "breadcrumb": [
++                        {
++                            "url": {
++                                "path": "/",
++                                "routed": true
++                            },
++                            "text": "Home"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care",
++                                "routed": true
++                            },
++                            "text": "VA Pittsburgh health care"
++                        },
++                        {
++                            "url": {
++                                "path": "/pittsburgh-health-care/news-releases",
++                                "routed": true
++                            },
++                            "text": "News releases"
++                        }
++                    ],
+                     "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-healthcare-system-issues-water-restrictions-0"
+                 },
+-                "uid": {
+-                    "targetId": 31,
+-                    "entity": {
+-                        "name": "louis.scavnicky@va.gov",
+-                        "timezone": null
+-                    }
+-                },
+                 "promote": false,
+                 "created": 1573049105,
+-                "fieldIntroText": "VA Pittsburgh Healthcare System operates a comprehensive legionella prevention, detection and remediation program. Over the last month, during routine water testing we observed an unusual increase in water samples returning positive for legionella bacteria."
++                "fieldIntroText": "VA Pittsburgh Healthcare System operates a comprehensive legionella prevention, detection and remediation program. Over the last month, during routine water testing we observed an unusual increase in water samples returning positive for legionella bacteria.",
++                "entityPublished": true
+             }
+         ]
+     },
+@@ -4458,201 +5496,381 @@ if (module) {
+             "entityId": "15073",
+             "title": "VA/Pitt Study Shows Telehealth Effective, Preferred for Veterans’ Wheelchair Design and Fit",
+             "fieldReleaseDate": {
+-                "value": "2020-12-22T16:08:39"
++                "value": "2020-12-22T11:08:39-05:00",
++                "date": "2020-12-22 16:08:39 UTC"
+             },
+             "entityUrl": {
++                "breadcrumb": [
++                    {
++                        "url": {
++                            "path": "/",
++                            "routed": true
++                        },
++                        "text": "Home"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care",
++                            "routed": true
++                        },
++                        "text": "VA Pittsburgh health care"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care/news-releases",
++                            "routed": true
++                        },
++                        "text": "News releases"
++                    }
++                ],
+                 "path": "/pittsburgh-health-care/news-releases/vapitt-study-shows-telehealth-effective-preferred-for-veterans"
+             },
+-            "uid": {
+-                "targetId": 34,
+-                "entity": {
+-                    "name": "Ryan.Stubblebine@va.gov",
+-                    "timezone": null
+-                }
+-            },
+             "promote": false,
+             "created": 1608653318,
+-            "fieldIntroText": "Two recent studies published in the International Journal of Telerehabilitation show that telehealth can be effective in providing Complex Rehabilitation Technology (CRT) to Veterans, including custom-designed and custom-fitted manual and power wheelchairs."
++            "fieldIntroText": "Two recent studies published in the International Journal of Telerehabilitation show that telehealth can be effective in providing Complex Rehabilitation Technology (CRT) to Veterans, including custom-designed and custom-fitted manual and power wheelchairs.",
++            "entityPublished": true
+         },
+         {
+             "entityId": "8139",
+             "title": "VA Pittsburgh Physician receives 2020 David M. Worthen Rising Star Award",
+             "fieldReleaseDate": {
+-                "value": "2020-10-07T10:10:46"
++                "value": "2020-10-07T06:10:46-04:00",
++                "date": "2020-10-07 10:10:46 UTC"
+             },
+             "entityUrl": {
++                "breadcrumb": [
++                    {
++                        "url": {
++                            "path": "/",
++                            "routed": true
++                        },
++                        "text": "Home"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care",
++                            "routed": true
++                        },
++                        "text": "VA Pittsburgh health care"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care/news-releases",
++                            "routed": true
++                        },
++                        "text": "News releases"
++                    }
++                ],
+                 "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-physician-receives-2020-david-m-worthen-rising"
+             },
+-            "uid": {
+-                "targetId": 34,
+-                "entity": {
+-                    "name": "Ryan.Stubblebine@va.gov",
+-                    "timezone": null
+-                }
+-            },
+             "promote": false,
+             "created": 1602065446,
+-            "fieldIntroText": "Dr. Deborah DiNardo, director of Women’s Health and an internist at VA Pittsburgh Healthcare System, received the 2020 Worthen Rising Star Award, recognizing her as an early career champion of health professions trainee education. "
++            "fieldIntroText": "Dr. Deborah DiNardo, director of Women’s Health and an internist at VA Pittsburgh Healthcare System, received the 2020 Worthen Rising Star Award, recognizing her as an early career champion of health professions trainee education. ",
++            "entityPublished": true
+         },
+         {
+             "entityId": "7640",
+             "title": "VA Pittsburgh named ‘LGBTQ Healthcare Equality Leader’ for 8th year",
+             "fieldReleaseDate": {
+-                "value": "2020-09-14T11:40:46"
++                "value": "2020-09-14T07:40:46-04:00",
++                "date": "2020-09-14 11:40:46 UTC"
+             },
+             "entityUrl": {
++                "breadcrumb": [
++                    {
++                        "url": {
++                            "path": "/",
++                            "routed": true
++                        },
++                        "text": "Home"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care",
++                            "routed": true
++                        },
++                        "text": "VA Pittsburgh health care"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care/news-releases",
++                            "routed": true
++                        },
++                        "text": "News releases"
++                    }
++                ],
+                 "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-named-lgbtq-healthcare-equality-leader-for-8th"
+             },
+-            "uid": {
+-                "targetId": 34,
+-                "entity": {
+-                    "name": "Ryan.Stubblebine@va.gov",
+-                    "timezone": null
+-                }
+-            },
+             "promote": false,
+             "created": 1600083646,
+-            "fieldIntroText": "VA Pittsburgh Healthcare System was named a 2020 “LGBTQ Healthcare Equality Leader” by the Human Rights Campaign Foundation (HRC). The designation is the eighth time in as many years and is listed in the 13th edition of the Healthcare Equality Index (HEI). "
++            "fieldIntroText": "VA Pittsburgh Healthcare System was named a 2020 “LGBTQ Healthcare Equality Leader” by the Human Rights Campaign Foundation (HRC). The designation is the eighth time in as many years and is listed in the 13th edition of the Healthcare Equality Index (HEI). ",
++            "entityPublished": true
+         },
+         {
+             "entityId": "6790",
+             "title": "VA Pittsburgh Healthcare System surpasses 32,000 telehealth encounters in 2020",
+             "fieldReleaseDate": {
+-                "value": "2020-07-31T16:20:30"
++                "value": "2020-07-31T12:20:30-04:00",
++                "date": "2020-07-31 16:20:30 UTC"
+             },
+             "entityUrl": {
++                "breadcrumb": [
++                    {
++                        "url": {
++                            "path": "/",
++                            "routed": true
++                        },
++                        "text": "Home"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care",
++                            "routed": true
++                        },
++                        "text": "VA Pittsburgh health care"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care/news-releases",
++                            "routed": true
++                        },
++                        "text": "News releases"
++                    }
++                ],
+                 "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-healthcare-system-surpasses-32000-telehealth"
+             },
+-            "uid": {
+-                "targetId": 34,
+-                "entity": {
+-                    "name": "Ryan.Stubblebine@va.gov",
+-                    "timezone": null
+-                }
+-            },
+             "promote": false,
+             "created": 1596212429,
+-            "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) has conducted more than 32,000 telehealth encounters for over 16,000 veterans throughout western Pennsylvania and parts of Ohio and West Virginia so far this fiscal year. "
++            "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) has conducted more than 32,000 telehealth encounters for over 16,000 veterans throughout western Pennsylvania and parts of Ohio and West Virginia so far this fiscal year. ",
++            "entityPublished": true
+         },
+         {
+             "entityId": "5680",
+             "title": "Moving Forward: Safe Care is Our Mission",
+             "fieldReleaseDate": {
+-                "value": "2020-06-08T16:13:54"
++                "value": "2020-06-08T12:13:54-04:00",
++                "date": "2020-06-08 16:13:54 UTC"
+             },
+             "entityUrl": {
++                "breadcrumb": [
++                    {
++                        "url": {
++                            "path": "/",
++                            "routed": true
++                        },
++                        "text": "Home"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care",
++                            "routed": true
++                        },
++                        "text": "VA Pittsburgh health care"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care/news-releases",
++                            "routed": true
++                        },
++                        "text": "News releases"
++                    }
++                ],
+                 "path": "/pittsburgh-health-care/news-releases/moving-forward-safe-care-is-our-mission"
+             },
+-            "uid": {
+-                "targetId": 33,
+-                "entity": {
+-                    "name": "Kimberly.Graham3@va.gov",
+-                    "timezone": null
+-                }
+-            },
+             "promote": false,
+             "created": 1591632834,
+-            "fieldIntroText": "Safe care is our mission. Your safety and the safety of our employees is our top priority during the COVID-19 pandemic. We are working to restore services safely at our facilities based on federal, state and local guidance."
++            "fieldIntroText": "Safe care is our mission. Your safety and the safety of our employees is our top priority during the COVID-19 pandemic. We are working to restore services safely at our facilities based on federal, state and local guidance.",
++            "entityPublished": true
+         },
+         {
+             "entityId": "5102",
+             "title": "VA Pittsburgh Creates First VA Dialysis Program in a Long-Term Care Facility",
+             "fieldReleaseDate": {
+-                "value": "2020-04-27T10:43:38"
++                "value": "2020-04-27T06:43:38-04:00",
++                "date": "2020-04-27 10:43:38 UTC"
+             },
+             "entityUrl": {
++                "breadcrumb": [
++                    {
++                        "url": {
++                            "path": "/",
++                            "routed": true
++                        },
++                        "text": "Home"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care",
++                            "routed": true
++                        },
++                        "text": "VA Pittsburgh health care"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care/news-releases",
++                            "routed": true
++                        },
++                        "text": "News releases"
++                    }
++                ],
+                 "path": "/pittsburgh-health-care/news-releases/va-pittsburgh-creates-first-va-dialysis-program-in-a-long-term"
+             },
+-            "uid": {
+-                "targetId": 34,
+-                "entity": {
+-                    "name": "Ryan.Stubblebine@va.gov",
+-                    "timezone": null
+-                }
+-            },
+             "promote": false,
+             "created": 1587984218,
+-            "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) in April created a dialysis program at its Community Living Center (CLC) to safeguard veterans against exposure to the coronavirus. "
++            "fieldIntroText": "VA Pittsburgh Healthcare System (VAPHS) in April created a dialysis program at its Community Living Center (CLC) to safeguard veterans against exposure to the coronavirus. ",
++            "entityPublished": true
+         },
+         {
+             "entityId": "3015",
+             "title": "Pittsburgh VA Implements More Measures  to Prevent COVID-19 Infection",
+             "fieldReleaseDate": {
+-                "value": "2020-03-17T17:06:18"
++                "value": "2020-03-17T13:06:18-04:00",
++                "date": "2020-03-17 17:06:18 UTC"
+             },
+             "entityUrl": {
++                "breadcrumb": [
++                    {
++                        "url": {
++                            "path": "/",
++                            "routed": true
++                        },
++                        "text": "Home"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care",
++                            "routed": true
++                        },
++                        "text": "VA Pittsburgh health care"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care/news-releases",
++                            "routed": true
++                        },
++                        "text": "News releases"
++                    }
++                ],
+                 "path": "/pittsburgh-health-care/news-releases/pittsburgh-va-implements-more-measures-to-prevent-covid-19"
+             },
+-            "uid": {
+-                "targetId": 34,
+-                "entity": {
+-                    "name": "Ryan.Stubblebine@va.gov",
+-                    "timezone": null
+-                }
+-            },
+             "promote": false,
+             "created": 1584464777,
+-            "fieldIntroText": "As per guidance from the Centers for Disease Control, VA Pittsburgh Healthcare System (VAPHS) is taking special precautions to prevent the spread of COVID-19."
++            "fieldIntroText": "As per guidance from the Centers for Disease Control, VA Pittsburgh Healthcare System (VAPHS) is taking special precautions to prevent the spread of COVID-19.",
++            "entityPublished": true
+         },
+         {
+             "entityId": "3006",
+             "title": "Pittsburgh Veterans’ Hospitals Implement Further Measures to Protect Veterans and Staff from COVID-19",
+             "fieldReleaseDate": {
+-                "value": "2020-03-13T14:29:35"
++                "value": "2020-03-13T10:29:35-04:00",
++                "date": "2020-03-13 14:29:35 UTC"
+             },
+             "entityUrl": {
++                "breadcrumb": [
++                    {
++                        "url": {
++                            "path": "/",
++                            "routed": true
++                        },
++                        "text": "Home"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care",
++                            "routed": true
++                        },
++                        "text": "VA Pittsburgh health care"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care/news-releases",
++                            "routed": true
++                        },
++                        "text": "News releases"
++                    }
++                ],
+                 "path": "/pittsburgh-health-care/news-releases/pittsburgh-veterans-hospitals-implement-further-measures-to"
+             },
+-            "uid": {
+-                "targetId": 34,
+-                "entity": {
+-                    "name": "Ryan.Stubblebine@va.gov",
+-                    "timezone": null
+-                }
+-            },
+             "promote": false,
+             "created": 1584109774,
+-            "fieldIntroText": "While the Centers for Disease Control still considers COVID-19 to be a low threat to the general American public, VA Pittsburgh Healthcare System is paying special attention to it.  \r\n"
++            "fieldIntroText": "While the Centers for Disease Control still considers COVID-19 to be a low threat to the general American public, VA Pittsburgh Healthcare System is paying special attention to it.  \r\n",
++            "entityPublished": true
+         },
+         {
+             "entityId": "2946",
+             "title": "Pittsburgh Veterans' Hospitals Implement Measures to Protect Veterans and Staff from COVID-19",
+             "fieldReleaseDate": {
+-                "value": "2020-03-09T17:01:51"
++                "value": "2020-03-09T13:01:51-04:00",
++                "date": "2020-03-09 17:01:51 UTC"
+             },
+             "entityUrl": {
++                "breadcrumb": [
++                    {
++                        "url": {
++                            "path": "/",
++                            "routed": true
++                        },
++                        "text": "Home"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care",
++                            "routed": true
++                        },
++                        "text": "VA Pittsburgh health care"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care/news-releases",
++                            "routed": true
++                        },
++                        "text": "News releases"
++                    }
++                ],
+                 "path": "/pittsburgh-health-care/news-releases/pittsburgh-veterans-hospitals-implement-measures-to-protect"
+             },
+-            "uid": {
+-                "targetId": 34,
+-                "entity": {
+-                    "name": "Ryan.Stubblebine@va.gov",
+-                    "timezone": null
+-                }
+-            },
+             "promote": false,
+             "created": 1583773311,
+-            "fieldIntroText": "The Department of Veterans Affairs (VA) continues to work closely with the Centers for Disease Control and Prevention (CDC) and other federal agencies to monitor and respond to the current outbreak of Novel Coronavirus (COVID-19) in the United States."
++            "fieldIntroText": "The Department of Veterans Affairs (VA) continues to work closely with the Centers for Disease Control and Prevention (CDC) and other federal agencies to monitor and respond to the current outbreak of Novel Coronavirus (COVID-19) in the United States.",
++            "entityPublished": true
+         },
+         {
+             "entityId": "2924",
+             "title": "Help Limit the Spread of COVID-19 and other illnesses",
+             "fieldReleaseDate": {
+-                "value": "2020-03-09T12:07:50"
++                "value": "2020-03-09T08:07:50-04:00",
++                "date": "2020-03-09 12:07:50 UTC"
+             },
+             "entityUrl": {
++                "breadcrumb": [
++                    {
++                        "url": {
++                            "path": "/",
++                            "routed": true
++                        },
++                        "text": "Home"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care",
++                            "routed": true
++                        },
++                        "text": "VA Pittsburgh health care"
++                    },
++                    {
++                        "url": {
++                            "path": "/pittsburgh-health-care/news-releases",
++                            "routed": true
++                        },
++                        "text": "News releases"
++                    }
++                ],
+                 "path": "/pittsburgh-health-care/news-releases/help-limit-the-spread-of-covid-19-and-other-illnesses"
+             },
+-            "uid": {
+-                "targetId": 34,
+-                "entity": {
+-                    "name": "Ryan.Stubblebine@va.gov",
+-                    "timezone": null
+-                }
+-            },
+             "promote": false,
+             "created": 1583755670,
+-            "fieldIntroText": "In an effort to reduce the impact of COVID-19 and other illnesses, VA is asking patients, staff and visitors to help slow the spread of infection. Effective immediately, visitation to the VA Pittsburgh Healthcare System Community Living Center (CLC) are limited. "
++            "fieldIntroText": "In an effort to reduce the impact of COVID-19 and other illnesses, VA is asking patients, staff and visitors to help slow the spread of infection. Effective immediately, visitation to the VA Pittsburgh Healthcare System Community Living Center (CLC) are limited. ",
++            "entityPublished": true
+         }
+     ],
+     "paginator": {
