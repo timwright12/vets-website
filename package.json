@@ -19,6 +19,7 @@
     "cms:diff": "./script/cms/diff.sh",
     "cms:find-node": "./script/cms/find_node.sh",
     "debug:webpack:prod": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 node --inspect --inspect-brk ./node_modules/webpack/bin/webpack.js --config config/webpack.config.js --env.buildtype vagovprod",
+    "diff-transformer-output": "diff -ur build/graphql/pittsburgh-health-care/news-releases/index.html build/cms-export/pittsburgh-health-care/news-releases/index.html | delta",
     "cy:open": "cypress open --config-file config/cypress.json",
     "cy:run": "cypress run --config-file config/cypress.json",
     "cy:test:circle": "./script/run-cypress-tests-circle.sh",
