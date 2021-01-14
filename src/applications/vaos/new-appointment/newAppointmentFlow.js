@@ -1,13 +1,20 @@
 import {
+  selectUseFlatFacilityPage,
+  selectUseProviderSelection,
+} from '../redux/selectors';
+import {
+  getChosenFacilityInfo,
+  getEligibilityStatus,
   getFormData,
   getNewAppointment,
-  getEligibilityStatus,
   getTypeOfCare,
-  vaosFlatFacilityPage,
-} from '../utils/selectors';
+} from './redux/selectors';
 import { FACILITY_TYPES, FLOW_TYPES, TYPES_OF_CARE } from '../utils/constants';
+import { getSiteIdFromFakeFHIRId } from '../services/location';
 import {
-  showTypeOfCareUnavailableModal,
+  checkEligibility,
+  showEligibilityModal,
+  showPodiatryAppointmentUnavailableModal,
   startDirectScheduleFlow,
   startRequestAppointmentFlow,
   updateFacilityType,
@@ -18,6 +25,8 @@ const AUDIOLOGY = '203';
 const SLEEP_CARE = 'SLEEP';
 const EYE_CARE = 'EYE';
 const PODIATRY = 'tbd-podiatry';
+const VA_FACILITY_V1_KEY = 'vaFacility';
+const VA_FACILITY_V2_KEY = 'vaFacilityV2';
 
 function isCCAudiology(state) {
   return (
@@ -50,7 +59,46 @@ function isPodiatry(state) {
 }
 
 function getFacilityPageKey(state) {
-  return vaosFlatFacilityPage(state) ? 'vaFacilityV2' : 'vaFacility';
+  return selectUseFlatFacilityPage(state)
+    ? VA_FACILITY_V2_KEY
+    : VA_FACILITY_V1_KEY;
+}
+
+async function vaFacilityNext(state, dispatch) {
+  let eligibility = getEligibilityStatus(state);
+
+  if (selectUseFlatFacilityPage(state)) {
+    // Fetch eligibility if we haven't already
+    if (eligibility.direct === null && eligibility.request === null) {
+      const location = getChosenFacilityInfo(state);
+      const siteId = getSiteIdFromFakeFHIRId(location.id);
+
+      eligibility = await dispatch(
+        checkEligibility({
+          location,
+          siteId,
+          showModal: true,
+        }),
+      );
+    }
+
+    if (!eligibility.direct && !eligibility.request) {
+      dispatch(showEligibilityModal());
+      return VA_FACILITY_V2_KEY;
+    }
+  }
+
+  if (eligibility.direct) {
+    dispatch(startDirectScheduleFlow());
+    return 'clinicChoice';
+  }
+
+  if (eligibility.request) {
+    dispatch(startRequestAppointmentFlow());
+    return 'requestDateTime';
+  }
+
+  throw new Error('Veteran not eligible for direct scheduling or requests');
 }
 
 export default {
@@ -83,7 +131,7 @@ export default {
           return 'typeOfFacility';
         } else if (isPodiatry(state)) {
           // If no CC enabled systems and toc is podiatry, show modal
-          dispatch(showTypeOfCareUnavailableModal());
+          dispatch(showPodiatryAppointmentUnavailableModal());
           return 'typeOfCare';
         }
       }
@@ -138,28 +186,25 @@ export default {
   },
   ccPreferences: {
     url: '/new-appointment/community-care-preferences',
+    next(state) {
+      if (selectUseProviderSelection(state)) {
+        return 'ccLanguage';
+      }
+
+      return 'reasonForAppointment';
+    },
+  },
+  ccLanguage: {
+    url: '/new-appointment/community-care-language',
     next: 'reasonForAppointment',
   },
   vaFacility: {
     url: '/new-appointment/va-facility',
-    async next(state, dispatch) {
-      const eligibilityStatus = getEligibilityStatus(state);
-
-      if (eligibilityStatus.direct) {
-        dispatch(startDirectScheduleFlow());
-        return 'clinicChoice';
-      }
-
-      if (eligibilityStatus.request) {
-        dispatch(startRequestAppointmentFlow());
-        return 'requestDateTime';
-      }
-
-      throw new Error('Veteran not eligible for direct scheduling or requests');
-    },
+    next: vaFacilityNext,
   },
   vaFacilityV2: {
     url: '/new-appointment/va-facility-2',
+    next: vaFacilityNext,
   },
   clinicChoice: {
     url: '/new-appointment/clinics',

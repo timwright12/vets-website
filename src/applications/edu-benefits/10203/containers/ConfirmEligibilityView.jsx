@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { isChapter33 } from '../helpers';
 import captureEvents from '../analytics-functions';
+import { ExitApplicationButton } from '../components/ExitApplicationButton';
 
 export class ConfirmEligibilityView extends React.Component {
   onChange = property => {
@@ -71,7 +72,8 @@ export class ConfirmEligibilityView extends React.Component {
   };
 
   renderChecks = () => (
-    <div role="alert">
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+    <div tabIndex="0">
       <div className="vads-u-margin-top--neg2p5">
         <h4>Based on your responses, you may not be eligible</h4>
       </div>
@@ -160,13 +162,10 @@ export class ConfirmEligibilityView extends React.Component {
 
         <div>
           <div className="vads-u-margin-top--neg2">
-            <a
-              className={'usa-button-primary va-button-primary'}
-              href="/education/"
-              onClick={captureEvents.exitApplication}
-            >
-              Exit application
-            </a>
+            <ExitApplicationButton
+              formId={this.props.formId}
+              isLoggedIn={this.props.isLoggedIn}
+            />
           </div>
 
           <div>
@@ -197,6 +196,8 @@ const mapStateToProps = (state, ownProps) => {
       errors.length > 0 &&
       ownProps?.formContext?.submitted &&
       confirmEligibility === undefined,
+    formId: state.form.formId,
+    isLoggedIn: state.user.login.currentlyLoggedIn,
   };
 };
 

@@ -61,16 +61,26 @@ function unescapeUnicode(string) {
 }
 
 /**
- * A very specific helper function that expects to receive an
- * array with one item which is an object with a single `value` property
+ * Extracts a nested string from specific types of export data.
  *
+ * @param {Array} arr - An array with one item, which is an object with
+ *                      either a single `value` property or the properties
+ *                      `value`, `format`, and `processed`.
+ * @return {string} The value of `processed` if it exists or `value` otherwise.
  */
 function getDrupalValue(arr) {
-  if (arr.length === 0) return null;
+  if (!arr || arr.length === 0) return null;
+  if (arr.length === 1 && arr[0].processed === '') return null;
   if (arr.length === 1)
-    return typeof arr[0].value === 'string'
-      ? unescapeUnicode(arr[0].value)
-      : arr[0].value;
+    if (arr[0].processed)
+      return typeof arr[0].processed === 'string'
+        ? unescapeUnicode(arr[0].processed)
+        : arr[0].processed;
+    else
+      return typeof arr[0].value === 'string'
+        ? unescapeUnicode(arr[0].value)
+        : arr[0].value;
+
   // eslint-disable-next-line no-console
   console.warn(`Unexpected argument: ${arr.toString()}`);
   return null;
@@ -94,11 +104,18 @@ function getImageCrop(obj, imageStyle = null) {
           .join(', ')}.`,
       );
     }
-    const url = `/img/styles/${image.machine}/${
-      imageObj.image.derivative.url
-    }`.replace('public:/', 'public');
+    const url = `/img/styles/${
+      image.machine
+    }/public${imageObj.image.derivative.url.replace('/img', '')}`;
     imageObj.image.url = url;
-    imageObj.image.derivative.url = url;
+    // Derivative urls have a full path starting with
+    // 'https://{buildtype}.cms.va.gov/sites/default/files/', so add that here.
+    // It doesn't matter what the build type is since it gets stripped out in convertDrupalFilesToLocal
+    // so just use prod here
+    imageObj.image.derivative.url = `https://prod.cms.va.gov/sites/default/files/${url.replace(
+      '/img/',
+      '',
+    )}`;
     imageObj.image.derivative.width = image.width;
     imageObj.image.derivative.height = image.height;
     return imageObj;
@@ -213,16 +230,24 @@ module.exports = {
       createMetaTag('MetaValue', 'description', metaTags.description),
       createMetaTag('MetaValue', 'twitter:title', metaTags.twitter_cards_title),
       createMetaTag('MetaValue', 'twitter:site', metaTags.twitter_cards_site),
+      createMetaTag('MetaValue', 'abstract', metaTags.abstract),
       createMetaTag('MetaLink', 'image_src', metaTags.image_src),
       createMetaTag('MetaProperty', 'og:title', metaTags.og_title),
+      createMetaTag('MetaValue', 'keywords', metaTags.keywords),
       createMetaTag('MetaProperty', 'og:description', metaTags.og_description),
+      createMetaTag('MetaValue', 'twitter:image', metaTags.twitter_cards_image),
+      createMetaTag(
+        'MetaValue',
+        'twitter:image:alt',
+        metaTags.twitter_cards_image_alt,
+      ),
+      createMetaTag('MetaProperty', 'og:image', metaTags.og_image_0),
       createMetaTag(
         'MetaProperty',
         'og:image:height',
         metaTags.og_image_height,
       ),
-      createMetaTag('MetaValue', 'twitter:image', metaTags.twitter_cards_image),
-      createMetaTag('MetaProperty', 'og:image', metaTags.og_image_0),
+      createMetaTag('MetaProperty', 'og:image:alt', metaTags.og_image_alt),
     ].filter(t => t.value);
   },
 
@@ -250,7 +275,7 @@ module.exports = {
    *                                     that we want to use
    * @return {Object} The new schema
    */
-  usePartialSchema(schema, properties) {
+  partialSchema(schema, properties) {
     // Some sanity checking before we start
     assert(
       schema.type === 'object' ||
@@ -363,5 +388,20 @@ module.exports = {
         .filter(filter || (() => true))
         .map(entity => assembleEntityTree(entity))
     );
+  },
+
+  /**
+   * Returns an object with a single key "entity" and value entity[key][0].
+   * This is a very common pattern.
+   * @param entity
+   * @param key
+   * @returns {{entity: *}}
+   */
+  entityObjectForKey(entity, key) {
+    return entity && entity[key]
+      ? {
+          entity: entity[key][0],
+        }
+      : null;
   },
 };

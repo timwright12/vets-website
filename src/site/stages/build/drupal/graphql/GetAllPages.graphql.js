@@ -5,6 +5,7 @@ const healthCareRegionPage = require('./healthCareRegionPage.graphql');
 const alertsQuery = require('./alerts.graphql');
 const allSideNavMachineNamesQuery = require('./navigation-fragments/allSideNavMachineNames.nav.graphql');
 const bannerAlertsQuery = require('./bannerAlerts.graphql');
+const basicLandingPage = require('./nodeBasicLandingPage.graphql');
 const benefitListingPage = require('./benefitListingPage.graphql');
 const bioPage = require('./bioPage.graphql');
 const checklistPage = require('./nodeChecklist.graphql');
@@ -32,6 +33,8 @@ const qaPage = require('./nodeQa.graphql');
 const sidebarQuery = require('./navigation-fragments/sidebar.nav.graphql');
 const stepByStepPage = require('./nodeStepByStep.graphql');
 const storyListingPage = require('./storyListingPage.graphql');
+const taxonomiesQuery = require('./taxonomy-fragments/GetTaxonomies.graphql');
+const supportResourcesDetailPage = require('./nodeSupportResourcesDetailPage.graphql');
 const vaFormPage = require('./vaFormPage.graphql');
 const vamcOperatingStatusAndAlerts = require('./vamcOperatingStatusAndAlerts.graphql');
 
@@ -83,6 +86,8 @@ const buildQuery = ({ useTomeSync }) => {
   ${mediaListImages}
   ${checklistPage}
   ${mediaListVideos}
+  ${supportResourcesDetailPage}
+  ${basicLandingPage}
 `;
 
   const todayQueryVar = useTomeSync ? '' : '$today: String!,';
@@ -90,7 +95,7 @@ const buildQuery = ({ useTomeSync }) => {
   const nodeQuery = useTomeSync
     ? ''
     : `
-    nodeQuery(limit: 2000, filter: {
+    nodeQuery(limit: 5000, filter: {
       conditions: [
         { field: "status", value: ["1"], enabled: $onlyPublishedContent }
       ]
@@ -121,6 +126,8 @@ const buildQuery = ({ useTomeSync }) => {
         ... nodeMediaListImages
         ... nodeChecklist
         ... nodeMediaListVideos
+        ... nodeSupportResourcesDetailPage
+        ... nodeBasicLandingPage
       }
     }`;
 
@@ -148,6 +155,7 @@ const buildQuery = ({ useTomeSync }) => {
         : ''
     }
     ${menuLinksQuery}
+    ${taxonomiesQuery}
   }
 `;
 

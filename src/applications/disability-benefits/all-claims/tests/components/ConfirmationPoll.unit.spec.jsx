@@ -1,13 +1,18 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { expect } from 'chai';
+import { Provider } from 'react-redux';
+import { combineReducers, createStore } from 'redux';
+
+import { commonReducer } from 'platform/startup/store';
+import reducers from '../../reducers';
 
 import {
   mockApiRequest,
   mockMultipleApiRequests,
 } from 'platform/testing/unit/helpers';
 
-import {
+import ConnectedConfirmationPoll, {
   ConfirmationPoll,
   selectAllDisabilityNames,
 } from '../../components/ConfirmationPoll';
@@ -49,12 +54,27 @@ const failureResponse = {
   },
 };
 
+const errorResponse = {
+  shouldResolve: true,
+  response: {
+    errors: [
+      {
+        title: 'error',
+        detail: 'some error',
+        code: '401',
+        status: 'some status',
+      },
+    ],
+  },
+};
+
 describe('ConfirmationPoll', () => {
   const defaultProps = {
     jobId: '12345',
     fullName: { first: 'asdf', last: 'fdsa' },
     disabilities: [],
     submittedAt: Date.now(),
+    areConfirmationEmailTogglesOn: false,
   };
 
   afterEach(() => {
@@ -100,10 +120,53 @@ describe('ConfirmationPoll', () => {
         fullName: defaultProps.fullName,
         disabilities: defaultProps.disabilities,
         submittedAt: defaultProps.submittedAt,
+        areConfirmationEmailTogglesOn:
+          defaultProps.areConfirmationEmailTogglesOn,
       });
       tree.unmount();
       done();
     }, 500);
+  });
+
+  it('should render long wait alert', done => {
+    mockMultipleApiRequests([
+      pendingResponse,
+      pendingResponse,
+      pendingResponse,
+      successResponse,
+    ]);
+
+    const form = mount(
+      <ConfirmationPoll {...defaultProps} pollRate={10} longWaitTime={10} />,
+    );
+    setTimeout(() => {
+      expect(global.fetch.callCount).to.equal(4);
+      const alert = form.find('LoadingIndicator');
+      expect(alert.text()).to.contain('longer than expected');
+      form.unmount();
+      done();
+    }, 50);
+  });
+
+  it('should ignore immediate api failures', done => {
+    mockMultipleApiRequests([
+      errorResponse,
+      pendingResponse,
+      pendingResponse,
+      successResponse,
+    ]);
+
+    const form = mount(
+      <ConfirmationPoll {...defaultProps} pollRate={10} delayFailure={20} />,
+    );
+    setTimeout(() => {
+      form.update();
+      expect(global.fetch.callCount).to.equal(4);
+      const confirmationPage = form.find('ConfirmationPage');
+      expect(confirmationPage.length).to.equal(1);
+      form.unmount();
+      done();
+    }, 50);
   });
 
   describe('selectAllDisabilityNames', () => {
@@ -210,6 +273,36 @@ describe('ConfirmationPoll', () => {
         newDisabilities[0].condition,
         newDisabilities[1].condition,
       ]);
+    });
+  });
+
+  describe('ConnectedConfirmationPoll', () => {
+    it('should return areConfirmationEmailTogglesOn as true when confirmationEmailFeature toggles on', () => {
+      mockApiRequest(successResponse.response);
+      const togglesOnState = {
+        featureToggles: {
+          /* eslint-disable camelcase */
+          form526_confirmation_email: true,
+          form526_confirmation_email_show_copy: true,
+        },
+      };
+      const commonStore = createStore(
+        combineReducers({ ...commonReducer, ...reducers }),
+        togglesOnState,
+      );
+      const connectedConfirmationPoll = shallow(
+        <Provider store={commonStore}>
+          <ConnectedConfirmationPoll {...defaultProps} pollRate={10} />
+        </Provider>,
+      );
+
+      expect(
+        connectedConfirmationPoll
+          .dive()
+          .find('ConfirmationPoll')
+          .props().areConfirmationEmailTogglesOn,
+      ).to.be.true;
+      connectedConfirmationPoll.unmount();
     });
   });
 });

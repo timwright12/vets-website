@@ -8,6 +8,7 @@ import {
   fillData,
   selectCheckbox,
   fillDate,
+  selectRadio,
 } from 'platform/testing/unit/schemaform-utils.jsx';
 
 import formConfig from '../../config/form.js';
@@ -16,7 +17,10 @@ describe('Coronavirus Research Volunteer Form', () => {
   const { schema, uiSchema } = formConfig.chapters.chapter1.pages.page1;
 
   const volunteerData = () => ({
-    diagnosed: false,
+    diagnosed: true,
+    DIAGNOSED_DETAILS: {
+      'DIAGNOSED_DETAILS::ANTIBODY_BLOOD_TEST': true,
+    },
     closeContactPositive: 'UNSURE',
     hospitalized: true,
     smokeOrVape: false,
@@ -26,7 +30,10 @@ describe('Coronavirus Research Volunteer Form', () => {
       'HEALTH_HISTORY::NONE_OF_ABOVE': false,
     },
     EMPLOYMENT_STATUS: { 'EMPLOYMENT_STATUS::STUDENT': true },
-    TRANSPORTATION: { 'TRANSPORTATION::NONE_OF_ABOVE': true },
+    TRANSPORTATION: {
+      'TRANSPORTATION::NONE_OF_ABOVE': false,
+      'TRANSPORTATION::CARPOOL_OR_VANPOOL': true,
+    },
     residentsInHome: 'ONE_TWO',
     closeContact: 'ZERO',
     veteranFullName: { first: 'testFName', last: 'testLName' },
@@ -35,7 +42,7 @@ describe('Coronavirus Research Volunteer Form', () => {
     zipCode: '99988',
     veteranDateOfBirth: '1980-09-24',
     VETERAN: { 'VETERAN::VETERAN': true, 'VETERAN::VA_EMPLOYEE': true },
-    GENDER: { 'GENDER::FEMALE': true, 'GENDER::NONE_OF_ABOVE': false },
+    GENDER: { 'GENDER::NON_BINARY': true, 'GENDER::NONE_OF_ABOVE': false },
     GENDER_SELF_IDENTIFY_DETAILS: 'This is a gender self description',
     RACE_ETHNICITY: { 'RACE_ETHNICITY::NONE_OF_ABOVE': true },
     consentAgreementAccepted: true,
@@ -50,7 +57,7 @@ describe('Coronavirus Research Volunteer Form', () => {
         uiSchema={uiSchema}
       />,
     );
-    expect(form.find('input').length).to.equal(71);
+    expect(form.find('input').length).to.equal(77);
     form.unmount();
   });
 
@@ -258,10 +265,9 @@ describe('Coronavirus Research Volunteer Form', () => {
     );
     selectCheckbox(
       form,
-      'root_TRANSPORTATION_TRANSPORTATION::NONE_OF_ABOVE',
+      'root_TRANSPORTATION_TRANSPORTATION::CARPOOL_OR_VANPOOL',
       false,
     );
-
     form.find('form').simulate('submit');
     expect(form.find('.usa-input-error').length).to.equal(1);
     expect(form.find('.input-error-date').length).to.equal(0);
@@ -301,7 +307,7 @@ describe('Coronavirus Research Volunteer Form', () => {
         uiSchema={uiSchema}
       />,
     );
-    selectCheckbox(form, 'root_GENDER_GENDER::FEMALE', false);
+    selectCheckbox(form, 'root_GENDER_GENDER::NON_BINARY', false);
 
     form.find('form').simulate('submit');
     expect(form.find('.usa-input-error').length).to.equal(1);
@@ -374,6 +380,85 @@ describe('Coronavirus Research Volunteer Form', () => {
       form.find('input#root_GENDER_SELF_IDENTIFY_DETAILS').length,
     ).to.equal(0);
     expect(form.find('.input-error-date').length).to.equal(0);
+    expect(onSubmit.called).to.be.true;
+    form.unmount();
+  });
+  it('should show Diagnosed Detail Checkboxes when Diagnosed response is Yes', () => {
+    const onSubmit = sinon.spy();
+    const form = mount(
+      <DefinitionTester
+        pagePerItemIndex={0}
+        schema={schema}
+        data={volunteerData()}
+        definitions={formConfig.defaultDefinitions}
+        onSubmit={onSubmit}
+        uiSchema={uiSchema}
+      />,
+    );
+    selectRadio(form, 'root_diagnosed', 'Y');
+
+    form.find('form').simulate('submit');
+    expect(
+      form.find(
+        'input[id="root_DIAGNOSED_DETAILS_DIAGNOSED_DETAILS::ANTIBODY_BLOOD_TEST"]',
+      ).length,
+    ).to.equal(1);
+    expect(
+      form.find(
+        'input[id="root_DIAGNOSED_DETAILS_DIAGNOSED_DETAILS::NASAL_SWAB_TEST_POSITIVE"]',
+      ).length,
+    ).to.equal(1);
+    expect(
+      form.find(
+        'input[id="root_DIAGNOSED_DETAILS_DIAGNOSED_DETAILS::SYMPTOMS_ONLY"]',
+      ).length,
+    ).to.equal(1);
+    expect(
+      form.find(
+        'input[id="root_DIAGNOSED_DETAILS_DIAGNOSED_DETAILS::DIFFERENT_METHOD"]',
+      ).length,
+    ).to.equal(1);
+    // expect(form.find('.input-error-date').length).to.equal(0);
+    expect(onSubmit.called).to.be.true;
+    form.unmount();
+  });
+
+  it('should Not show Diagnosed Detail Checkboxes when Diagnosed response is No', () => {
+    const onSubmit = sinon.spy();
+    const form = mount(
+      <DefinitionTester
+        pagePerItemIndex={0}
+        schema={schema}
+        data={volunteerData()}
+        definitions={formConfig.defaultDefinitions}
+        onSubmit={onSubmit}
+        uiSchema={uiSchema}
+      />,
+    );
+    selectRadio(form, 'root_diagnosed', 'N');
+
+    form.find('form').simulate('submit');
+    expect(
+      form.find(
+        'input[id="root_DIAGNOSED_DETAILS_DIAGNOSED_DETAILS::ANTIBODY_BLOOD_TEST"]',
+      ).length,
+    ).to.equal(0);
+    expect(
+      form.find(
+        'input[id="root_DIAGNOSED_DETAILS_DIAGNOSED_DETAILS::NASAL_SWAB_TEST_POSITIVE"]',
+      ).length,
+    ).to.equal(0);
+    expect(
+      form.find(
+        'input[id="root_DIAGNOSED_DETAILS_DIAGNOSED_DETAILS::SYMPTOMS_ONLY"]',
+      ).length,
+    ).to.equal(0);
+    expect(
+      form.find(
+        'input[id="root_DIAGNOSED_DETAILS_DIAGNOSED_DETAILS::DIFFERENT_METHOD"]',
+      ).length,
+    ).to.equal(0);
+    // expect(form.find('.input-error-date').length).to.equal(0);
     expect(onSubmit.called).to.be.true;
     form.unmount();
   });

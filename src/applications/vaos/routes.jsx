@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import asyncLoader from 'platform/utilities/ui/asyncLoader';
 import AppointmentsPage from './appointment-list/components/AppointmentsPage';
-import VAOSApp from './containers/VAOSApp';
+import VAOSApp from './components/VAOSApp';
 import ErrorBoundary from './components/ErrorBoundary';
 import { captureError } from './utils/error';
 import LoadingIndicator from '@department-of-veterans-affairs/formation-react/LoadingIndicator';
@@ -48,6 +48,17 @@ export default function createRoutesWithStore(store) {
                 .then(({ NewExpressCareRequest, reducer }) => {
                   store.injectReducer('expressCare', reducer);
                   return NewExpressCareRequest;
+                })
+                .catch(handleLoadError),
+            )}
+          />
+          <Route
+            path="/new-project-cheetah-booking"
+            component={asyncLoader(() =>
+              import(/* webpackChunkName: "project-cheetah" */ './project-cheetah')
+                .then(({ NewBooking, reducer }) => {
+                  store.injectReducer('projectCheetah', reducer);
+                  return NewBooking;
                 })
                 .catch(handleLoadError),
             )}

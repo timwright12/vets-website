@@ -1,5 +1,6 @@
 import React from 'react';
-import ErrorableRadioButtons from '@department-of-veterans-affairs/formation-react/ErrorableRadioButtons';
+import recordEvent from 'platform/monitoring/record-event';
+import RadioButtons from '@department-of-veterans-affairs/formation-react/RadioButtons';
 import { pageNames } from './pageList';
 
 const options = [
@@ -23,6 +24,12 @@ const options = [
 
 const StartPage = ({ setPageState, state = {} }) => {
   const handleValueChange = ({ value }) => {
+    recordEvent({
+      event: `howToWizard-formChange`,
+      'form-field-type': 'form-radio-buttons',
+      'form-field-label': 'Which of these best describes you?',
+      'form-field-value': value,
+    });
     switch (value) {
       case 'isVeteran':
       case 'isServiceMember':
@@ -38,7 +45,8 @@ const StartPage = ({ setPageState, state = {} }) => {
   };
 
   return (
-    <ErrorableRadioButtons
+    <RadioButtons
+      additionalFieldsetClass="vads-u-margin-top--1"
       name="claimant-relationship"
       label="Which of these best describes you?"
       id="claimant-relationship"

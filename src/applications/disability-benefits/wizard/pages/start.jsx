@@ -1,16 +1,16 @@
 import React from 'react';
-import ErrorableRadioButtons from '@department-of-veterans-affairs/formation-react/ErrorableRadioButtons';
+import RadioButtons from '@department-of-veterans-affairs/formation-react/RadioButtons';
 import { pageNames } from './pageList';
 
 const options = [
-  { value: pageNames.appeals, label: 'Yes' },
-  { value: pageNames.bdd, label: 'No' },
+  { value: pageNames.bdd, label: 'Yes' },
+  { value: pageNames.appeals, label: 'No' },
 ];
 
 const StartPage = ({ setPageState, state = {} }) => (
-  <ErrorableRadioButtons
+  <RadioButtons
     name={`${pageNames.start}-option`}
-    label="Have you separated from your military or uniformed service?"
+    label="Are you currently on active duty?"
     id={`${pageNames.start}-option`}
     options={options}
     onValueChange={({ value }) => setPageState({ selected: value }, value)}

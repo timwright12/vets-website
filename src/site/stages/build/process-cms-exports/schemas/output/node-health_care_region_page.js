@@ -1,9 +1,23 @@
-const { usePartialSchema } = require('../../transformers/helpers');
-const personProfileSchema = require('./node-person_profile');
+const { partialSchema } = require('../../transformers/helpers');
 const healthCareLocalFacilitySchema = require('./node-health_care_local_facility');
 const newsStorySchema = require('./node-news_story');
 const eventSchema = require('./node-event');
 const pressRelease = require('./node-press_release');
+
+const socialMediaSchema = {
+  type: ['object', 'null'],
+  properties: {
+    url: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+      },
+      required: ['path'],
+    },
+    title: { type: 'string' },
+  },
+  required: ['url', 'title'],
+};
 
 const facilitiesSchema = {
   type: 'object',
@@ -11,8 +25,7 @@ const facilitiesSchema = {
     entities: {
       type: 'array',
       items: {
-        /* eslint-disable react-hooks/rules-of-hooks */
-        entity: usePartialSchema(healthCareLocalFacilitySchema, [
+        entity: partialSchema(healthCareLocalFacilitySchema, [
           'entityUrl',
           'entityBundle',
           'title',
@@ -41,9 +54,9 @@ const eventTeasersSchema = max => ({
       type: 'array',
       maxItems: max,
       items: {
-        entity: usePartialSchema(eventSchema, [
+        entity: partialSchema(eventSchema, [
           'title',
-          'fieldDate',
+          'fieldDatetimeRangeTimezone',
           'fieldDescription',
           'fieldLocationHumanreadable',
           'fieldFacilityLocation',
@@ -61,7 +74,7 @@ const newsTeasersSchema = max => ({
       type: 'array',
       maxItems: max,
       items: {
-        entity: usePartialSchema(newsStorySchema, [
+        entity: partialSchema(newsStorySchema, [
           'title',
           'fieldFeatured',
           'fieldIntroText',
@@ -82,6 +95,11 @@ module.exports = {
     entityBundle: { enum: ['health_care_region_page'] },
     title: { type: 'string' },
     entityUrl: { $ref: 'EntityUrl' },
+    fieldIntroText: { type: ['string', 'null'] },
+    fieldGovdeliveryIdEmerg: { type: 'string' },
+    fieldGovdeliveryIdNews: { type: 'string' },
+    fieldOperatingStatus: socialMediaSchema,
+    fieldOtherVaLocations: { type: 'array' },
     fieldNicknameForThisFacility: { type: ['string', 'null'] },
     fieldLinkFacilityEmergList: {
       type: ['object', 'null'],
@@ -98,38 +116,14 @@ module.exports = {
     fieldRelatedLinks: {
       $ref: 'output/paragraph-list_of_link_teasers',
     },
-    fieldPressReleaseBlurb: { $ref: 'ProcessedString' },
-    entityMetaTags: { $ref: 'MetaTags' },
-    fieldLeadership: {
-      type: 'array',
-      items: {
-        /* eslint-disable react-hooks/rules-of-hooks */
-        entity: usePartialSchema(personProfileSchema, [
-          'entityPublished',
-          'title',
-          'fieldNameFirst',
-          'fieldLastName',
-          'fieldSuffix',
-          'fieldEmailAddress',
-          'fieldPhoneNumber',
-          'fieldDescription',
-          'fieldOffice',
-          'fieldIntroText',
-          'fieldPhotoAllowHiresDownload',
-          'fieldMedia',
-          'fieldBody',
-          'changed',
-          'entityUrl',
-        ]),
-      },
-    },
+    fieldMedia: { $ref: 'Media' },
     reverseFieldRegionPageNode: {
       type: 'object',
       properties: {
         entities: {
           type: 'array',
           items: {
-            entity: usePartialSchema(healthCareLocalFacilitySchema, [
+            entity: partialSchema(healthCareLocalFacilitySchema, [
               'title',
               'fieldOperatingStatusFacility',
             ]),
@@ -148,7 +142,7 @@ module.exports = {
           type: 'array',
           maxItems: 100,
           items: {
-            entity: usePartialSchema(pressRelease, [
+            entity: partialSchema(pressRelease, [
               'title',
               'fieldReleaseDate',
               'entityUrl',
@@ -165,10 +159,13 @@ module.exports = {
   },
   required: [
     'title',
+    'fieldIntroText',
+    'fieldGovdeliveryIdEmerg',
+    'fieldGovdeliveryIdNews',
+    'fieldOperatingStatus',
+    'fieldOtherVaLocations',
     'fieldNicknameForThisFacility',
     'fieldLinkFacilityEmergList',
-    'fieldPressReleaseBlurb',
-    'fieldLeadership',
     'reverseFieldRegionPageNode',
     'newsStoryTeasers',
     'allNewsStoryTeasers',

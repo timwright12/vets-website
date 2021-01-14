@@ -1,5 +1,6 @@
 import React from 'react';
-import ErrorableRadioButtons from '@department-of-veterans-affairs/formation-react/ErrorableRadioButtons';
+import recordEvent from 'platform/monitoring/record-event';
+import RadioButtons from '@department-of-veterans-affairs/formation-react/RadioButtons';
 import { pageNames } from './pageList';
 
 const options = [
@@ -13,16 +14,28 @@ const options = [
   },
 ];
 
-const BeginFormNow = ({ setPageState, state = {} }) => (
-  <ErrorableRadioButtons
-    name="begin-form-now"
-    label="Would you like to apply for career planning and guidance benefits now?"
-    options={options}
-    id="begin-form-now"
-    onValueChange={({ value }) => setPageState({ selected: value }, value)}
-    value={{ value: state.selected }}
-  />
-);
+const BeginFormNow = ({ setPageState, state = {} }) => {
+  const handleValueChange = ({ value }) => {
+    recordEvent({
+      event: `howToWizard-formChange`,
+      'form-field-type': 'form-radio-buttons',
+      'form-field-label':
+        'Would you like to apply for career planning and guidance benefits now?',
+      'form-field-value': value,
+    });
+    setPageState({ selected: value }, value);
+  };
+  return (
+    <RadioButtons
+      name="begin-form-now"
+      label="Would you like to apply for career planning and guidance benefits now?"
+      options={options}
+      id="begin-form-now"
+      onValueChange={handleValueChange}
+      value={{ value: state.selected }}
+    />
+  );
+};
 
 export default {
   name: 'beginFormNow',

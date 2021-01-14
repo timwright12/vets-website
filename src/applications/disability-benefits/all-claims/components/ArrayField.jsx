@@ -40,11 +40,8 @@ export default class ArrayField extends React.Component {
      * manage and doesn’t need to persist from page to page
      */
     this.state = {
-      // force edit mode for valid BDD separation date; empty serviceBranch,
-      // but includes valid "to" entry
-      editing: props.formData
-        ? props.formData.map(data => data?.serviceBranch === '')
-        : [true],
+      // force edit mode for any empty service period data
+      editing: this.setInitialState(),
     };
   }
 
@@ -70,6 +67,16 @@ export default class ArrayField extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     return !deepEquals(this.props, nextProps) || nextState !== this.state;
   }
+
+  setInitialState = () => {
+    const { formData, uiSchema } = this.props;
+    if (formData) {
+      return uiSchema['ui:options']?.setEditState
+        ? uiSchema['ui:options']?.setEditState(formData)
+        : formData.map(() => false);
+    }
+    return [true];
+  };
 
   onItemChange = (indexToChange, value) => {
     const newItems = _.set(indexToChange, value, this.props.formData || []);
@@ -307,7 +314,8 @@ export default class ArrayField extends React.Component {
       typeof description === 'string' ? description : null;
     const DescriptionField =
       typeof description === 'function' ? uiSchema['ui:description'] : null;
-    const hasTitleOrDescription = (!!title && !hideTitle) || !!description;
+    const hasTitle = !!title && !hideTitle;
+    const hasTitleOrDescription = hasTitle || !!description;
 
     // if we have form data, use that, otherwise use an array with a single default object
     const items =
@@ -318,30 +326,28 @@ export default class ArrayField extends React.Component {
     const containerClassNames = classNames({
       'schemaform-field-container': true,
       'schemaform-block': hasTitleOrDescription,
+      'schemaform-block-header': hasTitleOrDescription,
     });
 
     const isOnlyItem = items.length < 2;
+    const Wrapper =
+      hasTitleOrDescription && title && !hideTitle ? 'fieldset' : 'div';
 
+    // TitleField (legend) needs to be the first child of the fieldset
     return (
-      <div className={containerClassNames}>
-        {hasTitleOrDescription && (
-          <div className="schemaform-block-header">
-            {title && !hideTitle ? (
-              <TitleField
-                id={`${idSchema.$id}__title`}
-                title={title}
-                formContext={formContext}
-              />
-            ) : null}
-            {textDescription && <p>{textDescription}</p>}
-            {DescriptionField && (
-              <DescriptionField options={uiSchema['ui:options']} />
-            )}
-            {!textDescription && !DescriptionField && description}
-          </div>
+      <Wrapper className={containerClassNames}>
+        {hasTitle && (
+          <TitleField
+            id={`${idSchema.$id}__title`}
+            title={title}
+            formContext={formContext}
+          />
         )}
+        {textDescription && <p>{textDescription}</p>}
+        {DescriptionField && <DescriptionField options={uiOptions} />}
+        {!textDescription && !DescriptionField && description}
 
-        <div className="va-growable">
+        <div className="va-growable vads-u-margin-top--2">
           <Element name={`topOfTable_${idSchema.$id}`} />
           {items.map((item, index) => {
             const itemSchema = this.getItemSchema(index);
@@ -353,22 +359,27 @@ export default class ArrayField extends React.Component {
             );
             const isLast = items.length === index + 1;
             const isEditing = this.state.editing[index];
-
-            const Tag = formContext.onReviewPage ? 'h5' : 'h3';
+            const itemName = uiOptions.itemName;
+            const legendText = `${
+              isLast && items.length > 1 ? 'New' : 'Editing'
+            } ${itemName || ''} ${
+              uiOptions.includeIndexInTitle ? index + 1 : ''
+            }`;
 
             if (isEditing) {
               return (
                 <div key={index} className="va-growable-background">
                   <Element name={`table_${itemIdPrefix}`} />
                   <div className="row small-collapse">
-                    <div className="small-12 columns va-growable-expanded">
-                      {isLast &&
-                      items.length > 1 &&
-                      uiSchema['ui:options'].itemName ? (
-                        <Tag className="vads-u-font-size--h5">
-                          New {uiSchema['ui:options'].itemName}
-                        </Tag>
-                      ) : null}
+                    <fieldset className="small-12 columns va-growable-expanded">
+                      <legend className="vads-u-font-size--base">
+                        {legendText}
+                        {uiOptions.includeRequiredLabelInTitle && (
+                          <span className="schemaform-required-span vads-u-font-weight--normal">
+                            (*Required)
+                          </span>
+                        )}
+                      </legend>
                       <div className="input-section">
                         <SchemaField
                           key={index}
@@ -431,7 +442,7 @@ export default class ArrayField extends React.Component {
                           )}
                         </div>
                       </div>
-                    </div>
+                    </fieldset>
                   </div>
                 </div>
               );
@@ -468,7 +479,7 @@ export default class ArrayField extends React.Component {
             Add Another {uiOptions.itemName}
           </button>
         </div>
-      </div>
+      </Wrapper>
     );
   }
 }

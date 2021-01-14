@@ -5,8 +5,8 @@ fragment nodeMediaListVideos on NodeMediaListVideos {
   ${entityElementsFromPages}
   entityBundle
 
+  changed
   title
-  fieldDescription
   fieldIntroTextLimitedHtml {
     processed
   }
@@ -21,9 +21,31 @@ fragment nodeMediaListVideos on NodeMediaListVideos {
       ... button
     }
   }
-  fieldRelatedLinks {
+  fieldContactInformation {
     entity {
-      ... listOfLinkTeasers
+      entityBundle
+      ... contactInformation
+    }
+  }
+  fieldRelatedBenefitHubs {
+    entity {
+      ... on NodeLandingPage {
+        fieldHomePageHubLabel
+        fieldTeaserText
+        path {
+          alias
+        }
+        fieldSupportServices {
+          entity {
+            ... supportService
+          }
+        }
+      }
+    }
+  }
+  fieldRelatedInformation {
+    entity {
+      ... linkTeaser
     }
   }
 
@@ -41,6 +63,21 @@ fragment nodeMediaListVideos on NodeMediaListVideos {
           }
         }
       }
+    }
+  }
+  fieldPrimaryCategory {
+    entity {
+      ... taxonomyTermLcCategories
+    }
+  }
+  fieldOtherCategories {
+    entity {
+      ... taxonomyTermLcCategories
+    }
+  }
+  fieldTags {
+    entity {
+      ... audienceTopics
     }
   }
 }

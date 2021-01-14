@@ -27,12 +27,14 @@ const LocationOperationStatus = ({ operatingStatus }) => {
 
   return (
     <div
-      className={`usa-alert ${classNameAlert} background-color-only  vads-u-padding--1  vads-u-font-weight--bold`}
+      className={`usa-alert ${classNameAlert} background-color-only  vads-u-padding--1 vads-u-margin-top--2 vads-u-font-weight--bold`}
     >
       <i
         aria-hidden="true"
+        role="img"
         className={`fa fa-exclamation-${iconType} vads-u-margin-top--1 icon-base`}
       />
+      <span className="sr-only">Alert: </span>
       <div className="usa-alert-body">{infoMsg}</div>
     </div>
   );
