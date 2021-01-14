@@ -7,9 +7,10 @@ const transform = entity => ({
   // uid: entity.uid[0],
   title: getDrupalValue(entity.title),
   created: utcToEpochTime(getDrupalValue(entity.created)),
+  fieldIntroText: getDrupalValue(entity.fieldIntroText),
 });
 
 module.exports = {
-  filter: ['title', 'created'],
+  filter: ['title', 'created', 'field_intro_text'],
   transform,
 };

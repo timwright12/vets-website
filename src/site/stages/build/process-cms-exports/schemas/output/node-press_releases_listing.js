@@ -5,6 +5,7 @@ module.exports = {
     entityBundle: { type: 'string', enum: ['press_releases_listing'] },
     title: { type: 'string' },
     created: { type: 'number' },
+    fieldIntroText: { type: 'string' },
   },
-  required: ['title', 'created'],
+  required: ['title', 'created', 'fieldIntroText'],
 };
