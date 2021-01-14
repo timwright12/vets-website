@@ -5,54 +5,59 @@ const {
   isPublished,
 } = require('./helpers');
 
-const transform = (entity, { ancestors }) => ({
-  entityType: 'node',
-  entityBundle: 'press_releases_listing',
-  title: getDrupalValue(entity.title),
-  created: utcToEpochTime(getDrupalValue(entity.created)),
-  changed: utcToEpochTime(getDrupalValue(entity.changed)),
-  entityMetatags: createMetaTagArray(entity.metatag.value),
-  fieldAdministration: entity.fieldAdministration[0],
-  fieldDescription: getDrupalValue(entity.fieldDescription),
-  fieldIntroText: getDrupalValue(entity.fieldIntroText),
-  fieldMetaTitle: getDrupalValue(entity.fieldMetaTitle),
-  fieldOffice: entity.fieldOffice[0]
-    ? {
-        entity: !ancestors.find(
-          r => r.entity.uuid === entity.fieldOffice[0].uuid,
-        )
-          ? entity.fieldOffice[0]
-          : {
-              entityLabel: getDrupalValue(entity.fieldOffice[0].title),
-              entityType: entity.fieldOffice[0].entityType,
-            },
-      }
-    : null,
-  fieldPressReleaseBlurb: getDrupalValue(entity.fieldPressReleaseBlurb),
-  reverseFieldListingNode: {
-    entities: entity.reverseFieldListing
-      ? entity.reverseFieldListing
-          .filter(
-            reverseField =>
-              reverseField.entityBundle === 'press_release' &&
-              reverseField.entityPublished,
+const transform = (entity, { ancestors }) => {
+  console.log('----------------'); // eslint-disable-line no-console
+  console.log('entity', entity); // eslint-disable-line no-console
+  console.log('----------------'); // eslint-disable-line no-console
+  console.log('ancestors', ancestors); // eslint-disable-line no-console
+  return {
+    entityBundle: 'press_releases_listing',
+    title: getDrupalValue(entity.title),
+    created: utcToEpochTime(getDrupalValue(entity.created)),
+    changed: utcToEpochTime(getDrupalValue(entity.changed)),
+    entityMetatags: createMetaTagArray(entity.metatag.value),
+    fieldAdministration: entity.fieldAdministration[0],
+    fieldDescription: getDrupalValue(entity.fieldDescription),
+    fieldIntroText: getDrupalValue(entity.fieldIntroText),
+    fieldMetaTitle: getDrupalValue(entity.fieldMetaTitle),
+    fieldOffice: entity.fieldOffice[0]
+      ? {
+          entity: !ancestors.find(
+            r => r.entity.uuid === entity.fieldOffice[0].uuid,
           )
-          .map(reverseField => ({
-            entityId: reverseField.entityId,
-            title: reverseField.title,
-            fieldReleaseDate: reverseField.fieldReleaseDate,
-            entityUrl: reverseField.entityUrl,
-            promote: reverseField.promote,
-            created: reverseField.created,
-            fieldIntroText: reverseField.fieldIntroText,
-            entityPublished: reverseField.entityPublished,
-          }))
-          .sort((a, b) => b.created - a.created)
-      : [],
-  },
-  entityPublished: isPublished(getDrupalValue(entity.status)),
-  status: getDrupalValue(entity.status),
-});
+            ? entity.fieldOffice[0]
+            : {
+                entityLabel: getDrupalValue(entity.fieldOffice[0].title),
+                entityType: entity.fieldOffice[0].entityType,
+              },
+        }
+      : null,
+    fieldPressReleaseBlurb: getDrupalValue(entity.fieldPressReleaseBlurb),
+    reverseFieldListingNode: {
+      entities: entity.reverseFieldListing
+        ? entity.reverseFieldListing
+            .filter(
+              reverseField =>
+                reverseField.entityBundle === 'press_release' &&
+                reverseField.entityPublished,
+            )
+            .map(reverseField => ({
+              entityId: reverseField.entityId,
+              title: reverseField.title,
+              fieldReleaseDate: reverseField.fieldReleaseDate,
+              entityUrl: reverseField.entityUrl,
+              promote: reverseField.promote,
+              created: reverseField.created,
+              fieldIntroText: reverseField.fieldIntroText,
+              entityPublished: reverseField.entityPublished,
+            }))
+            .sort((a, b) => b.created - a.created)
+        : [],
+    },
+    entityPublished: isPublished(getDrupalValue(entity.status)),
+    status: getDrupalValue(entity.status),
+  };
+};
 
 module.exports = {
   filter: [
