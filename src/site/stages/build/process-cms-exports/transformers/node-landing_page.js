@@ -15,6 +15,7 @@ const transform = entity => ({
   entityPublished: isPublished(getDrupalValue(entity.status)),
   fieldAdministration: entity.fieldAdministration[0],
   fieldAlert: entity.fieldAlert[0] || null,
+  fieldHomePageHubLabel: getDrupalValue(entity.fieldHomePageHubLabel),
   fieldIntroText: getDrupalValue(entity.fieldIntroText),
   fieldLinks: entity.fieldLinks.map(({ title, uri }) => ({
     title,
@@ -31,6 +32,7 @@ const transform = entity => ({
   fieldRelatedLinks: entity.fieldRelatedLinks[0] || null,
   fieldSpokes: entity.fieldSpokes,
   fieldSupportServices: entity.fieldSupportServices,
+  fieldTeaserText: getDrupalValue(entity.fieldTeaserText),
   fieldTitleIcon: getDrupalValue(entity.fieldTitleIcon),
 });
 
@@ -42,6 +44,7 @@ module.exports = {
     'field_administration',
     'field_alert',
     'field_description',
+    'field_home_page_hub_label',
     'field_intro_text',
     'field_links',
     'field_page_last_built',
@@ -50,6 +53,7 @@ module.exports = {
     'field_related_links',
     'field_spokes',
     'field_support_services',
+    'field_teaser_text',
     'field_title_icon',
     'metatag',
     'status',

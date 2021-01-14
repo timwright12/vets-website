@@ -19,19 +19,21 @@
       {% endif %}
 
       <article class="usa-content">
-        <h1 class="vads-u-margin-bottom--0">{{ title }}</h1>
+        <h1 class="vads-u-margin-bottom--0">
+          {{ title }}
+        </h1>
 
         <dl>
           <div class="vads-u-margin-bottom--4">
-            <dt class="vads-u-visibility--screen-reader">Form name:</dt>
-            <dd class="va-introtext">{{ fieldVaFormName }}</dd>
+            <dt class="va-introtext">
+              <dfn class="vads-u-visibility--screen-reader">Form name:</dfn>
+              {{ fieldVaFormName }}
+            </dt>
           </div>
 
           <div class="vads-u-margin-y--1">
-            <dt class="vads-u-font-weight--bold vads-u-display--inline">
-              Related to:
-            </dd>
-            <dd class="vads-u-display--inline">
+            <dd>
+              <dfn class="vads-u-font-weight--bold vads-u-display--inline">Related to:</dfn>
               {% case fieldVaFormType %}
                 {% when 'employment' %}
                   Employment or jobs at VA
@@ -50,13 +52,16 @@
             </dd>
           </div>
 
-          {% if fieldVaFormRevisionDate %}
+          {% if fieldVaFormRevisionDate or fieldVaFormIssueDate %}
             <div>
-              <dt class="vads-u-font-weight--bold vads-u-display--inline">
-                Form last updated:
-              </dt>
-              <dd class="vads-u-display--inline">
-                {{ fieldVaFormRevisionDate.value | humanizeDate }}
+              <dd>
+                <dfn class="vads-u-font-weight--bold vads-u-display--inline">Form last updated:</dfn>
+                {% assign revisionDateIsLatestUpdate = fieldVaFormRevisionDate.value | isLaterThan: fieldVaFormIssueDate.value %}
+                {% if revisionDateIsLatestUpdate %}
+                  {{ fieldVaFormRevisionDate.value | humanizeDate }}
+                {% else %}
+                  {{ fieldVaFormIssueDate.value | humanizeDate }}
+                {% endif %}
               </dd>
             </div>
           {% endif %}
@@ -115,26 +120,24 @@
             <h2>Related forms and instructions</h2>
             <ul class="usa-unstyled-list">
             {% for vaForm in fieldVaFormRelatedForms %}
-                <li>
-                  <hgroup>
-                    <h3>VA Form {{ vaForm.entity.fieldVaFormNumber }}</h3>
-                    <h4 class="vads-u-margin-top--0">
-                      <span class="vads-u-visibility--screen-reader">Form name:</span> {{ vaForm.entity.fieldVaFormName }}
-                    </h4>
-                  </hgroup>
+              <li>
+                  <h3>VA Form {{ vaForm.entity.fieldVaFormNumber }}</h3>
+                  <p class="vads-u-margin-top--0 vads-u-font-size--h4 vads-u-font-weight--bold">
+                    <dfn class="vads-u-visibility--screen-reader">Form name:</dfn> {{ vaForm.entity.fieldVaFormName }}
+                  </p>
 
-                  {{ vaForm.entity.fieldVaFormUsage.processed }}
+                {{ vaForm.entity.fieldVaFormUsage.processed }}
 
-                  <a
-                    href="{{ vaForm.entity.fieldVaFormUrl.uri }}"
-                    target="_blank"
-                    download
-                    data-widget-type="find-va-forms-invalid-pdf-alert"
-                    data-form-number="{{ vaForm.entity.fieldVaFormNumber }}">
-                    Download VA Form {{ vaForm.entity.fieldVaFormNumber }} (PDF)
-                  </a>
-                </li>
-              {% endfor %}
+                <a
+                  href="{{ vaForm.entity.fieldVaFormUrl.uri }}"
+                  target="_blank"
+                  download
+                  data-widget-type="find-va-forms-invalid-pdf-alert"
+                  data-form-number="{{ vaForm.entity.fieldVaFormNumber }}">
+                  Download VA Form {{ vaForm.entity.fieldVaFormNumber }} (PDF)
+                </a>
+              </li>
+            {% endfor %}
             </ul>
           </section>
         {% endif %}

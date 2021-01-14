@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import newAppointmentFlow from '../../newAppointmentFlow';
+
 import { LANGUAGES } from '../../../utils/constants';
 
 export default function PreferredProviderSection(props) {
@@ -18,15 +19,19 @@ export default function PreferredProviderSection(props) {
                     <br />
                   </>
                 )}
-                {props.data.communityCareProvider.firstName} &nbsp;
+                {props.data.communityCareProvider.firstName}{' '}
                 {props.data.communityCareProvider.lastName}
                 <br />
                 {props.data.communityCareProvider.address.street}
+                {!!props.data.communityCareProvider.address.street2 && (
+                  <>
+                    <br />
+                    {props.data.communityCareProvider.address.street2}
+                  </>
+                )}
                 <br />
-                {props.data.communityCareProvider.address.street2}
-                <br />
-                {props.data.communityCareProvider.address.city}, &nbsp;
-                {props.data.communityCareProvider.address.state} &nbsp;
+                {props.data.communityCareProvider.address.city},{' '}
+                {props.data.communityCareProvider.address.state}{' '}
                 {props.data.communityCareProvider.address.postalCode}
                 <br />
                 <br />

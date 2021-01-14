@@ -28,7 +28,7 @@ Cypress.Commands.add('verifyOptions', () => {
   cy.get('#service-type-dropdown').should('not.have', 'disabled');
 });
 
-describe('Facility search', () => {
+describe.skip('Facility search', () => {
   before(() => {
     cy.syncFixtures({
       constants: path.join(__dirname, '..', '..', 'constants'),
@@ -72,53 +72,58 @@ describe('Facility search', () => {
     cy.get('#other-tools').should('exist');
   });
 
-  it('should render breadcrumbs ', () => {
+  it.skip('should render breadcrumbs ', () => {
     cy.visit('/find-locations');
 
     cy.get('#street-city-state-zip').type('Austin, TX');
     cy.get('#facility-type-dropdown').select('VA health');
-    cy.get('#facility-search').click();
+    cy.get('#facility-search')
+      .click()
+      .then(() => {
+        cy.injectAxe();
+        cy.axeCheck();
 
-    cy.injectAxe();
-    cy.axeCheck('main', { _13647Exception: true });
+        cy.get('.facility-result a').should('exist');
+        cy.route(
+          'GET',
+          '/v1/facilities/va/vha_674BY',
+          'fx:constants/mock-facility-v1',
+        ).as('fetchFacility');
 
-    cy.get('.facility-result a').should('exist');
-    cy.route(
-      'GET',
-      '/v1/facilities/va/vha_674BY',
-      'fx:constants/mock-facility-v1',
-    ).as('fetchFacility');
+        cy.findByText(/austin va clinic/i, { selector: 'a' })
+          .first()
+          .click()
+          .then(() => {
+            cy.axeCheck();
 
-    cy.findByText(/austin va clinic/i, { selector: 'a' })
-      .first()
-      .click();
+            cy.get('.all-details', { timeout: 10000 }).should('exist');
 
-    cy.axeCheck('main', { _13647Exception: true });
+            cy.get('a[aria-current="page"').should('exist');
 
-    cy.get('.all-details').should('exist');
+            cy.get(
+              '.va-nav-breadcrumbs-list li:nth-of-type(3) a[aria-current="page"]',
+            ).should('exist');
 
-    cy.get('a[aria-current="page"').should('exist');
+            cy.get(
+              '.va-nav-breadcrumbs-list li:nth-of-type(3) a[aria-current="page"]',
+            ).contains('Facility Details');
 
-    cy.get(
-      '.va-nav-breadcrumbs-list li:nth-of-type(3) a[aria-current="page"]',
-    ).should('exist');
+            cy.get('.va-nav-breadcrumbs-list li:nth-of-type(2) a').click();
 
-    cy.get(
-      '.va-nav-breadcrumbs-list li:nth-of-type(3) a[aria-current="page"]',
-    ).contains('Facility Details');
+            // Mobile View
+            cy.viewport(375, 667);
 
-    cy.get('.va-nav-breadcrumbs-list li:nth-of-type(2) a').click();
+            cy.get('.va-nav-breadcrumbs-list').should('exist');
 
-    // Mobile View
-    cy.viewport(375, 667);
+            cy.get('.va-nav-breadcrumbs-list li:not(:nth-last-child(2))')
+              .should('have.css', 'display')
+              .and('match', /none/);
 
-    cy.get('.va-nav-breadcrumbs-list').should('exist');
-
-    cy.get('.va-nav-breadcrumbs-list li:not(:nth-last-child(2))')
-      .should('have.css', 'display')
-      .and('match', /none/);
-
-    cy.get('.va-nav-breadcrumbs-list li:nth-last-child(2)').contains('Home');
+            cy.get('.va-nav-breadcrumbs-list li:nth-last-child(2)').contains(
+              'Home',
+            );
+          });
+      });
   });
 
   it('does not show search result header if no results are found', () => {
@@ -169,7 +174,7 @@ describe('Facility search', () => {
     cy.get('#other-tools').should('exist');
 
     cy.injectAxe();
-    cy.axeCheck('main', { _13647Exception: true });
+    cy.axeCheck();
 
     cy.get('.facility-result h3').contains('Concentra Urgent Care');
     cy.get('.va-pagination').should('not.exist');
@@ -190,29 +195,9 @@ describe('Facility search', () => {
     cy.get('#other-tools').should('exist');
 
     cy.injectAxe();
-    cy.axeCheck('main', { _13647Exception: true });
-
-    cy.get('.facility-result h3').contains('MinuteClinic');
-    cy.get('.va-pagination').should('not.exist');
-  });
-
-  it('finds community care pharmacies', () => {
-    cy.visit('/find-locations');
-
-    cy.get('#street-city-state-zip').type('Austin, TX');
-    cy.get('#facility-type-dropdown').select(
-      'Community pharmacies (in VA’s network)',
-    );
-    cy.get('#facility-search').click();
-    cy.get('#search-results-subheader').contains(
-      'Results for "Community pharmacies (in VA’s network)" near "Austin, Texas"',
-    );
-    cy.get('#other-tools').should('exist');
-
-    cy.injectAxe();
     cy.axeCheck();
 
-    cy.get('.facility-result h3').contains('CVS');
+    cy.get('.facility-result h3').contains('MinuteClinic');
     cy.get('.va-pagination').should('not.exist');
   });
 
@@ -231,7 +216,7 @@ describe('Facility search', () => {
     cy.get('.facility-search-results').contains(
       /Something’s not quite right. Please enter a valid or different location and try your search again./gi,
     );
-    cy.axeCheck('main', { _13647Exception: true });
+    cy.axeCheck();
 
     // Valid location search
     cy.route('GET', '/geocoding/**/*', 'fx:constants/mock-geocoding-data').as(
@@ -245,7 +230,7 @@ describe('Facility search', () => {
       'Results for "VA health", "Primary care" near "Austin, Texas"',
     );
     cy.get('.facility-result a').should('exist');
-    cy.axeCheck('main', { _13647Exception: true });
+    cy.axeCheck();
   });
 
   it('finds va benefits facility in Los Angeles and views its page', () => {
@@ -264,7 +249,7 @@ describe('Facility search', () => {
     );
     cy.get('#other-tools').should('exist');
 
-    cy.axeCheck('main', { _13647Exception: true });
+    cy.axeCheck();
 
     cy.get('.facility-result a').contains('Los Angeles Ambulatory Care Center');
     cy.findByText(/Los Angeles Ambulatory Care Center/i, { selector: 'a' })
@@ -280,10 +265,10 @@ describe('Facility search', () => {
     cy.get('#hours-op h3').contains('Hours of operation');
     cy.get('#other-tools').should('not.exist');
 
-    cy.axeCheck('main', { _13647Exception: true });
+    cy.axeCheck();
   });
 
-  it.skip('renders static map images on detail page', () => {
+  it('renders static map images on detail page', () => {
     // from https://stackoverflow.com/questions/51246606/test-loading-of-image-in-cypress
     cy.visit('/find-locations/facility/vha_688GA');
     cy.get('[alt="Static map"]')

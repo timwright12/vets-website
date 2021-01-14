@@ -15,13 +15,16 @@ const healthCareRegionDetailPage = require('./healthCareRegionDetailPage.graphql
 const icsFileQuery = require('./file-fragments/ics.file.graphql');
 const menuLinksQuery = require('./navigation-fragments/menuLinks.nav.graphql');
 const newsStoryPage = require('./newStoryPage.graphql');
-const nodeMediaListImages = require('./nodeMediaListImages.graphql');
+const nodeBasicLandingPage = require('./nodeBasicLandingPage.graphql');
 const nodeChecklist = require('./nodeChecklist.graphql');
+const nodeMediaListImages = require('./nodeMediaListImages.graphql');
 const nodeMediaListVideos = require('./nodeMediaListVideos.graphql');
 const nodeQa = require('./nodeQa.graphql');
 const nodeStepByStep = require('./nodeStepByStep.graphql');
+const nodeSupportResourcesDetailPage = require('./nodeSupportResourcesDetailPage.graphql');
 const pressReleasePage = require('./pressReleasePage.graphql');
 const sidebarQuery = require('./navigation-fragments/sidebar.nav.graphql');
+const taxonomiesQuery = require('./taxonomy-fragments/GetTaxonomies.graphql');
 const vaFormPage = require('./vaFormPage.graphql');
 const vamcOperatingStatusAndAlerts = require('./vamcOperatingStatusAndAlerts.graphql');
 
@@ -58,6 +61,8 @@ module.exports = `
   ${nodeMediaListImages}
   ${nodeChecklist}
   ${nodeMediaListVideos}
+  ${nodeSupportResourcesDetailPage}
+  ${nodeBasicLandingPage}
 
   query GetLatestPageById($id: String!, $today: String!, $onlyPublishedContent: Boolean!) {
     nodes: nodeQuery(revisions: LATEST, filter: {
@@ -83,6 +88,8 @@ module.exports = `
         ... nodeMediaListImages
         ... nodeChecklist
         ... nodeMediaListVideos
+        ... nodeSupportResourcesDetailPage
+        ... nodeBasicLandingPage
       }
     }
     ${icsFileQuery}
@@ -96,6 +103,7 @@ module.exports = `
         : ''
     }
     ${menuLinksQuery}
+    ${taxonomiesQuery}
   }
 `;
 

@@ -42,11 +42,12 @@ const initialState = {
     loading: false,
     termsAndConditionsAccepted: false,
   },
-  vet360: {},
+  vapContactInfo: {},
   savedForms: [],
   prefillsAvailable: [],
   loading: true,
   services: [],
+  session: {},
 };
 
 const updateMhvAccountState = (state, mhvAccount) =>
