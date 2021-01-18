@@ -60,3 +60,15 @@ fi
 
 # Always build the content
 yarn build:content $args
+
+echo "Listing folders of .cache/localhost directory"
+ls /application/.cache/localhost
+
+echo "Listing folders of .cache/vagovdev directory"
+ls /application/.cache/vagovdev
+
+echo "Listing folders of .cache/vagovstaging directory"
+ls /application/.cache/vagovstaging
+
+echo "Listing folders of .cache/vagovprod directory"
+ls /application/.cache/vagovprod
