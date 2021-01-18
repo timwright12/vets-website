@@ -59,7 +59,7 @@ else
 fi
 
 # Always build the content
-yarn build:content --use-cms-export $args
+yarn build:content $args
 
 echo "Listing folders of .cache/localhost directory"
 ls /application/.cache/localhost
