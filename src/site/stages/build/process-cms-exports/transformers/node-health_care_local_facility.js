@@ -18,6 +18,7 @@ const getSocialMediaObject = ({ uri, title }) =>
       }
     : null;
 
+// eslint-disable-next-line no-unused-vars
 const getFieldRegionObject = ({
   title,
   field_related_links,
@@ -37,6 +38,7 @@ const getFieldRegionObject = ({
       }
     : null;
 
+// eslint-disable-next-line no-unused-vars
 const transform = (entity, { ancestors }) => ({
   entityType: 'node',
   entityBundle: 'health_care_local_facility',
