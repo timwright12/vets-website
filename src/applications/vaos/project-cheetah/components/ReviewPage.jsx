@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 // import * as actions from '../redux/actions';
 import LoadingButton from 'platform/site-wide/loading-button/LoadingButton';
-import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
+import AlertBox from '@department-of-veterans-affairs/component-library/AlertBox';
 import { FETCH_STATUS } from '../../utils/constants';
 import FacilityAddress from '../../components/FacilityAddress';
 import { scrollAndFocus } from '../../utils/scrollAndFocus';
 import { getTimezoneAbbrBySystemId } from '../../utils/timezone';
 import { getRealFacilityId } from '../../utils/appointment';
 import { getReviewPage } from '../redux/selectors';
+import State from '../../components/State';
 
 const pageTitle = 'Review your appointment details';
 
@@ -59,7 +60,7 @@ function ReviewPage({
       <h3 className="vaos-appts__block-label">{clinic.serviceName}</h3>
       {facility.name}
       <br />
-      {facility.address?.city}, {facility.address?.state}
+      {facility.address?.city}, <State state={facility.address?.state} />
       <hr aria-hidden="true" className="vads-u-margin-y--2" />
       <div className="vads-u-margin-y--2">
         <LoadingButton
