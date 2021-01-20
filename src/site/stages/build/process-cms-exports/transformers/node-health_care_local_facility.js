@@ -17,7 +17,7 @@ const getSocialMediaObject = ({ uri, title }) =>
         title,
       }
     : null;
-
+// eslint-disable-next-line no-unused-vars
 const getFieldRegionObject = ({
   title,
   field_related_links,
@@ -36,7 +36,7 @@ const getFieldRegionObject = ({
           : null,
       }
     : null;
-
+// eslint-disable-next-line no-unused-vars
 const transform = (entity, { ancestors }) => ({
   entityType: 'node',
   entityBundle: 'health_care_local_facility',
@@ -75,15 +75,15 @@ const transform = (entity, { ancestors }) => ({
     entity.fieldOperatingStatusMoreInfo,
   ),
   fieldPhoneNumber: getDrupalValue(entity.fieldPhoneNumber),
-  fieldRegionPage: entity.fieldRegionPage[0]
-    ? {
-        entity: !ancestors.find(
-          r => r.entity.uuid === entity.fieldRegionPage[0].uuid,
-        )
-          ? entity.fieldRegionPage[0]
-          : getFieldRegionObject(entity.fieldRegionPage[0]),
-      }
-    : null,
+  // fieldRegionPage: entity.fieldRegionPage[0]
+  //   ? {
+  //       entity: !ancestors.find(
+  //         r => r.entity.uuid === entity.fieldRegionPage[0].uuid,
+  //       )
+  //         ? entity.fieldRegionPage[0]
+  //         : getFieldRegionObject(entity.fieldRegionPage[0]),
+  //     }
+  //   : null,
 });
 
 module.exports = {
