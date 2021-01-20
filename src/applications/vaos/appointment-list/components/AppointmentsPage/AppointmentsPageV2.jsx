@@ -21,7 +21,7 @@ import { GA_PREFIX, FETCH_STATUS } from '../../../utils/constants';
 import { scrollAndFocus } from '../../../utils/scrollAndFocus';
 import RequestExpressCare from './RequestExpressCare';
 import UpcomingAppointmentsList from '../UpcomingAppointmentsList';
-import PastAppointmentsList from '../PastAppointmentsList';
+import PastAppointmentsListV2 from '../PastAppointmentsListV2';
 import DowntimeNotification, {
   externalServices,
 } from 'platform/monitoring/DowntimeNotification';
@@ -74,7 +74,7 @@ function AppointmentsPageV2({
     <Switch>
       <Route exact path="/" component={UpcomingAppointmentsList} />
       <Route path="/requested" component={UpcomingAppointmentsList} />
-      <Route path="/past" component={PastAppointmentsList} />
+      <Route path="/past" component={PastAppointmentsListV2} />
       <Route path="/cancelled" component={UpcomingAppointmentsList} />
     </Switch>
   );
