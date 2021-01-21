@@ -16,6 +16,8 @@ async function downloadFile(
   everythingDownloaded,
 ) {
   const asset = assetsToDownload.shift();
+  process.stdout.write(`Downloading ${asset.src}...`);
+
   const response = await client.proxyFetch(asset.src);
 
   if (response.ok) {
@@ -32,7 +34,7 @@ async function downloadFile(
 
     downloadResults.downloadCount++;
 
-    process.stdout.write(`Finished downloading ${asset.src}`);
+    process.stdout.write(`succeeded.\n`);
     // if (global.verbose) {
     //   log(`Finished downloading ${asset.src}`);
     // } else {
@@ -42,6 +44,7 @@ async function downloadFile(
   } else {
     // For now, not going to fail the build for a missing asset
     // Should get caught by the broken link checker, though
+    process.stdout.write('failed.\n');
     downloadResults.errorCount++;
     if (global.verbose) {
       log(`Image download failed: ${response.statusText}: ${asset.src}`);
