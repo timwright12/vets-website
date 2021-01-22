@@ -97,6 +97,14 @@ function updateAttr(attr, doc, client) {
     const newAssetPath = convertAssetPath(srcAttr);
     const awsURI = getAwsURI(siteURI, usingAWS);
 
+    if (usingAWS) {
+      // eslint-disable-next-line no-console
+      console.log('we are using AWS. replacing', siteURI, 'with', awsURI);
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('not using AWS. using srcAttr:', srcAttr);
+    }
+
     assetsToDownload.push({
       // URLs in WYSIWYG content won't be the AWS URLs, they'll be CMS URLs.
       // This means we need to replace them with the AWS URLs if we're on Jenkins.
