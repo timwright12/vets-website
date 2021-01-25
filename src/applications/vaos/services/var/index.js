@@ -114,9 +114,12 @@ export function checkPastVisits(
   ).then(parseApiObject);
 }
 
-export function getRequestLimits(facilityId, typeOfCareId) {
+export function getRequestLimits(facilityIds, typeOfCareId) {
+  const facilityIdList = facilityIds
+    .map(facilityId => `facility_ids[]=${facilityId}`)
+    .join('&');
   return apiRequestWithMocks(
-    `/vaos/v0/facilities/${facilityId}/limits?type_of_care_id=${typeOfCareId}`,
+    `/vaos/v0/facilities/limits?${facilityIdList}type_of_care_id=${typeOfCareId}`,
   ).then(parseApiObject);
 }
 
