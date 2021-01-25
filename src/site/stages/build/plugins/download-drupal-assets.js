@@ -81,13 +81,12 @@ function downloadDrupalAssets(options) {
   return async (files, metalsmith, done) => {
     const assetsToDownload = Object.entries(files)
       .filter(entry => entry[1].isDrupalAsset && !entry[1].contents)
-      .map(([key, value]) => ({
-        src: value.source.replace(
-          'https://prod.cms.va.gov',
-          'http://internal-dsva-vagov-prod-cms-2000800896.us-gov-west-1.elb.amazonaws.com',
-        ),
-        dest: key,
-      }));
+      .map(([key, value]) => {
+        return {
+          src: value.source,
+          dest: key,
+        };
+      });
 
     if (assetsToDownload.length) {
       const downloadResults = {
