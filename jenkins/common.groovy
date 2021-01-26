@@ -233,11 +233,11 @@ def buildAll(String ref, dockerContainer, Boolean contentOnlyBuild) {
         }
       }
 
-      /******** Begin experimental CMS export build ********/
-      builds['cms-export'] = {
+      /******** Experimental CMS export build (prod, content only) ********/
+      builds['cms-export-experimental'] = {
         try {
           def envName = 'vagovprod'
-          build(ref, dockerContainer, assetSource, envName, false, contentOnlyBuild, true)
+          build(ref, dockerContainer, assetSource, envName, false, true, true)
           envUsedCache[envName] = false
         } catch (error) {
           // Don't fail the build, just report the error
@@ -245,7 +245,6 @@ def buildAll(String ref, dockerContainer, Boolean contentOnlyBuild) {
         }
       }
       /******** End experimental CMS export build ********/
-
 
       parallel builds
       return envUsedCache
