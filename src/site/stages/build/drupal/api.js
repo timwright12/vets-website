@@ -189,7 +189,7 @@ function getDrupalClient(buildOptions, clientOptionsArg) {
 
     getExportedPages() {
       say('Transforming CMS export');
-      const contentDir = buildOptions['cms-export-dir'];
+      const contentDir = buildOptions['cms-export-dir-incorrect-force-error'];
       const entities = readAllNodeNames(contentDir).map(entityDetails =>
         readEntity(contentDir, ...entityDetails),
       );

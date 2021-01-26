@@ -214,23 +214,19 @@ def buildAll(String ref, dockerContainer, Boolean contentOnlyBuild) {
         def envName = VAGOV_BUILDTYPES.get(i)
         builds[envName] = {
           try {
-            echo "Trying build for ${envName}"
-            build(ref, dockerContainer, assetSource, envName, false, contentOnlyBuild)
+            build(ref, dockerContainer, assetSource, envName, false, contentOnlyBuild, false)
             envUsedCache[envName] = false
           } catch (error) {
-            echo "Error in build for ${envName} is ${error}"
             // We're not using the cache for content only builds, because requesting
             // a content only build is an attempt to refresh content from the current set
             if (!contentOnlyBuild) {
-              echo "Running drupal-aws-cache.js"
               dockerContainer.inside(DOCKER_ARGS) {
                 sh "cd /application && node script/drupal-aws-cache.js --fetch --buildtype=${envName}"
               }
-              echo "In catch block, running build for ${envName}"
-              build(ref, dockerContainer, assetSource, envName, true, contentOnlyBuild)
+              build(ref, dockerContainer, assetSource, envName, true, contentOnlyBuild, false)
               envUsedCache[envName] = true
             } else {
-              build(ref, dockerContainer, assetSource, envName, false, contentOnlyBuild)
+              build(ref, dockerContainer, assetSource, envName, false, contentOnlyBuild, false)
               envUsedCache[envName] = false
             }
           }
@@ -240,7 +236,7 @@ def buildAll(String ref, dockerContainer, Boolean contentOnlyBuild) {
       /******** Experimental CMS export build (prod, content only) ********/
       builds['cms-export-experimental'] = {
         try {
-          build(ref, dockerContainer, 'local', 'vagovprod', false, true, true)
+          build(ref, dockerContainer, assetSource, 'vagovprod', false, contentOnlyBuild, true)
         } catch (error) {
           // Don't fail the build, just report the error
           echo "Experimental CMS export build failed: ${error}"
