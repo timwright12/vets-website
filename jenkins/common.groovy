@@ -214,15 +214,19 @@ def buildAll(String ref, dockerContainer, Boolean contentOnlyBuild) {
         def envName = VAGOV_BUILDTYPES.get(i)
         builds[envName] = {
           try {
+            echo "Trying build for ${envName}"
             build(ref, dockerContainer, assetSource, envName, false, contentOnlyBuild)
             envUsedCache[envName] = false
           } catch (error) {
+            echo "Error in build for ${envName} is ${error}"
             // We're not using the cache for content only builds, because requesting
             // a content only build is an attempt to refresh content from the current set
             if (!contentOnlyBuild) {
+              echo "Running drupal-aws-cache.js"
               dockerContainer.inside(DOCKER_ARGS) {
                 sh "cd /application && node script/drupal-aws-cache.js --fetch --buildtype=${envName}"
               }
+              echo "In catch block, running build for ${envName}"
               build(ref, dockerContainer, assetSource, envName, true, contentOnlyBuild)
               envUsedCache[envName] = true
             } else {
@@ -236,9 +240,7 @@ def buildAll(String ref, dockerContainer, Boolean contentOnlyBuild) {
       /******** Experimental CMS export build (prod, content only) ********/
       builds['cms-export-experimental'] = {
         try {
-          def envName = 'vagovprod'
-          build(ref, dockerContainer, assetSource, envName, false, true, true)
-          envUsedCache[envName] = false
+          build(ref, dockerContainer, 'local', 'vagovprod', false, true, true)
         } catch (error) {
           // Don't fail the build, just report the error
           echo "Experimental CMS export build failed: ${error}"
