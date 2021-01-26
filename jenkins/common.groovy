@@ -236,6 +236,7 @@ def buildAll(String ref, dockerContainer, Boolean contentOnlyBuild) {
       /******** Begin experimental CMS export build ********/
       builds['cms-export'] = {
         try {
+          def envName = 'vagovprod'
           build(ref, dockerContainer, assetSource, envName, false, contentOnlyBuild, true)
           envUsedCache[envName] = false
         } catch (error) {
