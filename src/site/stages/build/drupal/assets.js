@@ -82,10 +82,18 @@ function getAwsURI(siteURI, usingAWS) {
 }
 
 function replaceHostIfUsingAWS(originalSrc, usingAWS) {
+  // eslint-disable-next-line no-console
+  console.log('replaceHostIfUsingAWS() input:', originalSrc);
   const siteURI = originalSrc.match(
     /https?:\/\/([a-zA-Z0-9-]+[.])*cms[.]va[.]gov/,
   )[0];
   const awsURI = getAwsURI(siteURI, usingAWS);
+
+  // eslint-disable-next-line no-console
+  console.log(
+    'output:',
+    usingAWS ? originalSrc.replace(siteURI, awsURI) : originalSrc,
+  );
 
   return usingAWS ? originalSrc.replace(siteURI, awsURI) : originalSrc;
 }
