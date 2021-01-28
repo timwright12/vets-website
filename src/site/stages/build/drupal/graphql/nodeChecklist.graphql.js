@@ -5,8 +5,8 @@ fragment nodeChecklist on NodeChecklist {
   ${entityElementsFromPages}
   entityBundle
 
+  changed
   title
-  fieldDescription
   fieldIntroTextLimitedHtml {
     processed
   }
@@ -22,9 +22,31 @@ fragment nodeChecklist on NodeChecklist {
       ... alertSingle
     }
   }
-  fieldRelatedLinks {
+  fieldContactInformation {
     entity {
-      ... listOfLinkTeasers
+      entityBundle
+      ... contactInformation
+    }
+  }
+  fieldRelatedBenefitHubs {
+    entity {
+      ... on NodeLandingPage {
+        fieldHomePageHubLabel
+        fieldTeaserText
+        path {
+          alias
+        }
+        fieldSupportServices {
+          entity {
+            ... supportService
+          }
+        }
+      }
+    }
+  }
+  fieldRelatedInformation {
+    entity {
+      ... linkTeaser
     }
   }
   fieldChecklist {
@@ -33,13 +55,28 @@ fragment nodeChecklist on NodeChecklist {
         fieldChecklistSections {
           entity {
             ... on ParagraphChecklistItem {
-              fieldSectionIntro
-              fieldSectionHeader
               fieldChecklistItems
+              fieldSectionHeader
+              fieldSectionIntro
             }
           }
         }
       }
+    }
+  }
+  fieldPrimaryCategory {
+    entity {
+      ... taxonomyTermLcCategories
+    }
+  }
+  fieldOtherCategories {
+    entity {
+      ... taxonomyTermLcCategories
+    }
+  }
+  fieldTags {
+    entity {
+      ... audienceTopics
     }
   }
 }

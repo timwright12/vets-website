@@ -1,12 +1,13 @@
 const entityElementsFromPages = require('./entityElementsForPages.graphql');
 const socialMediaFields = require('./facilities-fragments/healthCareSocialMedia.fields.graphql');
+const serviceLocation = require('./paragraph-fragments/serviceLocation.paragraph.graphql');
+const appointmentItems = require('./file-fragments/appointmentItems.graphql');
 
 module.exports = `
   fragment healthCareLocalFacilityPage on NodeHealthCareLocalFacility {
     ${entityElementsFromPages}
     changed
     fieldFacilityLocatorApiId
-    fieldNicknameForThisFacility
     title
     fieldIntroText
     fieldOperatingStatusFacility
@@ -18,43 +19,6 @@ module.exports = `
           fieldTitle
           fieldWysiwyg {
             processed
-          }
-        }
-      }
-    }
-    fieldRegionPage {
-      entity {
-        ... on NodeHealthCareRegionPage {
-          fieldFacebook {
-            title
-            url {
-              path
-            }
-          }
-          fieldTwitter {
-            title
-            url {
-              path
-            }
-          }
-          fieldFlickr {
-            title
-            url {
-              path
-            }
-          }
-          fieldInstagram {
-            title
-            url {
-              path
-            }
-          }
-          fieldGovdeliveryIdEmerg
-          fieldGovdeliveryIdNews
-          fieldOperatingStatus {
-            url {
-              path
-            }
           }
         }
       }
@@ -93,10 +57,16 @@ module.exports = `
           entityId
           entityPublished
           title
-          fieldNicknameForThisFacility
           fieldRelatedLinks {
             entity {
               ... listOfLinkTeasers
+            }
+          }
+          fieldGovdeliveryIdEmerg
+          fieldGovdeliveryIdNews
+          fieldOperatingStatus {
+            url {
+              path
             }
           }
         }
@@ -109,6 +79,8 @@ module.exports = `
           fieldBody {
             processed
           }
+          ${serviceLocation}
+          ${appointmentItems}
           fieldRegionalHealthService
           {
             entity {

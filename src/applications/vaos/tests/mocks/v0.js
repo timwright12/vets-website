@@ -7,13 +7,14 @@
 export function getVAAppointmentMock() {
   return {
     id: '21cdc6741c00ac67b6cbf6b972d084c1',
-    type: 'va_appointments',
+    type: 'appointment',
     attributes: {
       clinicFriendlyName: 'Fake',
       clinicId: 'fake',
       facilityId: 'fake',
       sta6aid: 'fake',
       communityCare: false,
+      phoneOnly: false,
       vdsAppointments: [
         {
           bookingNote: null,
@@ -217,6 +218,54 @@ export function getParentSiteMock() {
   };
 }
 
+export function getRequestEligibilityCriteriaMock({
+  id = 'fake',
+  typeOfCareId = 'fake',
+  patientHistoryRequired = 'No',
+} = {}) {
+  return {
+    id,
+    type: 'request_eligibility_criteria',
+    attributes: {
+      id,
+      requestSettings: [
+        {
+          id: typeOfCareId,
+          typeOfCare: 'fake',
+          patientHistoryRequired,
+          patientHistoryDuration: 0,
+          submittedRequestLimit: 1,
+          enterpriseSubmittedRequestLimit: 1,
+        },
+      ],
+    },
+  };
+}
+
+export function getDirectBookingEligibilityCriteriaMock({
+  id = 'fake',
+  typeOfCareId = 'fake',
+  patientHistoryRequired = 'No',
+} = {}) {
+  return {
+    id,
+    type: 'request_eligibility_criteria',
+    attributes: {
+      id,
+      coreSettings: [
+        {
+          id: typeOfCareId,
+          typeOfCare: 'fake',
+          patientHistoryRequired,
+          patientHistoryDuration: 0,
+          submittedRequestLimit: 1,
+          enterpriseSubmittedRequestLimit: 1,
+        },
+      ],
+    },
+  };
+}
+
 export function getFacilityMock() {
   return {
     id: 'fake',
@@ -269,26 +318,24 @@ export function getAppointmentSlotMock() {
 }
 
 export function getExpressCareRequestCriteriaMock(id, schedulingDays) {
-  return [
-    {
+  return {
+    id,
+    type: 'request_eligibility_criteria',
+    attributes: {
       id,
-      type: 'request_eligibility_criteria',
-      attributes: {
-        id,
-        requestSettings: [],
-        customRequestSettings: [
-          {
-            id: 'CR1',
-            typeOfCare: 'Express Care',
-            submittedRequestLimit: 2,
-            enterpriseSubmittedRequestLimit: 2,
-            supported: !!schedulingDays,
-            schedulingDays: schedulingDays || [],
-          },
-        ],
-      },
+      requestSettings: [],
+      customRequestSettings: [
+        {
+          id: 'CR1',
+          typeOfCare: 'Express Care',
+          submittedRequestLimit: 2,
+          enterpriseSubmittedRequestLimit: 2,
+          supported: !!schedulingDays,
+          schedulingDays: schedulingDays || [],
+        },
+      ],
     },
-  ];
+  };
 }
 
 export function getCCEligibilityMock(typeOfCare, eligible = true) {

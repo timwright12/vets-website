@@ -1,5 +1,5 @@
 import React from 'react';
-import Breadcrumbs from '@department-of-veterans-affairs/formation-react/Breadcrumbs';
+import Breadcrumbs from '@department-of-veterans-affairs/component-library/Breadcrumbs';
 import { useRouteMatch, Link } from 'react-router-dom';
 import appendQuery from 'append-query';
 import { useQueryParams } from '../../utils/helpers';
@@ -14,7 +14,7 @@ export default function GiBillBreadcrumbs({ searchQuery }) {
   const root = version
     ? {
         pathname: '/',
-        search: { version },
+        search: queryParams.toString(),
       }
     : '/';
 

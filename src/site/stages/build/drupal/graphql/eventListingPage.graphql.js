@@ -28,6 +28,13 @@ module.exports = `
                 }
               }
               fieldFeatured
+              fieldDatetimeRangeTimezone {
+                value
+                startTime
+                endValue
+                endTime
+                timezone
+              }
               fieldDate {
                 startDate
                 value
@@ -64,6 +71,13 @@ module.exports = `
               }
             }
             fieldFeatured
+            fieldDatetimeRangeTimezone {
+              value
+              startTime
+              endValue
+              endTime
+              timezone
+            }
             fieldDate {
               startDate
               value
@@ -89,7 +103,6 @@ module.exports = `
         ...on NodeHealthCareRegionPage {
           entityLabel
           title
-          fieldNicknameForThisFacility
         }
       }
     }

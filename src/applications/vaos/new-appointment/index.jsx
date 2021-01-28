@@ -7,8 +7,11 @@ import {
   useHistory,
   useLocation,
 } from 'react-router-dom';
-import { selectIsCernerOnlyPatient } from 'platform/user/selectors';
-import { vaosFlatFacilityPage } from '../utils/selectors';
+import {
+  selectUseFlatFacilityPage,
+  selectIsCernerOnlyPatient,
+  selectUseProviderSelection,
+} from '../redux/selectors';
 import newAppointmentReducer from './redux/reducer';
 import FormLayout from './components/FormLayout';
 import TypeOfCarePage from './components/TypeOfCarePage';
@@ -23,6 +26,8 @@ import DateTimeSelectPage from './components/DateTimeSelectPage';
 import VAFacilityPage from './components/VAFacilityPage';
 import VAFacilityPageV2 from './components/VAFacilityPage/VAFacilityPageV2';
 import CommunityCarePreferencesPage from './components/CommunityCarePreferencesPage';
+import CommunityCareLanguagePage from './components/CommunityCareLanguagePage';
+import CommunityCareProviderSelectionPage from './components/CommunityCareProviderSelectionPage';
 import ClinicChoicePage from './components/ClinicChoicePage';
 import ReasonForAppointmentPage from './components/ReasonForAppointmentPage';
 import ReviewPage from './components/ReviewPage';
@@ -43,8 +48,9 @@ function onBeforeUnload(e) {
 }
 
 function NewAppointmentSection({
-  isCernerOnlyPatient,
   flatFacilityPageEnabled,
+  isCernerOnlyPatient,
+  providerSelectionEnabled,
 }) {
   const match = useRouteMatch();
   const history = useHistory();
@@ -60,10 +66,6 @@ function NewAppointmentSection({
   );
 
   useEffect(() => {
-    if (isCernerOnlyPatient) {
-      history.replace('/');
-    }
-
     if (window.History) {
       window.History.scrollRestoration = 'manual';
     }
@@ -77,13 +79,25 @@ function NewAppointmentSection({
     ) {
       history.replace('/new-appointment');
     }
-
-    window.addEventListener('beforeunload', onBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', onBeforeUnload);
-    };
   }, []);
+
+  useEffect(
+    () => {
+      // If we're on the facility page for a Cerner only patient, there's a link to send the user to
+      // the Cerner portal, and it would be annoying to show the "You may have unsaved changes" message
+      // when a user clicks on that link
+      if (location.pathname.includes('va-facility') && isCernerOnlyPatient) {
+        window.removeEventListener('beforeunload', onBeforeUnload);
+      } else {
+        window.addEventListener('beforeunload', onBeforeUnload);
+      }
+
+      return () => {
+        window.removeEventListener('beforeunload', onBeforeUnload);
+      };
+    },
+    [location.pathname, isCernerOnlyPatient],
+  );
 
   return (
     <FormLayout isReviewPage={location.pathname.includes('review')}>
@@ -130,10 +144,24 @@ function NewAppointmentSection({
             component={VAFacilityPageV2}
           />
         )}
-        <Route
-          path={`${match.url}/community-care-preferences`}
-          component={CommunityCarePreferencesPage}
-        />
+        {!providerSelectionEnabled && (
+          <Route
+            path={`${match.url}/community-care-preferences`}
+            component={CommunityCarePreferencesPage}
+          />
+        )}
+        {providerSelectionEnabled && (
+          <Route
+            path={`${match.url}/community-care-preferences`}
+            component={CommunityCareProviderSelectionPage}
+          />
+        )}
+        {providerSelectionEnabled && (
+          <Route
+            path={`${match.url}/community-care-language`}
+            component={CommunityCareLanguagePage}
+          />
+        )}
         <Route path={`${match.url}/clinics`} component={ClinicChoicePage} />
         <Route
           path={`${match.url}/reason-appointment`}
@@ -153,7 +181,8 @@ function NewAppointmentSection({
 function mapStateToProps(state) {
   return {
     isCernerOnlyPatient: selectIsCernerOnlyPatient(state),
-    flatFacilityPageEnabled: vaosFlatFacilityPage(state),
+    flatFacilityPageEnabled: selectUseFlatFacilityPage(state),
+    providerSelectionEnabled: selectUseProviderSelection(state),
   };
 }
 

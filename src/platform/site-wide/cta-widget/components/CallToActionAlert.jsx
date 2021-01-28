@@ -1,9 +1,10 @@
 import React from 'react';
 
-import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
+import AlertBox from '@department-of-veterans-affairs/component-library/AlertBox';
 
 export default function CallToActionAlert({
   heading,
+  headerLevel,
   alertText,
   primaryButtonText,
   primaryButtonHandler,
@@ -16,6 +17,7 @@ export default function CallToActionAlert({
 
   const alertProps = {
     headline: heading,
+    level: headerLevel,
     content: (
       <div>
         {alertText}

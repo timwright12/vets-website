@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import moment from '../../../../utils/moment-tz';
-import { formatFacilityAddress } from '../../../../utils/formatters';
-import { APPOINTMENT_STATUS, PURPOSE_TEXT } from '../../../../utils/constants';
+import moment from '../../../../lib/moment-tz';
+import { formatFacilityAddress } from '../../../../services/location';
+import {
+  APPOINTMENT_STATUS,
+  PURPOSE_TEXT,
+  VIDEO_TYPES,
+} from '../../../../utils/constants';
 import VideoVisitSection from './VideoVisitSection';
 import AddToCalendar from '../../../../components/AddToCalendar';
 import VAFacilityLocation from '../../../../components/VAFacilityLocation';
@@ -12,17 +16,20 @@ import CommunityCareInstructions from './CommunityCareInstructions';
 import AppointmentStatus from '../AppointmentStatus';
 import ConfirmedCommunityCareLocation from './ConfirmedCommunityCareLocation';
 import {
+  getATLASLocation,
   getVARFacilityId,
   getVAAppointmentLocationId,
   isVideoAppointment,
   isAtlasLocation,
-  isVideoGFE,
+  getVideoKind,
+  hasPractitioner,
 } from '../../../../services/appointment';
 import AdditionalInfoRow from '../AdditionalInfoRow';
 import {
   getVideoInstructionText,
   VideoVisitInstructions,
 } from './VideoInstructions';
+import VideoVisitProviderSection from './VideoVisitProvider';
 
 // Only use this when we need to pass data that comes back from one of our
 // services files to one of the older api functions
@@ -52,7 +59,7 @@ export default function ConfirmedAppointmentListItem({
   const isVideo = isVideoAppointment(appointment);
   const isInPersonVAAppointment = !isVideo && !isCommunityCare;
   const isAtlas = isAtlasLocation(appointment);
-  const isGFE = isVideoGFE(appointment);
+  const videoKind = getVideoKind(appointment);
 
   const showInstructions =
     isCommunityCare ||
@@ -61,11 +68,21 @@ export default function ConfirmedAppointmentListItem({
         appointment?.comment?.startsWith(purpose.short),
       ));
 
-  let instructionText;
+  const showVideoInstructions =
+    isVideo &&
+    appointment.comment &&
+    videoKind !== VIDEO_TYPES.clinic &&
+    videoKind !== VIDEO_TYPES.gfe;
+
+  const showProvider = isVideo && hasPractitioner(appointment);
+
+  let instructionText = 'VA appointment';
   if (showInstructions) {
     instructionText = appointment.comment;
-  } else if (isVideo && appointment.comment) {
+  } else if (showVideoInstructions) {
     instructionText = getVideoInstructionText(appointment.comment);
+  } else if (isVideo) {
+    instructionText = 'VA video appointment';
   }
 
   const itemClasses = classNames(
@@ -77,19 +94,30 @@ export default function ConfirmedAppointmentListItem({
     },
   );
 
-  const getVideoLocation = () => {
-    if (isAtlas) {
-      return 'at an ATLAS location';
-    } else if (isGFE) {
-      return 'using a VA device';
-    }
-    return null;
-  };
-
   let header;
   let location;
-  if (isVideo) {
+  let subHeader = '';
+
+  if (isAtlas) {
     header = 'VA Video Connect';
+    subHeader = ' at an ATLAS location';
+    const { address } = getATLASLocation(appointment);
+    if (address) {
+      location = `${address.streetAddress}, ${address.city}, ${address.state} ${
+        address.zipCode
+      }`;
+    }
+  } else if (videoKind === VIDEO_TYPES.clinic) {
+    header = 'VA Video Connect';
+    subHeader = ' at a VA location';
+    location = facility ? formatFacilityAddress(facility) : null;
+  } else if (videoKind === VIDEO_TYPES.gfe) {
+    header = 'VA Video Connect';
+    subHeader = ' using a VA device';
+    location = 'Video conference';
+  } else if (isVideo) {
+    header = 'VA Video Connect';
+    subHeader = ' at home';
     location = 'Video conference';
   } else if (isCommunityCare) {
     header = 'Community Care';
@@ -97,13 +125,16 @@ export default function ConfirmedAppointmentListItem({
       res => res.resourceType === 'Location',
     )?.address;
     if (address) {
-      location = `${address.line[0]} ${address.city}, ${address.state} ${
+      location = `${address.line[0]}, ${address.city}, ${address.state} ${
         address.postalCode
       }`;
     }
   } else {
     header = 'VA Appointment';
     location = facility ? formatFacilityAddress(facility) : null;
+    if (appointment.vaos.isPhoneAppointment) {
+      subHeader = ' over the phone';
+    }
   }
 
   return (
@@ -115,30 +146,18 @@ export default function ConfirmedAppointmentListItem({
     >
       <div
         id={`card-${index}-type`}
-        className="vaos-form__title vads-u-font-size--sm vads-u-font-weight--normal vads-u-font-family--sans"
+        className="vads-u-font-size--sm vads-u-font-weight--normal vads-u-font-family--sans"
       >
-        {header}
+        <span className="vaos-form__title">{header}</span>
+        <span>{subHeader}</span>
       </div>
       <h3 className="vaos-appts__date-time vads-u-font-size--h3 vads-u-margin-x--0">
-        {isAtlas && <span>Video appointment {getVideoLocation()}</span>}
-        {isGFE && <span>Video appointment {getVideoLocation()}</span>}
-        {!isAtlas &&
-          !isGFE && (
-            <AppointmentDateTime
-              appointmentDate={moment.parseZone(appointment.start)}
-              timezone={appointment.vaos.timeZone}
-              facilityId={getVARFacilityId(appointment)}
-            />
-          )}
-      </h3>
-      {(isAtlas || isGFE) && (
         <AppointmentDateTime
           appointmentDate={moment.parseZone(appointment.start)}
           timezone={appointment.vaos.timeZone}
           facilityId={getVARFacilityId(appointment)}
-          newFormat
         />
-      )}
+      </h3>
       <AppointmentStatus
         status={appointment.status}
         isPastAppointment={isPastAppointment}
@@ -149,7 +168,9 @@ export default function ConfirmedAppointmentListItem({
           {isCommunityCare && (
             <ConfirmedCommunityCareLocation appointment={appointment} />
           )}
-          {isVideo && <VideoVisitSection appointment={appointment} />}
+          {isVideo && (
+            <VideoVisitSection facility={facility} appointment={appointment} />
+          )}
           {isInPersonVAAppointment && (
             <VAFacilityLocation
               facility={facility}
@@ -172,33 +193,42 @@ export default function ConfirmedAppointmentListItem({
         )}
       </div>
 
+      {showProvider && (
+        <div className="vads-u-display--flex vads-u-flex-direction--column small-screen:vads-u-flex-direction--row">
+          <div className="vads-u-flex--1 vads-u-margin-bottom--2 vads-u-margin-right--1 vaos-u-word-break--break-word">
+            <VideoVisitProviderSection participants={appointment.participant} />
+          </div>
+        </div>
+      )}
+
       {!cancelled &&
         !isPastAppointment && (
           <div className="vads-u-margin-top--2 vads-u-display--flex vads-u-flex-wrap--wrap">
-            {isVideo &&
-              appointment.comment && (
-                <AdditionalInfoRow
-                  id={appointment.id}
-                  open={showMoreOpen}
-                  triggerText="Prepare for video visit"
-                  onClick={() => setShowMoreOpen(!showMoreOpen)}
-                >
-                  <VideoVisitInstructions
-                    instructionsType={appointment.comment}
-                  />
-                </AdditionalInfoRow>
-              )}
+            {showVideoInstructions && (
+              <AdditionalInfoRow
+                id={appointment.id}
+                open={showMoreOpen}
+                triggerText="Prepare for video visit"
+                onClick={() => setShowMoreOpen(!showMoreOpen)}
+              >
+                <VideoVisitInstructions
+                  instructionsType={appointment.comment}
+                />
+              </AdditionalInfoRow>
+            )}
             <AddToCalendar
-              summary={header}
+              summary={`${header}${subHeader}`}
               description={instructionText}
               location={location}
               duration={appointment.minutesDuration}
-              startDateTime={appointment.start}
+              startDateTime={moment.parseZone(appointment.start)}
             />
             {showCancelButton && (
               <button
                 onClick={() => cancelAppointment(appointment)}
-                aria-label="Cancel appointment"
+                aria-label={`Cancel appointment on ${formatAppointmentDate(
+                  moment.parseZone(appointment.start),
+                )}`}
                 className="vaos-appts__cancel-btn va-button-link vads-u-margin--0 vads-u-flex--0"
               >
                 Cancel appointment

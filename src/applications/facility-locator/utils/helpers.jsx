@@ -4,9 +4,7 @@ import moment from 'moment';
 import { first, includes, last, split, toLower } from 'lodash';
 import { CLINIC_URGENTCARE_SERVICE, LocationType } from '../constants';
 import UrgentCareAlert from '../containers/UrgentCareAlert';
-
-import recordEvent from 'platform/monitoring/record-event';
-import { distBetween } from '../utils/facilityDistance';
+import { recordMarkerEvents } from '../utils/analytics';
 
 export const setFocus = selector => {
   const el =
@@ -15,6 +13,75 @@ export const setFocus = selector => {
     el.setAttribute('tabIndex', -1);
     el.focus();
   }
+};
+
+export const clearLocationMarkers = () => {
+  const locationMarkers = window.document.getElementsByClassName(
+    'mapboxgl-marker',
+  );
+  Array.from(locationMarkers).forEach(marker =>
+    marker.parentNode.removeChild(marker),
+  );
+};
+
+export const buildMarker = (type, values) => {
+  if (type === 'location') {
+    const { loc, attrs } = values;
+    const markerElement = document.createElement('span');
+    markerElement.className = 'i-pin-card-map';
+    markerElement.style.cursor = 'pointer';
+    markerElement.textContent = attrs.letter;
+    markerElement.addEventListener('click', function() {
+      const locationElement = document.getElementById(loc.id);
+      if (locationElement) {
+        Array.from(document.getElementsByClassName('facility-result')).forEach(
+          e => {
+            e.classList.remove('active');
+          },
+        );
+        locationElement.classList.add('active');
+        recordMarkerEvents(loc);
+        document.getElementById('searchResultsContainer').scrollTop =
+          locationElement.offsetTop;
+      }
+    });
+    return markerElement;
+  }
+
+  if (type === 'currentPos') {
+    const markerElement = document.createElement('div');
+    markerElement.className = 'current-pos-pin';
+    return markerElement;
+  }
+  return null;
+};
+
+export const clearSearchAreaCtrl = () => {
+  const searchAreaControlId = document.getElementById(
+    'search-area-control-container',
+  );
+
+  if (searchAreaControlId) {
+    searchAreaControlId.style.display = 'none';
+  }
+};
+
+export const resetMapElements = () => {
+  clearLocationMarkers();
+  clearSearchAreaCtrl();
+};
+
+export const setSearchAreaPosition = () => {
+  const searchAreaContainer = document.getElementById(
+    'search-area-control-container',
+  );
+  document
+    .querySelector('.mapboxgl-control-container')
+    .appendChild(searchAreaContainer);
+  document
+    .querySelectorAll('.mapboxgl-ctrl-top-right')
+    // IE 11 doesn't support ChildNode.remove() and core-js doesn't polyfill DOM methods.
+    .forEach(el => el.parentNode.removeChild(el));
 };
 
 /**
@@ -245,111 +312,4 @@ export const showDialogUrgCare = currentQuery => {
   }
 
   return null;
-};
-
-/**
- * Helper fn to record Markers events for GA
- */
-export const recordMarkerEvents = r => {
-  const { classification, name, facilityType } = r.attributes;
-  const distance = r.distance;
-
-  if (classification && name && facilityType && distance) {
-    recordEvent({
-      event: 'fl-map-pin-click',
-      'fl-facility-type': facilityType,
-      'fl-facility-classification': classification,
-      'fl-facility-name': name,
-      'fl-facility-distance-from-search': distance,
-    });
-  }
-};
-
-/**
- * Helper fn to record map zoom and panning events for GA
- */
-export const recordZoomPanEvents = (e, searchCoords, currentZoomLevel) => {
-  if (currentZoomLevel && e.zoom > currentZoomLevel) {
-    recordEvent({ event: 'fl-map-zoom-in' });
-  } else if (currentZoomLevel && e.zoom < currentZoomLevel) {
-    recordEvent({ event: 'fl-map-zoom-out' });
-  }
-
-  if (searchCoords && searchCoords.lat && searchCoords.lng) {
-    const distanceMoved = distBetween(
-      searchCoords.lat,
-      searchCoords.lng,
-      e.center[0],
-      e.center[1],
-    );
-
-    if (distanceMoved > 0) {
-      recordEvent({ 'fl-map-miles-moved': distanceMoved });
-    }
-  }
-};
-
-/**
- * Helper fn to record search results data layer
- */
-export const recordResultEvents = (location, index) => {
-  const { classification, name, facilityType, id } = location.attributes;
-  const currentPage = location.currentPage;
-
-  if (classification && name && facilityType && id) {
-    recordEvent({
-      event: 'fl-results-click',
-      'fl-result-page-number': currentPage,
-      'fl-result-position': index + 1,
-      'fl-facility-type': facilityType,
-      'fl-facility-classification': classification,
-      'fl-facility-name': name,
-      'fl-facility-id': id,
-    });
-  }
-};
-
-/**
- * Helper fn to record search data layer
- */
-export const recordSearchEvents = (data, meta) => {
-  let dataPush = {};
-
-  if (data) {
-    dataPush = {
-      event: 'fl-search-results',
-      'fl-results-returned': !!data.length,
-    };
-
-    if (meta.pagination && meta.pagination.totalEntries) {
-      dataPush['fl-total-number-of-results'] = meta.pagination.totalEntries;
-    }
-
-    if (meta.pagination && meta.pagination.totalPages) {
-      dataPush['fl-total-number-of-result-pages'] = meta.pagination.totalPages;
-    }
-
-    recordEvent(dataPush);
-  }
-};
-
-/**
- * Helper fn to record mapBox data layer events
- */
-export const recordMapBoxEvents = res => {
-  const { body } = res;
-
-  if (body.query && Array.isArray(body.query)) {
-    recordEvent({ 'fl-searched-query': body.query.join(' ') });
-  }
-
-  body.features.forEach(f => {
-    if (f.place_name) {
-      recordEvent({ 'fl-mapbox-returned-place-name': f.place_name });
-    }
-
-    if (f.place_type && Array.isArray(f.place_type)) {
-      recordEvent({ 'fl-mapbox-returned-place-type': f.place_type.join(' ') });
-    }
-  });
 };

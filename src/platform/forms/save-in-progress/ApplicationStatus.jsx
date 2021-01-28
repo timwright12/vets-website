@@ -8,9 +8,9 @@ import {
   formDescriptions,
   formBenefits,
 } from 'applications/personalization/dashboard/helpers';
-import LoadingIndicator from '@department-of-veterans-affairs/formation-react/LoadingIndicator';
-import ProgressButton from '@department-of-veterans-affairs/formation-react/ProgressButton';
-import Modal from '@department-of-veterans-affairs/formation-react/Modal';
+import LoadingIndicator from '@department-of-veterans-affairs/component-library/LoadingIndicator';
+import ProgressButton from '@department-of-veterans-affairs/component-library/ProgressButton';
+import Modal from '@department-of-veterans-affairs/component-library/Modal';
 import { removeSavedForm } from '../../user/profile/actions';
 
 import {
@@ -132,8 +132,7 @@ export class ApplicationStatus extends React.Component {
             <br />
             <div className="expires-container">
               You can continue {appAction} now, or come back later to finish
-              your
-              {appType}. Your {appType}{' '}
+              your {appType}. Your {appType}{' '}
               <span className="expires">
                 will expire on {expirationDate.format('M/D/YYYY')}.
               </span>

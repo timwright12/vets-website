@@ -14,14 +14,6 @@ beforeEach(() => {
   cy.route('GET', '/v0/gi/calculator_constants', calculatorConstantsJson);
 });
 
-// Force interactions on elements, skipping the default checks for the
-// "user interactive" state of an element, potentially saving some time.
-// More importantly, this ensures the interaction will target the actual
-// selected element, which overrides the default behavior that simulates
-// how a real user might try to interact with a target element that has moved.
-// https://github.com/cypress-io/cypress/issues/6165
-export const FORCE_OPTION = { force: true };
-
 /**
  * Mocks the call for the profile
  * @param profile
@@ -33,7 +25,13 @@ export const initMockProfile = profile => {
   );
 };
 
-// Create API routes
+/**
+ * Setups up search results and a profile
+ * Calling this will also load calculator_constants
+ * Feature flags are loaded in src/platform/testing/e2e/cypress/support/index.js
+ * @param profile
+ * @param results
+ */
 export const initApplicationMock = (
   profile = institutionProfile,
   results = searchResults,
@@ -44,32 +42,4 @@ export const initApplicationMock = (
   cy.route('GET', '/v0/gi/institutions/search**', results).as('defaultSearch');
 
   initMockProfile(profile);
-};
-
-export const expectLocation = urlSubstring => {
-  cy.location().should(loc => {
-    expect(loc.pathname).to.includes(urlSubstring.replace(/\s/g, '%20'));
-  });
-  cy.axeCheck();
-};
-
-export const expectParams = params => {
-  const paramSubString = Object.values(params).map(
-    (key, value) => `${key}=${value.replace(/\\s/g, '%20')}`,
-  );
-  cy.location().should(loc => {
-    expect(loc.search).to.eq(`?${paramSubString}`);
-  });
-  cy.axeCheck();
-};
-
-export const forceClick = selector => {
-  cy.get(`${selector}`)
-    .first()
-    .click(FORCE_OPTION);
-};
-
-export const selectDropdown = (name, option) => {
-  const selector = `select[name="${name}"]`;
-  cy.get(selector).select(option);
 };

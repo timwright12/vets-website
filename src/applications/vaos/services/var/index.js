@@ -138,9 +138,26 @@ export function getFacilitiesInfo(facilityIds) {
     .map(id => `vha_${id}`)
     .join(',');
 
-  return apiRequestWithMocks(`/v1/facilities/va?ids=${idList}`).then(
-    parseApiList,
-  );
+  return apiRequestWithMocks(
+    `/v1/facilities/va?ids=${idList}&per_page=${facilityIds.length}`,
+  ).then(parseApiList);
+}
+
+export function getCommunityCareFacilities({
+  latitude,
+  longitude,
+  radius,
+  bbox,
+  specialties,
+  page = 1,
+  perPage = 10,
+}) {
+  const bboxQuery = bbox.map(c => `bbox[]=${c}`).join('&');
+  const specialtiesQuery = specialties.map(s => `specialties[]=${s}`).join('&');
+
+  return apiRequestWithMocks(
+    `/v1/facilities/ccp?latitude=${latitude}&longitude=${longitude}&radius=${radius}&per_page=${perPage}&page=${page}&${bboxQuery}&${specialtiesQuery}&type=provider&trim=true`,
+  ).then(parseApiList);
 }
 
 export function getSitesSupportingVAR(systemIds) {
@@ -224,6 +241,14 @@ export function updatePreferences(data) {
 export function getRequestEligibilityCriteria(sites) {
   return apiRequestWithMocks(
     `/vaos/v0/request_eligibility_criteria?${sites
+      .map(site => `parent_sites[]=${site}`)
+      .join('&')}`,
+  ).then(parseApiList);
+}
+
+export function getDirectBookingEligibilityCriteria(sites) {
+  return apiRequestWithMocks(
+    `/vaos/v0/direct_booking_eligibility_criteria?${sites
       .map(site => `parent_sites[]=${site}`)
       .join('&')}`,
   ).then(parseApiList);

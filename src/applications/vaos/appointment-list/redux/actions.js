@@ -1,9 +1,19 @@
 import moment from 'moment';
 import * as Sentry from '@sentry/browser';
-import { GA_PREFIX, APPOINTMENT_TYPES } from '../../utils/constants';
 import recordEvent from 'platform/monitoring/record-event';
-import { resetDataLayer } from '../../utils/events';
-import { selectSystemIds, vaosExpressCare } from '../../utils/selectors';
+import { selectVAPResidentialAddress } from 'platform/user/selectors';
+import {
+  GA_PREFIX,
+  APPOINTMENT_TYPES,
+  EXPRESS_CARE,
+} from '../../utils/constants';
+import { recordItemsRetrieved, resetDataLayer } from '../../utils/events';
+import {
+  selectSystemIds,
+  selectFeatureHomepageRefresh,
+} from '../../redux/selectors';
+
+import { selectPendingAppointments } from '../redux/selectors';
 
 import {
   getCancelReasons,
@@ -23,12 +33,21 @@ import {
   getVAAppointmentLocationId,
   getVideoAppointmentLocation,
   isVideoAppointment,
+  isVideoHome,
+  isAtlasLocation,
+  isVideoGFE,
+  isVideoVAFacility,
+  isVideoStoreForward,
 } from '../../services/appointment';
 
-import { captureError, getErrorCodes } from '../../utils/error';
-import { STARTED_NEW_APPOINTMENT_FLOW } from '../../redux/sitewide';
+import { captureError, has400LevelError } from '../../utils/error';
+import {
+  STARTED_NEW_APPOINTMENT_FLOW,
+  STARTED_NEW_EXPRESS_CARE_FLOW,
+} from '../../redux/sitewide';
 
 export const FETCH_FUTURE_APPOINTMENTS = 'vaos/FETCH_FUTURE_APPOINTMENTS';
+export const FETCH_PENDING_APPOINTMENTS = 'vaos/FETCH_PENDING_APPOINTMENTS';
 export const FETCH_PENDING_APPOINTMENTS_FAILED =
   'vaos/FETCH_PENDING_APPOINTMENTS_FAILED';
 export const FETCH_PENDING_APPOINTMENTS_SUCCEEDED =
@@ -43,6 +62,11 @@ export const FETCH_PAST_APPOINTMENTS_FAILED =
   'vaos/FETCH_PAST_APPOINTMENTS_FAILED';
 export const FETCH_PAST_APPOINTMENTS_SUCCEEDED =
   'vaos/FETCH_PAST_APPOINTMENTS_SUCCEEDED';
+
+export const FETCH_REQUEST_DETAILS = 'vaos/FETCH_REQUEST_DETAILS';
+export const FETCH_REQUEST_DETAILS_FAILED = 'vaos/FETCH_REQUEST_DETAILS_FAILED';
+export const FETCH_REQUEST_DETAILS_SUCCEEDED =
+  'vaos/FETCH_REQUEST_DETAILS_SUCCEEDED';
 
 export const FETCH_REQUEST_MESSAGES = 'vaos/FETCH_REQUEST_MESSAGES';
 export const FETCH_REQUEST_MESSAGES_FAILED =
@@ -65,6 +89,10 @@ export const FETCH_EXPRESS_CARE_WINDOWS_FAILED =
   'vaos/FETCH_EXPRESS_CARE_WINDOWS_FAILED';
 export const FETCH_EXPRESS_CARE_WINDOWS_SUCCEEDED =
   'vaos/FETCH_EXPRESS_CARE_WINDOWS_SUCCEEDED';
+
+function parseFakeFHIRId(id) {
+  return id ? id.replace('var', '') : id;
+}
 
 export function fetchRequestMessages(requestId) {
   return async dispatch => {
@@ -135,6 +163,8 @@ async function getAdditionalFacilityInfo(futureAppointments) {
 
 export function fetchFutureAppointments() {
   return async (dispatch, getState) => {
+    const featureHomepageRefresh = selectFeatureHomepageRefresh(getState());
+
     dispatch({
       type: FETCH_FUTURE_APPOINTMENTS,
     });
@@ -157,7 +187,7 @@ export function fetchFutureAppointments() {
         }),
         getAppointmentRequests({
           startDate: moment()
-            .subtract(30, 'days')
+            .subtract(featureHomepageRefresh ? 120 : 30, 'days')
             .format('YYYY-MM-DD'),
           endDate: moment().format('YYYY-MM-DD'),
         })
@@ -167,21 +197,15 @@ export function fetchFutureAppointments() {
               data: requests,
             });
 
-            const requestSuccessEvent = {
+            recordEvent({
               event: `${GA_PREFIX}-get-pending-appointments-retrieved`,
-            };
+            });
 
-            const expressCareRequests = requests.filter(
-              appt => appt.vaos.isExpressCare,
+            recordItemsRetrieved(
+              'express_care',
+              requests.filter(appt => appt.vaos.isExpressCare).length,
             );
 
-            if (vaosExpressCare(getState()) && expressCareRequests.length) {
-              requestSuccessEvent[`${GA_PREFIX}-express-care-number-of-cards`] =
-                expressCareRequests.length;
-            }
-
-            recordEvent(requestSuccessEvent);
-            resetDataLayer();
             return requests;
           })
           .catch(resp => {
@@ -198,9 +222,32 @@ export function fetchFutureAppointments() {
 
       recordEvent({
         event: `${GA_PREFIX}-get-future-appointments-retrieved`,
-        [`${GA_PREFIX}-upcoming-number-of-cards`]: data[0]?.length,
       });
-      resetDataLayer();
+      recordItemsRetrieved('upcoming', data[0]?.length);
+      recordItemsRetrieved(
+        'video_home',
+        data[0]?.filter(appt => isVideoHome(appt)).length,
+      );
+
+      recordItemsRetrieved(
+        'video_atlas',
+        data[0]?.filter(appt => isAtlasLocation(appt)).length,
+      );
+
+      recordItemsRetrieved(
+        'video_va_facility',
+        data[0]?.filter(appt => isVideoVAFacility(appt)).length,
+      );
+
+      recordItemsRetrieved(
+        'video_gfe',
+        data[0]?.filter(appt => isVideoGFE(appt)).length,
+      );
+
+      recordItemsRetrieved(
+        'video_store_forward',
+        data[0]?.filter(appt => isVideoStoreForward(appt)).length,
+      );
 
       dispatch({
         type: FETCH_FUTURE_APPOINTMENTS_SUCCEEDED,
@@ -230,6 +277,64 @@ export function fetchFutureAppointments() {
         type: FETCH_FUTURE_APPOINTMENTS_FAILED,
         error,
       });
+    }
+  };
+}
+
+export function fetchPendingAppointments() {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: FETCH_PENDING_APPOINTMENTS,
+      });
+
+      const featureHomepageRefresh = selectFeatureHomepageRefresh(getState());
+
+      const pendingAppointments = await getAppointmentRequests({
+        startDate: moment()
+          .subtract(featureHomepageRefresh ? 120 : 30, 'days')
+          .format('YYYY-MM-DD'),
+        endDate: moment().format('YYYY-MM-DD'),
+      });
+
+      dispatch({
+        type: FETCH_PENDING_APPOINTMENTS_SUCCEEDED,
+        data: pendingAppointments,
+      });
+
+      recordEvent({
+        event: `${GA_PREFIX}-get-pending-appointments-retrieved`,
+      });
+
+      recordItemsRetrieved(
+        'express_care',
+        pendingAppointments.filter(appt => appt.vaos.isExpressCare).length,
+      );
+
+      try {
+        const facilityData = await getAdditionalFacilityInfo(
+          pendingAppointments,
+        );
+
+        if (facilityData) {
+          dispatch({
+            type: FETCH_FACILITY_LIST_DATA_SUCCEEDED,
+            facilityData,
+          });
+        }
+      } catch (error) {
+        captureError(error);
+      }
+
+      return pendingAppointments;
+    } catch (error) {
+      recordEvent({
+        event: `${GA_PREFIX}-get-pending-appointments-failed`,
+      });
+      dispatch({
+        type: FETCH_PENDING_APPOINTMENTS_FAILED,
+      });
+      return captureError(error);
     }
   };
 }
@@ -286,6 +391,33 @@ export function fetchPastAppointments(startDate, endDate, selectedIndex) {
       recordEvent({
         event: `${GA_PREFIX}-get-past-appointments-failed`,
       });
+    }
+  };
+}
+
+export function fetchRequestDetails(id) {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const { appointmentDetails, requestMessages } = state.appointments;
+    const pendingAppointments = selectPendingAppointments(state);
+    const request =
+      appointmentDetails[id] || pendingAppointments?.find(p => p.id === id);
+
+    dispatch({
+      type: FETCH_REQUEST_DETAILS,
+    });
+
+    if (request) {
+      dispatch({ type: FETCH_REQUEST_DETAILS_SUCCEEDED, request, id });
+    } else {
+      // TODO: fetch single appointment
+    }
+
+    const parsedId = parseFakeFHIRId(id);
+    const messages = requestMessages?.[parsedId];
+
+    if (!messages) {
+      dispatch(fetchRequestMessages(parsedId));
     }
   };
 }
@@ -387,7 +519,7 @@ export function confirmCancelAppointment() {
       });
       resetDataLayer();
     } catch (e) {
-      const isVaos400Error = getErrorCodes(e).includes('VAOS_400');
+      const isVaos400Error = has400LevelError(e);
       if (isVaos400Error) {
         Sentry.withScope(scope => {
           scope.setExtra('error', e);
@@ -424,6 +556,12 @@ export function startNewAppointmentFlow() {
   };
 }
 
+export function startNewExpressCareFlow() {
+  return {
+    type: STARTED_NEW_EXPRESS_CARE_FLOW,
+  };
+}
+
 export function fetchExpressCareWindows() {
   return async (dispatch, getState) => {
     dispatch({
@@ -432,12 +570,36 @@ export function fetchExpressCareWindows() {
 
     const initialState = getState();
     const userSiteIds = selectSystemIds(initialState);
+    const address = selectVAPResidentialAddress(initialState);
 
     try {
       const settings = await getRequestEligibilityCriteria(userSiteIds);
+      let facilityData;
+
+      if (address?.latitude && address?.longitude) {
+        const facilityIds = settings
+          .filter(
+            facility =>
+              facility.customRequestSettings?.find(
+                setting => setting.id === EXPRESS_CARE,
+              )?.supported,
+          )
+          .map(f => f.id);
+        if (facilityIds.length) {
+          try {
+            facilityData = await getLocations({ facilityIds });
+          } catch (error) {
+            // Still allow people into EC if the facility data call fails
+            captureError(error);
+          }
+        }
+      }
+
       dispatch({
         type: FETCH_EXPRESS_CARE_WINDOWS_SUCCEEDED,
         settings,
+        facilityData,
+        address,
         nowUtc: moment.utc(),
       });
     } catch (error) {

@@ -1,8 +1,8 @@
 import React from 'react';
-import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
+import AlertBox from '@department-of-veterans-affairs/component-library/AlertBox';
 import Telephone, {
   CONTACTS,
-} from '@department-of-veterans-affairs/formation-react/Telephone';
+} from '@department-of-veterans-affairs/component-library/Telephone';
 
 import { capitalizeEachWord, formatDate } from '../utils';
 import {
@@ -17,6 +17,11 @@ const template = (props, title, content, submissionMessage, messageType) => {
   const { fullName, disabilities, submittedAt } = props;
   const { first, last, middle, suffix } = fullName;
 
+  // This is easier than passing down props and checking if the form type
+  const pageTitle = document.title.includes('Benefits')
+    ? 'Benefits Delivery at Discharge Claim'
+    : 'Disability Compensation Claim';
+
   const renderableContent =
     typeof content === 'string' && content !== '' ? <p>{content}</p> : content;
 
@@ -26,6 +31,7 @@ const template = (props, title, content, submissionMessage, messageType) => {
       headline={title}
       content={renderableContent}
       status={messageType}
+      level="2"
     />
   );
 
@@ -49,23 +55,41 @@ const template = (props, title, content, submissionMessage, messageType) => {
   }
 
   return (
-    <div>
-      <h2 className="vads-u-font-size--h5">
-        Please print this page for your records.
-      </h2>
+    <div className="confirmation-page">
+      <div className="print-only">
+        <img
+          src="https://www.va.gov/img/design/logo/logo-black-and-white.png"
+          alt="VA logo"
+          width="300"
+        />
+        <h2>{pageTitle}</h2>
+      </div>
 
       <AlertBox
         isVisible
         headline={title}
         content={renderableContent}
         status={messageType}
+        level="2"
       />
 
+      {props.areConfirmationEmailTogglesOn ? (
+        <h2 className="vads-u-font-size--h5" id="note-email">
+          We'll send you an email to confirm that we received your claim.{' '}
+          <span className="screen-only">
+            You can also print this page for your records.
+          </span>
+        </h2>
+      ) : (
+        <h2 className="vads-u-font-size--h5 screen-only" id="note-print">
+          Please print this page for your records.
+        </h2>
+      )}
+
       <div className="inset">
-        <h3 className="vads-u-font-size--h4">
-          Disability Compensation Claim{' '}
-          <span className="additional">(Form 21-526EZ)</span>
-        </h3>
+        <h2 className="vads-u-font-size--h4">
+          {pageTitle} <span className="additional">(Form 21-526EZ)</span>
+        </h2>
         <span>
           For {first} {middle} {last} {suffix}
         </span>
@@ -78,9 +102,9 @@ const template = (props, title, content, submissionMessage, messageType) => {
           <li>
             <strong>Conditions claimed</strong>
             <br />
-            <ul className="disability-list">
+            <ul className="disability-list vads-u-margin-top--0">
               {disabilities.map((disability, i) => (
-                <li key={i}>
+                <li key={i} className="vads-u-margin-bottom--0">
                   {typeof disability === 'string'
                     ? capitalizeEachWord(disability)
                     : NULL_CONDITION_STRING}
@@ -90,12 +114,18 @@ const template = (props, title, content, submissionMessage, messageType) => {
             {submissionMessage}
           </li>
         </ul>
+        <button
+          className="usa-button screen-only"
+          onClick={() => window.print()}
+        >
+          Print for your records
+        </button>
       </div>
 
       <div className="confirmation-guidance-container">
-        <h3 className="confirmation-guidance-heading vads-u-font-size--h4">
+        <h2 className="confirmation-guidance-heading vads-u-font-size--h4">
           How long will it take VA to make a decision on my claim?
-        </h3>
+        </h2>
         <p className="confirmation-guidance-message">
           We process applications in the order we receive them. The amount of
           time it takes us to review you claim depends on:
@@ -113,9 +143,9 @@ const template = (props, title, content, submissionMessage, messageType) => {
           </li>
         </ul>
 
-        <h3 className="confirmation-guidance-heading vads-u-font-size--h4">
+        <h2 className="confirmation-guidance-heading vads-u-font-size--h4">
           How can I check the status of my claim?
-        </h3>
+        </h2>
         <p className="confirmation-guidance-message">
           You can check the status of your claim online. Please allow 24 hours
           for your disability claim to show up there. If you don’t see your
@@ -127,9 +157,9 @@ const template = (props, title, content, submissionMessage, messageType) => {
           <a href="/track-claims">Check the status of your claim</a>
         </p>
 
-        <h3 className="confirmation-guidance-heading vads-u-font-size--h4">
+        <h2 className="confirmation-guidance-heading vads-u-font-size--h4">
           What happens after I file a claim for disability compensation?
-        </h3>
+        </h2>
         <p className="confirmation-guidance-message">
           <a href="/disability/after-you-file-claim/">
             Learn more about what happens after you file a disability claim

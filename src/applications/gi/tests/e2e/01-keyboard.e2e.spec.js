@@ -24,7 +24,7 @@ module.exports = E2eHelpers.createE2eTest(client => {
   client.timeoutsAsyncScript(2000);
 
   // Assert the correct number of focusable elements in the form
-  client.assert.hasFocusableCount('div.usa-width-two-thirds form', 15);
+  client.assert.hasFocusableCount('div.usa-width-two-thirds form', 14);
 
   // Assert the correct number of tabbable elements in the form
   client.assert.hasTabbableCount('div.usa-width-two-thirds form', 11);
@@ -119,8 +119,8 @@ module.exports = E2eHelpers.createE2eTest(client => {
     .repeatKeypress(TAB, 2)
     .allyEvaluateRadioButtons(
       [
+        '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-0"]',
         '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-1"]',
-        '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-2"]',
       ],
       ARROW_DOWN,
     )
@@ -128,7 +128,6 @@ module.exports = E2eHelpers.createE2eTest(client => {
       [
         '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-0"]',
         '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-1"]',
-        '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-2"]',
       ],
       ARROW_RIGHT,
     );
@@ -139,7 +138,6 @@ module.exports = E2eHelpers.createE2eTest(client => {
       [
         '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-0"]',
         '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-1"]',
-        '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-2"]',
       ],
       ARROW_UP,
       true,
@@ -148,7 +146,6 @@ module.exports = E2eHelpers.createE2eTest(client => {
       [
         '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-0"]',
         '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-1"]',
-        '.form-radio-buttons  input[name="onlineClasses"][id^="radio-buttons-"][id$="-2"]',
       ],
       ARROW_LEFT,
       true,

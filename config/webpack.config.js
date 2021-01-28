@@ -1,4 +1,5 @@
-require('@babel/polyfill');
+require('core-js/stable');
+require('regenerator-runtime/runtime');
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
@@ -16,17 +17,22 @@ const headerFooterData = require('../src/platform/landing-pages/header-footer-da
 const BUCKETS = require('../src/site/constants/buckets');
 const ENVIRONMENTS = require('../src/site/constants/environments');
 
+const { VAGOVSTAGING, VAGOVPROD, LOCALHOST } = ENVIRONMENTS;
+
 const {
   getAppManifests,
   getWebpackEntryPoints,
 } = require('./manifest-helpers');
 
-const generateWebpackDevConfig = require('./webpack.dev.config.js');
+// TODO: refactor the other approach for creating files without the hash so that we're only doing that in the webpack config: https://github.com/department-of-veterans-affairs/vets-website/blob/a012bad17e5bf024b0ea7326a72ae6a737e349ec/src/site/stages/build/plugins/process-entry-names.js#L35
+const vaMedalliaStylesFilename = 'va-medallia-styles';
 
-const timestamp = new Date().getTime();
+const generateWebpackDevConfig = require('./webpack.dev.config.js');
 
 const getAbsolutePath = relativePath =>
   path.join(__dirname, '../', relativePath);
+
+const timestamp = new Date().getTime();
 
 const sharedModules = [
   getAbsolutePath('src/platform/polyfills'),
@@ -41,6 +47,9 @@ const sharedModules = [
 const globalEntryFiles = {
   polyfills: getAbsolutePath('src/platform/polyfills/preESModulesPolyfills.js'),
   style: getAbsolutePath('src/platform/site-wide/sass/style.scss'),
+  [vaMedalliaStylesFilename]: getAbsolutePath(
+    'src/platform/site-wide/sass/va-medallia-style.scss',
+  ),
   styleConsolidated: getAbsolutePath(
     'src/applications/proxy-rewrite/sass/style-consolidated.scss',
   ),
@@ -48,6 +57,18 @@ const globalEntryFiles = {
   // This is to solve the issue of the vendor file being cached
   'shared-modules': sharedModules,
 };
+
+function getEntryManifests(entry) {
+  const allManifests = getAppManifests();
+  let entryManifests = allManifests;
+  if (entry) {
+    const entryNames = entry.split(',').map(name => name.trim());
+    entryManifests = allManifests.filter(manifest =>
+      entryNames.includes(manifest.entryName),
+    );
+  }
+  return entryManifests;
+}
 
 /**
  * Get a list of all the entry points.
@@ -57,59 +78,56 @@ const globalEntryFiles = {
  * @return {Object} - The entry file paths mapped to the entry names
  */
 function getEntryPoints(entry) {
-  const manifests = getAppManifests();
-  let manifestsToBuild = manifests;
-  if (entry) {
-    const entryNames = entry.split(',').map(name => name.trim());
-    manifestsToBuild = manifests.filter(manifest =>
-      entryNames.includes(manifest.entryName),
-    );
-  }
+  const manifestsToBuild = getEntryManifests(entry);
 
   return getWebpackEntryPoints(manifestsToBuild);
 }
 
-module.exports = env => {
+module.exports = (env = {}) => {
+  const { buildtype = LOCALHOST } = env;
   const buildOptions = {
     api: '',
-    buildtype: 'localhost',
-    host: 'localhost',
+    buildtype,
+    host: LOCALHOST,
     port: 3001,
     scaffold: false,
     watch: false,
+    setPublicPath: false,
+    destination: path.resolve(__dirname, '../', 'build', buildtype),
     ...env,
-    // Using a getter so we can reference the buildtype
-    get destination() {
-      return path.resolve(__dirname, '../', 'build', this.buildtype);
-    },
   };
 
   const apps = getEntryPoints(buildOptions.entry);
   const entryFiles = Object.assign({}, apps, globalEntryFiles);
-  const isOptimizedBuild = [
-    ENVIRONMENTS.VAGOVSTAGING,
-    ENVIRONMENTS.VAGOVPROD,
-  ].includes(buildOptions.buildtype);
+  const isOptimizedBuild = [VAGOVSTAGING, VAGOVPROD].includes(buildtype);
+
+  const useHashFilenames = [VAGOVSTAGING, VAGOVPROD].includes(buildtype);
 
   // enable css sourcemaps for all non-localhost builds
   // or if build options include local-css-sourcemaps or entry
   const enableCSSSourcemaps =
-    buildOptions.buildtype !== ENVIRONMENTS.LOCALHOST ||
+    buildtype !== LOCALHOST ||
     buildOptions['local-css-sourcemaps'] ||
     !!buildOptions.entry;
 
   const outputPath = `${buildOptions.destination}/generated`;
+
+  // Set the publicPath conditional so we can get dynamic modules loading from S3
+  const publicAssetPath =
+    buildOptions.setPublicPath && buildtype !== LOCALHOST
+      ? `${BUCKETS[buildtype]}/generated/`
+      : '/generated/';
 
   const baseConfig = {
     mode: 'development',
     entry: entryFiles,
     output: {
       path: outputPath,
-      publicPath: '/generated/',
-      filename: !isOptimizedBuild
+      publicPath: publicAssetPath,
+      filename: !useHashFilenames
         ? '[name].entry.js'
         : `[name].entry.[chunkhash]-${timestamp}.js`,
-      chunkFilename: !isOptimizedBuild
+      chunkFilename: !useHashFilenames
         ? '[name].entry.js'
         : `[name].entry.[chunkhash]-${timestamp}.js`,
     },
@@ -128,7 +146,7 @@ module.exports = env => {
           },
         },
         {
-          test: /\.scss$/,
+          test: /\.(sa|sc|c)ss$/,
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
@@ -136,14 +154,16 @@ module.exports = env => {
             {
               loader: 'css-loader',
               options: {
-                minimize: isOptimizedBuild,
                 sourceMap: enableCSSSourcemaps,
               },
             },
             {
               loader: 'postcss-loader',
               options: {
-                plugins: () => [require('autoprefixer')],
+                // use cssnano to minimize css only on optimized builds
+                plugins: isOptimizedBuild
+                  ? () => [require('autoprefixer'), require('cssnano')]
+                  : () => [require('autoprefixer')],
               },
             },
             {
@@ -231,14 +251,23 @@ module.exports = env => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        __BUILDTYPE__: JSON.stringify(buildOptions.buildtype),
+        __BUILDTYPE__: JSON.stringify(buildtype),
         __API__: JSON.stringify(buildOptions.api),
       }),
 
       new MiniCssExtractPlugin({
-        filename: !isOptimizedBuild
-          ? '[name].css'
-          : `[name].[contenthash]-${timestamp}.css`,
+        moduleFilename: chunk => {
+          const { name } = chunk;
+          const isMedalliaStyleFile = name === vaMedalliaStylesFilename;
+
+          const isStaging = buildtype === VAGOVSTAGING;
+
+          if (isMedalliaStyleFile && isStaging) return `[name].css`;
+
+          return useHashFilenames
+            ? `[name].[contenthash]-${timestamp}.css`
+            : `[name].css`;
+        },
       }),
 
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
@@ -370,10 +399,19 @@ module.exports = env => {
         ],
       }),
     );
+
+    // Open the browser to either --env.openTo or one of the root URLs of the
+    // apps we're scaffolding
+    baseConfig.devServer.open = true;
+    baseConfig.devServer.openPage =
+      buildOptions.openTo || buildOptions.entry
+        ? // Assumes the first in the list has a rootUrl
+          getEntryManifests(buildOptions.entry)[0].rootUrl
+        : '';
   }
 
   if (isOptimizedBuild) {
-    const bucket = BUCKETS[buildOptions.buildtype];
+    const bucket = BUCKETS[buildtype];
 
     baseConfig.plugins.push(
       new webpack.SourceMapDevToolPlugin({

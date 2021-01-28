@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
+import { toggleValues } from 'platform/site-wide/feature-toggles/selectors';
+import FEATURE_FLAG_NAMES from 'platform/utilities/feature-toggles/featureFlagNames';
 
 import { fetchSearchResults } from '../actions';
 import { formatResponseString } from '../utils';
@@ -13,10 +15,11 @@ import { focusElement } from 'platform/utilities/ui';
 import DowntimeNotification, {
   externalServices,
 } from 'platform/monitoring/DowntimeNotification';
-import LoadingIndicator from '@department-of-veterans-affairs/formation-react/LoadingIndicator';
-import IconSearch from '@department-of-veterans-affairs/formation-react/IconSearch';
-import Pagination from '@department-of-veterans-affairs/formation-react/Pagination';
-import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
+import LoadingIndicator from '@department-of-veterans-affairs/component-library/LoadingIndicator';
+import IconSearch from '@department-of-veterans-affairs/component-library/IconSearch';
+import Pagination from '@department-of-veterans-affairs/component-library/Pagination';
+import AlertBox from '@department-of-veterans-affairs/component-library/AlertBox';
+import { apiRequest } from 'platform/utilities/api';
 
 import SearchBreadcrumbs from '../components/SearchBreadcrumbs';
 
@@ -56,7 +59,14 @@ class SearchApp extends React.Component {
     // If there's data in userInput, it must have come from the address bar, so we immediately hit the API.
     const { userInput, page } = this.state;
     if (userInput) {
-      this.props.fetchSearchResults(userInput, page);
+      this.props.fetchSearchResults(userInput, page, {
+        path: document.location.pathname,
+        userInput,
+        typeaheadEnabled: false,
+        keywordSelected: undefined,
+        keywordPosition: undefined,
+        suggestionsList: undefined,
+      });
     }
   }
 
@@ -94,7 +104,14 @@ class SearchApp extends React.Component {
     });
 
     // Fetch new results
-    this.props.fetchSearchResults(userInput, nextPage);
+    this.props.fetchSearchResults(userInput, nextPage, {
+      path: document.location.pathname,
+      userInput,
+      typeaheadEnabled: false,
+      keywordSelected: undefined,
+      keywordPosition: undefined,
+      suggestionsList: undefined,
+    });
 
     // Update query is necessary
     if (queryChanged) {
@@ -106,6 +123,55 @@ class SearchApp extends React.Component {
     this.setState({
       userInput: event.target.value,
     });
+  };
+
+  onSearchResultClick = ({ bestBet, title, index, url }) => () => {
+    if (bestBet) {
+      recordEvent({
+        event: 'nav-searchresults',
+        'nav-path': `Recommended Results -> ${title}`,
+      });
+    }
+
+    const bestBetPosition = index + 1;
+    const normalResultPosition =
+      index + (this.props.search?.recommendedResults?.length || 0) + 1;
+    const searchResultPosition = bestBet
+      ? bestBetPosition
+      : normalResultPosition;
+
+    const query = this.props.router?.location?.query?.query || '';
+
+    recordEvent({
+      event: 'onsite-search-results-click',
+      'search-page-path': document.location.pathname,
+      'search-query': query,
+      'search-result-chosen-page-url': url,
+      'search-result-chosen-title': title,
+      'search-results-pagination-current-page': this.props.search?.currentPage,
+      'search-results-position': searchResultPosition,
+      'search-results-total-count': this.props.search?.totalEntries,
+      'search-results-total-pages': Math.ceil(
+        this.props.search?.totalEntries / 10,
+      ),
+      'search-results-top-recommendation': bestBet,
+      'search-result-type': 'title',
+      'search-selection': 'All VA.gov',
+      'search-typeahead-enabled': this.props.searchTypeaheadEnabled,
+    });
+
+    const encodedUrl = encodeURIComponent(url);
+    const userAgent = encodeURIComponent(navigator.userAgent);
+    const searchClickTrackingEndpoint = `/search_click_tracking`;
+    const encodedQuery = encodeURIComponent(query);
+    const apiRequestOptions = {
+      method: 'POST',
+    };
+
+    apiRequest(
+      `${searchClickTrackingEndpoint}?position=${searchResultPosition}&query=${encodedQuery}&url=${encodedUrl}&user_agent=${userAgent}`,
+      apiRequestOptions,
+    );
   };
 
   renderResults() {
@@ -167,8 +233,8 @@ class SearchApp extends React.Component {
             Our top recommendations for you
           </h4>
           <ul className="results-list">
-            {recommendedResults.map(r =>
-              this.renderWebResult(r, 'description', true),
+            {recommendedResults.map((result, index) =>
+              this.renderWebResult(result, 'description', true, index),
             )}
           </ul>
           <hr />
@@ -223,7 +289,9 @@ class SearchApp extends React.Component {
     if (results && results.length > 0) {
       return (
         <ul className="results-list">
-          {results.map(r => this.renderWebResult(r))}
+          {results.map((result, index) =>
+            this.renderWebResult(result, undefined, undefined, index),
+          )}
         </ul>
       );
     }
@@ -236,22 +304,19 @@ class SearchApp extends React.Component {
   }
 
   /* eslint-disable react/no-danger */
-  renderWebResult(result, snippetKey = 'snippet', isBestBet = false) {
+  renderWebResult(result, snippetKey = 'snippet', isBestBet = false, index) {
     const strippedTitle = formatResponseString(result.title, true);
     return (
       <li key={result.url} className="result-item">
         <a
           className={`result-title ${SCREENREADER_FOCUS_CLASSNAME}`}
           href={replaceWithStagingDomain(result.url)}
-          onClick={
-            isBestBet
-              ? () =>
-                  recordEvent({
-                    event: 'nav-searchresults',
-                    'nav-path': `Recommended Results -> ${strippedTitle}`,
-                  })
-              : null
-          }
+          onClick={this.onSearchResultClick({
+            bestBet: isBestBet,
+            title: strippedTitle,
+            index,
+            url: result.url,
+          })}
         >
           <h5
             dangerouslySetInnerHTML={{
@@ -306,7 +371,7 @@ class SearchApp extends React.Component {
             </DowntimeNotification>
           </div>
           <div className="usa-width-one-fourth medium-4 small-12 columns sidebar">
-            <h4 className="highlight">More VA Search Tools</h4>
+            <h4 className="highlight">More VA search tools</h4>
             <ul>
               <li>
                 <a
@@ -338,16 +403,29 @@ class SearchApp extends React.Component {
               </li>
               <li>
                 <a
-                  href="https://www.index.va.gov/search/va/va_adv_search.jsp?SQ=www.va.gov/vaforms,www.va.gov/vapubs,www.va.gov/vhapublications,www.vba.va.gov/pubs/forms"
+                  href="/find-forms/"
+                  onClick={() =>
+                    recordEvent({
+                      event: 'nav-searchresults',
+                      'nav-path': 'More VA Search Tools -> Find a VA form',
+                    })
+                  }
+                >
+                  Find a VA form
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.va.gov/vapubs/"
                   onClick={() =>
                     recordEvent({
                       event: 'nav-searchresults',
                       'nav-path':
-                        'More VA Search Tools -> Find VA forms and publications',
+                        'More VA Search Tools -> VA handbooks and other publications',
                     })
                   }
                 >
-                  Find VA forms and publications
+                  VA handbooks and other publications
                 </a>
               </li>
               <li>
@@ -372,10 +450,12 @@ class SearchApp extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  const { search } = state;
-  return { search };
-}
+const mapStateToProps = state => ({
+  search: state.search,
+  searchTypeaheadEnabled: toggleValues(state)[
+    FEATURE_FLAG_NAMES.searchTypeaheadEnabled
+  ],
+});
 
 const mapDispatchToProps = {
   fetchSearchResults,

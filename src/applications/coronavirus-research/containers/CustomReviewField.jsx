@@ -22,19 +22,20 @@ export default function CustomReviewField({ children, uiSchema }) {
     case whichSelectQuestions('GENDER'):
       selectQuestionTitle = 'Gender';
       break;
-    case whichSelectQuestions('RACE_ETHNICITY_ORIGIN'):
+    case whichSelectQuestions('RACE_ETHNICITY'):
       selectQuestionTitle = 'Race, ethnicity, and origin';
+      break;
+    case whichSelectQuestions('DIAGNOSED_DETAILS'):
+      selectQuestionTitle = 'Diagnosed by';
       break;
     default:
       selectQuestionTitle = '';
   }
 
   return children?.props.formData ? (
-    <div>
-      <div className="review-row">
-        <dt>{selectQuestionTitle}:</dt>
-        <dd>{uiSchema['ui:title']}</dd>
-      </div>
+    <div className="review-row">
+      <dt>{selectQuestionTitle}:</dt>
+      <dd>{uiSchema['ui:title']}</dd>
     </div>
   ) : (
     ''

@@ -11,21 +11,30 @@ import CustomReviewDOBField from '../containers/CustomReviewDOBField';
 import CustomReviewRadio from '../containers/customReviewRadio';
 import CustomReviewYesNo from '../containers/customReviewYesNo';
 
+const conditionalValidateBooleanGroup = (errors, pageData) => {
+  const { diagnosed, DIAGNOSED_DETAILS } = pageData;
+  if (diagnosed) {
+    validateBooleanGroup(errors.DIAGNOSED_DETAILS, DIAGNOSED_DETAILS);
+  }
+};
+
 export const uiSchema = {
   descriptionText: {
     'view:descriptionText': {
       'ui:description': (
         <span>
-          Thank you for your interest in participating in coronavirus research
-          at VA. Please answer the questions below, and we’ll add you to our
-          volunteer list. If we think you may be eligible for one of our
+          Thank you for your interest in volunteering for coronavirus disease
+          research at VA. Please answer the questions below, and we’ll add you
+          to our volunteer list. If we think you may be eligible for one of our
           COVID-19 studies, we’ll contact you to tell you more about it so you
           can decide if you want to join. You don’t need to be a Veteran to
           volunteer.
           <p>
             <b>Note:</b> We won’t share your information with anyone outside of
-            VA. To learn more before volunteering, read about participating in
-            coronavirus research at VA .
+            VA. To learn more before volunteering,{' '}
+            <a href="/coronavirus-research">
+              read about volunteering for coronavirus research at VA.
+            </a>
           </p>
         </span>
       ),
@@ -43,13 +52,10 @@ export const uiSchema = {
   },
   healthHeaderText: {
     'view:healthText': {
-      'ui:description': <span>Help us understand your health</span>,
-    },
-    'ui:options': {
-      classNames:
-        'schemaform-block-title schemaform-block-subtitle vads-u-margin-top--3 vads-u-font-size--h2',
+      'ui:description': <h2>Help us understand your health</h2>,
     },
   },
+  'ui:validations': [conditionalValidateBooleanGroup],
   diagnosed: {
     'ui:title': (
       <span>
@@ -62,12 +68,42 @@ export const uiSchema = {
       classNames: '',
     },
   },
+  DIAGNOSED_DETAILS: {
+    'ui:options': {
+      showFieldLabel: true,
+      expandUnder: 'diagnosed',
+    },
+    'ui:title': (
+      <span>
+        <strong>How were you diagnosed?</strong>
+        <br />
+        (Please check all that apply.)
+        <br />
+      </span>
+    ),
+    'DIAGNOSED_DETAILS::SYMPTOMS_ONLY': {
+      'ui:title': 'Based on my symptoms',
+      'ui:reviewField': CustomReviewField,
+    },
+    'DIAGNOSED_DETAILS::ANTIBODY_BLOOD_TEST': {
+      'ui:title': 'With a positive antibody blood test',
+      'ui:reviewField': CustomReviewField,
+    },
+    'DIAGNOSED_DETAILS::NASAL_SWAB_TEST_POSITIVE': {
+      'ui:title': 'With a positive nasal swab test',
+      'ui:reviewField': CustomReviewField,
+    },
+    'DIAGNOSED_DETAILS::DIFFERENT_METHOD': {
+      'ui:title': 'With a different method',
+      'ui:reviewField': CustomReviewField,
+    },
+  },
   closeContactPositive: {
     'ui:title': (
       <span>
         <strong>
-          In the past month, have you been in close contact with anyone who
-          tested positive for COVID-19?
+          In the past month, have you been in close contact with anyone who you
+          know tested positive for COVID-19?
         </strong>
         <p>
           <strong>Note:</strong> We define close contact as being within 6 feet
@@ -126,7 +162,7 @@ export const uiSchema = {
         <strong>
           Do you have a history of any of the health issues listed below?
         </strong>
-        (Please check all that apply)
+        (Please check all that apply.)
         <br />
       </span>
     ),
@@ -181,11 +217,7 @@ export const uiSchema = {
   },
   exposureRiskHeaderText: {
     'view:exposureRiskText': {
-      'ui:description': 'Help us understand your COVID-19 exposure risk',
-      'ui:options': {
-        classNames:
-          'schemaform-block-title schemaform-block-subtitle vads-u-margin-top--3 vads-u-margin-bottom--neg2 vads-u-font-size--h2',
-      },
+      'ui:description': <h2>Help us understand your COVID-19 exposure risk</h2>,
     },
   },
   EMPLOYMENT_STATUS: {
@@ -196,7 +228,7 @@ export const uiSchema = {
     'ui:title': (
       <span>
         <strong>Which work situation describes you?</strong> (Please check all
-        that apply)
+        that apply.)
         <br />
       </span>
     ),
@@ -236,12 +268,16 @@ export const uiSchema = {
     },
     'ui:title': (
       <span>
-        <strong>How do you get to work?</strong> (Please check all that apply)
+        <strong>How do you get to work?</strong> (Please check all that apply.)
         <br />
       </span>
     ),
     'TRANSPORTATION::CAR': {
       'ui:title': 'Car',
+      'ui:reviewField': CustomReviewField,
+    },
+    'TRANSPORTATION::CARPOOL_OR_VANPOOL': {
+      'ui:title': 'Carpool or vanpool',
       'ui:reviewField': CustomReviewField,
     },
     'TRANSPORTATION::FREQUENT_AIR_TRAVEL': {
@@ -311,11 +347,7 @@ export const uiSchema = {
   },
   contactHeaderText: {
     'view:contactText': {
-      'ui:description': 'Your contact and personal information',
-      'ui:options': {
-        classNames:
-          'schemaform-block-title schemaform-block-subtitle vads-u-margin-top--3 vads-u-font-size--h2',
-      },
+      'ui:description': <h2>Your contact and personal information</h2>,
     },
   },
   veteranFullName: _.merge(fullNameUI, {
@@ -373,13 +405,17 @@ export const uiSchema = {
     },
     'ui:title': (
       <span>
-        <strong>What is your relationship to the VA?</strong> (Please check all
-        that apply)
+        <strong>Which of these best describe you?</strong> (Please check all
+        that apply.)
         <br />
+        <p>
+          <strong>Note:</strong> We ask for this information to help us
+          understand your relationship with VA.
+        </p>
       </span>
     ),
     'VETERAN::VETERAN': {
-      'ui:title': 'I am a Veteran',
+      'ui:title': 'Veteran',
       'ui:reviewField': CustomReviewField,
     },
     'VETERAN::ACTIVE_DUTY': {
@@ -415,7 +451,7 @@ export const uiSchema = {
 
     'ui:title': (
       <span>
-        <strong>What is your gender?</strong> (Please check all that apply)
+        <strong>What is your gender?</strong> (Please check all that apply.)
         <br />
         <br />
         <strong>Note:</strong> We ask for this information to help make sure we
@@ -439,6 +475,10 @@ export const uiSchema = {
       'ui:title': 'Transgender woman',
       'ui:reviewField': CustomReviewField,
     },
+    'GENDER::NON_BINARY': {
+      'ui:title': 'Non-binary',
+      'ui:reviewField': CustomReviewField,
+    },
     'GENDER::SELF_IDENTIFY': {
       'ui:title': 'Prefer to self-describe',
       'ui:reviewField': CustomReviewField,
@@ -449,7 +489,7 @@ export const uiSchema = {
     },
   },
   GENDER_SELF_IDENTIFY_DETAILS: {
-    'ui:title': 'Provide your preferred description (50 characters or less)',
+    'ui:title': 'Provide your preferred description',
     'ui:options': {
       expandUnder: 'GENDER',
       expandUnderCondition: formData =>
@@ -464,7 +504,7 @@ export const uiSchema = {
     'ui:title': (
       <span>
         <strong>What is your race, ethnicity, or origin?</strong> (Please check
-        all that apply)
+        all that apply.)
         <br />
         <br />
         <strong>Note:</strong> We ask for this information to help make sure we

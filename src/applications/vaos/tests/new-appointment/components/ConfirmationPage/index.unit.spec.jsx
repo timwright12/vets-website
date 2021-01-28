@@ -1,11 +1,15 @@
 import userEvent from '@testing-library/user-event';
+import { waitFor } from '@testing-library/dom';
 import { expect } from 'chai';
 import moment from 'moment';
 import React from 'react';
 import sinon from 'sinon';
-import { ConfirmationPage } from '../../../../new-appointment/components/ConfirmationPage';
+import ConfirmationPage, * as noConnect from '../../../../new-appointment/components/ConfirmationPage';
 import { FLOW_TYPES } from '../../../../utils/constants';
-import { renderWithStoreAndRouter } from '../../../mocks/setup';
+import {
+  createTestStore,
+  renderWithStoreAndRouter,
+} from '../../../mocks/setup';
 
 const initialState = {
   featureToggles: {
@@ -21,48 +25,85 @@ const startNewAppointmentFlow = sinon.spy();
 
 describe('VAOS <ConfirmationPage>', () => {
   it('should render appointment direct schedule view', async () => {
-    const start = moment().tz('America/Denver');
-    const end = start;
-    const flowType = FLOW_TYPES.DIRECT;
-    const data = {
-      typeOfCareId: '323',
-      phoneNumber: '1234567890',
-      email: 'joeblow@gmail.com',
-      reasonForAppointment: 'routine-follow-up',
-      reasonAdditionalInfo: 'Additional info',
-      vaFacility: '983',
-    };
-    const facilityDetails = {
-      id: 'var983',
-      name: 'Cheyenne VA Medical Center',
-      address: {
-        postalCode: '82001-5356',
-        city: 'Cheyenne',
-        state: 'WY',
-        line: ['2360 East Pershing Boulevard'],
+    const start = moment();
+    const store = createTestStore({
+      newAppointment: {
+        flowType: FLOW_TYPES.DIRECT,
+        data: {
+          typeOfCareId: '323',
+          phoneNumber: '1234567890',
+          email: 'joeblow@gmail.com',
+          reasonForAppointment: 'routine-follow-up',
+          reasonAdditionalInfo: 'Additional info',
+          vaParent: 'var983',
+          vaFacility: 'var983',
+          clinicId: '455',
+          selectedDates: [start.format()],
+        },
+        availableSlots: [
+          {
+            start: start.format(),
+            end: start
+              .clone()
+              .add(30, 'minutes')
+              .format(),
+          },
+        ],
+        parentFacilities: [
+          {
+            id: 'var983',
+            identifier: [
+              { system: 'urn:oid:2.16.840.1.113883.6.233', value: '983' },
+              {
+                system: 'http://med.va.gov/fhir/urn',
+                value: 'urn:va:facility:983',
+              },
+            ],
+          },
+        ],
+        facilityDetails: {
+          var983: {
+            id: 'var983',
+            name: 'Cheyenne VA Medical Center',
+            address: {
+              postalCode: '82001-5356',
+              city: 'Cheyenne',
+              state: 'WY',
+              line: ['2360 East Pershing Boulevard'],
+            },
+          },
+        },
+        clinics: {
+          // eslint-disable-next-line camelcase
+          var983_323: [
+            {
+              id: '455',
+            },
+          ],
+        },
+        facilities: {
+          '323_var983': {
+            id: 'var983',
+            name: 'Cheyenne VA Medical Center',
+          },
+        },
       },
-    };
+    });
 
-    const screen = renderWithStoreAndRouter(
-      <ConfirmationPage
-        facilityDetails={facilityDetails}
-        flowType={flowType}
-        data={data}
-        slot={{ start, end }}
-        systemId="578"
-      />,
-      {
-        initialState,
-      },
-    );
+    const screen = renderWithStoreAndRouter(<ConfirmationPage />, {
+      store,
+    });
 
-    expect(screen.getByText(/Your appointment has been scheduled./i)).to.be.ok;
-    expect(screen.getByText(start.format('MMMM D, YYYY [at] h:mm a CT'))).to.be
-      .ok;
+    expect(await screen.findByText(/Your appointment is confirmed/i)).to.be.ok;
+    expect(
+      screen.getByText(
+        new RegExp(start.format('MMMM D, YYYY [at] h:mm a'), 'i'),
+      ),
+    ).to.be.ok;
 
     expect(screen.getByText(/Cheyenne VA Medical Center/i)).to.be.ok;
     expect(screen.getByText(/2360 East Pershing Boulevard/i)).to.be.ok;
-    expect(screen.getByText(/Cheyenne, WY 82001-5356/i)).to.be.ok;
+    expect(screen.baseElement).to.contain.text('Cheyenne, WY 82001-5356');
     expect(screen.getByText(/Follow-up\/Routine/i)).to.be.ok;
     expect(screen.getByText(/Additional info/i)).to.be.ok;
 
@@ -81,9 +122,7 @@ describe('VAOS <ConfirmationPage>', () => {
         morning: true,
         afternoon: true,
       },
-      calendarData: {
-        selectedDates: [{ date: '2019-12-20', optionTime: 'AM' }],
-      },
+      selectedDates: ['2019-12-20T00:00:00.000'],
       vaFacility: '983',
     };
     const facilityDetails = {
@@ -98,7 +137,7 @@ describe('VAOS <ConfirmationPage>', () => {
     };
 
     const screen = renderWithStoreAndRouter(
-      <ConfirmationPage
+      <noConnect.ConfirmationPage
         facilityDetails={facilityDetails}
         flowType={flowType}
         data={data}
@@ -108,13 +147,12 @@ describe('VAOS <ConfirmationPage>', () => {
       },
     );
 
-    expect(screen.getByText(/Your appointment request has been submitted./i)).to
-      .be.ok;
+    expect(screen.getByText(/We’re reviewing your request/i)).to.be.ok;
     expect(screen.getByText(/VA appointment/i)).to.be.ok;
     expect(screen.getByText(/Primary care appointment/i)).to.be.ok;
     expect(screen.getByText(/Pending/i)).to.be.ok;
     expect(screen.getByText(/CHYSHR-Sidney VA Clinic/i)).to.be.ok;
-    expect(screen.getByText(/Cheyenne, WY/i)).to.be.ok;
+    expect(screen.baseElement).to.contain.text('Cheyenne, WY');
     expect(screen.getByText(/December 20, 2019 in the morning/i)).to.be.ok;
   });
 
@@ -142,9 +180,7 @@ describe('VAOS <ConfirmationPage>', () => {
           postalCode: '01060',
         },
       },
-      calendarData: {
-        selectedDates: [{ date: '2019-12-20', optionTime: 'AM' }],
-      },
+      selectedDates: ['2019-12-20T00:00:00.000'],
     };
     const facilityDetails = {
       name: 'CHYSHR-Sidney VA Clinic',
@@ -158,7 +194,7 @@ describe('VAOS <ConfirmationPage>', () => {
     };
 
     const screen = renderWithStoreAndRouter(
-      <ConfirmationPage
+      <noConnect.ConfirmationPage
         facilityDetails={facilityDetails}
         flowType={flowType}
         data={data}
@@ -168,15 +204,14 @@ describe('VAOS <ConfirmationPage>', () => {
       },
     );
 
-    expect(screen.getByText(/Your appointment request has been submitted./i)).to
-      .be.ok;
+    expect(screen.getByText(/We’re reviewing your request/i)).to.be.ok;
     expect(screen.getByText(/Community Care/i)).to.be.ok;
     expect(screen.getByText(/Primary care appointment/i)).to.be.ok;
     expect(screen.getByText(/Pending/i)).to.be.ok;
     expect(screen.getByText(/Jane Doe/i)).to.be.ok;
     expect(screen.getByText(/555555555/i)).to.be.ok;
     expect(screen.getByText(/123 Test/i)).to.be.ok;
-    expect(screen.getByText(/Northampton, MA 01060/i)).to.be.ok;
+    expect(screen.baseElement).to.contain.text('Northampton, MA 01060');
     expect(screen.getByText(/December 20, 2019 in the morning/i)).to.be.ok;
   });
 
@@ -193,9 +228,7 @@ describe('VAOS <ConfirmationPage>', () => {
         afternoon: true,
       },
       hasCommunityCareProvider: false,
-      calendarData: {
-        selectedDates: [{ date: '2019-12-20', optionTime: 'AM' }],
-      },
+      selectedDates: ['2019-12-20T00:00:00.000'],
     };
     const facilityDetails = {
       name: 'CHYSHR-Sidney VA Clinic',
@@ -209,7 +242,7 @@ describe('VAOS <ConfirmationPage>', () => {
     };
 
     const screen = renderWithStoreAndRouter(
-      <ConfirmationPage
+      <noConnect.ConfirmationPage
         facilityDetails={facilityDetails}
         flowType={flowType}
         data={data}
@@ -219,8 +252,7 @@ describe('VAOS <ConfirmationPage>', () => {
       },
     );
 
-    expect(screen.getByText(/Your appointment request has been submitted./i)).to
-      .be.ok;
+    expect(screen.getByText(/We’re reviewing your request/i)).to.be.ok;
     expect(screen.getByText(/Community Care/i)).to.be.ok;
     expect(screen.getByText(/Primary care appointment/i)).to.be.ok;
     expect(screen.getByText(/Pending/i)).to.be.ok;
@@ -255,7 +287,7 @@ describe('VAOS <ConfirmationPage>', () => {
     };
 
     const screen = renderWithStoreAndRouter(
-      <ConfirmationPage
+      <noConnect.ConfirmationPage
         facilityDetails={facilityDetails}
         flowType={flowType}
         data={data}
@@ -293,7 +325,7 @@ describe('VAOS <ConfirmationPage>', () => {
       address: {},
     };
     const screen = renderWithStoreAndRouter(
-      <ConfirmationPage
+      <noConnect.ConfirmationPage
         facilityDetails={facilityDetails}
         flowType={flowType}
         data={data}
@@ -326,7 +358,7 @@ describe('VAOS <ConfirmationPage>', () => {
       address: {},
     };
     const screen = renderWithStoreAndRouter(
-      <ConfirmationPage
+      <noConnect.ConfirmationPage
         facilityDetails={facilityDetails}
         flowType={flowType}
         data={data}
@@ -354,7 +386,7 @@ describe('VAOS <ConfirmationPage>', () => {
     };
 
     const screen = renderWithStoreAndRouter(
-      <ConfirmationPage
+      <noConnect.ConfirmationPage
         fetchFacilityDetails={fetchFacilityDetails}
         startNewAppointmentFlow={startNewAppointmentFlow}
         flowType={flowType}
@@ -384,7 +416,7 @@ describe('VAOS <ConfirmationPage>', () => {
     };
 
     const screen = renderWithStoreAndRouter(
-      <ConfirmationPage
+      <noConnect.ConfirmationPage
         fetchFacilityDetails={fetchFacilityDetails}
         closeConfirmationPage={closeConfirmationPage}
         flowType={flowType}
@@ -406,27 +438,17 @@ describe('VAOS <ConfirmationPage>', () => {
     expect(screen.history.push.getCall(0).args[0]).to.equal('/');
   });
 
-  it('should redirect to new appointment page if no form data', () => {
-    const flowType = FLOW_TYPES.REQUEST;
-    const data = {};
-    const history = {
-      replace: sinon.spy(),
-    };
-
-    renderWithStoreAndRouter(
-      <ConfirmationPage
-        fetchFacilityDetails={fetchFacilityDetails}
-        flowType={flowType}
-        data={data}
-        history={history}
-      />,
-      {
-        initialState,
-      },
-    );
+  it('should redirect to new appointment page if no form data', async () => {
+    const store = createTestStore(initialState);
+    const screen = renderWithStoreAndRouter(<ConfirmationPage />, {
+      store,
+    });
 
     // Expect router to route to new appointment page
-    expect(history.replace.called).to.be.true;
-    expect(history.replace.getCall(0).args[0]).to.equal('/new-appointment');
+    await waitFor(() => {
+      expect(screen.history.replace.firstCall.args[0]).to.equal(
+        '/new-appointment',
+      );
+    });
   });
 });
