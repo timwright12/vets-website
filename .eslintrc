@@ -242,7 +242,8 @@
       "rules": {
         "no-restricted-imports": ["error", "raven"],
         "no-unused-expressions": 0,
-        "react/no-find-dom-node": 0
+        "react/no-find-dom-node": 0,
+        "va/cypress-viewport-deprecated": 1
       }
     },
     {
