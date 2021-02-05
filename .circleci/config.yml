@@ -6,7 +6,7 @@ executors:
       - image: circleci/node:14.15.0
   cypress:
     docker:
-      - image: cypress/base:14.15.0
+      - image: cypress/browsers-chrome78-ff70
 
 commands:
   yarn-install-cache:
