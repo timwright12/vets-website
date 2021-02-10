@@ -7,6 +7,7 @@ const {
   utcToEpochTime,
   getWysiwygString,
   isPublished,
+  entityObjectForKey,
 } = require('./helpers');
 
 const transform = entity => ({
@@ -16,22 +17,20 @@ const transform = entity => ({
   // uid: entity.uid[0],
   title: getDrupalValue(entity.title),
   created: utcToEpochTime(getDrupalValue(entity.created)),
-  changed: utcToEpochTime(getDrupalValue(entity.changed)),
   promote: getDrupalValue(entity.promote),
   entityMetatags: createMetaTagArray(entity.metatag.value),
   fieldAddress: entity.fieldAddress[0]
     ? mapKeys(entity.fieldAddress[0], (v, k) => camelCase(k))
     : null,
   fieldIntroText: getDrupalValue(entity.fieldIntroText),
-  fieldOffice:
-    entity.fieldOffice && entity.fieldOffice[0]
-      ? { entity: entity.fieldOffice[0] }
-      : null,
-  fieldPdfVersion: entity.fieldPdfVersion[0] || null,
+  fieldOffice: entityObjectForKey(entity, 'fieldOffice'),
+  fieldPdfVersion: entityObjectForKey(entity, 'fieldPdfVersion'),
   fieldPressReleaseContact: entity.fieldPressReleaseContact.map(i => ({
     entity: i,
   })),
-  fieldPressReleaseDownloads: entity.fieldPressReleaseDownloads,
+  fieldPressReleaseDownloads: entity.fieldPressReleaseDownloads.map(i => ({
+    entity: i,
+  })),
   fieldPressReleaseFulltext: {
     processed: getWysiwygString(
       getDrupalValue(entity.fieldPressReleaseFulltext),
@@ -51,7 +50,6 @@ module.exports = {
     // 'uid',
     'title',
     'created',
-    'changed',
     'promote',
     'metatag',
     'path',

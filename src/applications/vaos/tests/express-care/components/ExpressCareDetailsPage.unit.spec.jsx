@@ -1,4 +1,5 @@
 import React from 'react';
+import MockDate from 'mockdate';
 import { expect } from 'chai';
 import moment from 'moment';
 
@@ -29,8 +30,14 @@ const initialState = {
 };
 
 describe('VAOS integration: Express Care form - Additional Details Page', () => {
-  beforeEach(() => mockFetch());
-  afterEach(() => resetFetch());
+  beforeEach(() => {
+    mockFetch();
+    MockDate.set(moment('2020-01-26T14:00:00'));
+  });
+  afterEach(() => {
+    resetFetch();
+    MockDate.reset();
+  });
 
   it('should contain expected form elements', async () => {
     const today = moment();
@@ -64,9 +71,8 @@ describe('VAOS integration: Express Care form - Additional Details Page', () => 
       store,
     });
 
-    await waitFor(() =>
-      expect(screen.baseElement).to.contain.text('Tell us about your cough'),
-    );
+    await screen.findByText(/tell us about your cough/i);
+
     expect(screen.baseElement).to.contain.text(
       'Please provide additional details about your symptoms',
     );

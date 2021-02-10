@@ -2,23 +2,29 @@ import React, { useEffect, useState } from 'react';
 import FormFooter from 'platform/forms/components/FormFooter';
 import RoutedSavableApp from 'platform/forms/save-in-progress/RoutedSavableApp';
 import formConfig from '../config/form';
-import WizardContainer from './WizardContainer';
-import { WIZARD_STATUS } from 'applications/vre/28-1900/constants';
+import OrientationWizardContainer from './OrientationWizardContainer';
+import { WIZARD_STATUS } from '../constants';
 
 export default function App({ location, children }) {
   const [wizardState, setWizardState] = useState(false);
   let content;
 
+  const wizardStateHandler = status => {
+    sessionStorage.setItem(WIZARD_STATUS, status);
+    setWizardState(status);
+  };
+
   useEffect(
     () => {
-      const wizardStatus = sessionStorage.getItem(WIZARD_STATUS);
-      setWizardState(JSON.parse(wizardStatus));
+      setWizardState(sessionStorage.getItem(WIZARD_STATUS));
     },
     [setWizardState],
   );
 
   if (!wizardState) {
-    content = <WizardContainer />;
+    content = (
+      <OrientationWizardContainer wizardStateHandler={wizardStateHandler} />
+    );
   } else {
     content = (
       <RoutedSavableApp formConfig={formConfig} currentLocation={location}>

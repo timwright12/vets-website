@@ -45,7 +45,7 @@ describe('VAOS <TypeOfEyeCarePage>', () => {
       },
     );
 
-    expect(screen.getAllByRole('radio').length).to.equal(2);
+    expect((await screen.findAllByRole('radio')).length).to.equal(2);
     fireEvent.click(screen.getByText(/Continue/));
 
     expect(await screen.findByText('Please provide a response')).to.exist;
@@ -58,7 +58,7 @@ describe('VAOS <TypeOfEyeCarePage>', () => {
     fireEvent.click(screen.getByText(/Continue/));
     await waitFor(() =>
       expect(screen.history.push.lastCall?.args[0]).to.equal(
-        '/new-appointment/va-facility',
+        '/new-appointment/va-facility-2',
       ),
     );
   });

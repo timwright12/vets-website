@@ -12,7 +12,7 @@ import {
 import { mockAppointmentInfo, mockFacilitiesFetch } from '../../mocks/helpers';
 import { renderWithStoreAndRouter } from '../../mocks/setup';
 
-import FutureAppointmentsList from '../../../appointment-list/components/FutureAppointmentsList';
+import AppointmentsPage from '../../../appointment-list/components/AppointmentsPage';
 
 const initialState = {
   featureToggles: {
@@ -53,7 +53,7 @@ describe('VAOS integration: pending appointments', () => {
         baseElement,
         getByText,
         queryByText,
-      } = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+      } = renderWithStoreAndRouter(<AppointmentsPage />, {
         initialState,
       });
 
@@ -70,6 +70,7 @@ describe('VAOS integration: pending appointments', () => {
         '/find-locations/facility/vha_442GC',
       );
       expect(baseElement).to.contain.text('Preferred date and time');
+      expect(await findByText('Preferred date and time')).to.have.tagName('h4');
       expect(baseElement).to.contain.text(
         `${moment()
           .add(3, 'days')
@@ -88,6 +89,7 @@ describe('VAOS integration: pending appointments', () => {
 
       expect(baseElement).not.to.contain.text('Add to calendar');
       expect(getByText(/cancel request/i)).to.have.tagName('button');
+      expect(baseElement.querySelector('h4')).to.be.ok;
     });
 
     it('should show information with full facility info', async () => {
@@ -129,7 +131,7 @@ describe('VAOS integration: pending appointments', () => {
       mockFacilitiesFetch('vha_442GC', [facility]);
 
       const { findByText, baseElement, queryByText } = renderWithStoreAndRouter(
-        <FutureAppointmentsList />,
+        <AppointmentsPage />,
         {
           initialState,
         },
@@ -151,6 +153,7 @@ describe('VAOS integration: pending appointments', () => {
       expect(baseElement).to.contain.text('2360 East Pershing Boulevard');
       expect(baseElement).to.contain.text('Cheyenne, WY 82001-5356');
       expect(baseElement).to.contain.text('307-778-7550');
+      expect(baseElement.querySelector('h4')).to.be.ok;
     });
 
     it('should show correct status for cancelled appointments', async () => {
@@ -172,7 +175,7 @@ describe('VAOS integration: pending appointments', () => {
       mockAppointmentInfo({ requests: [appointment] });
 
       const { findByText, baseElement, queryByText } = renderWithStoreAndRouter(
-        <FutureAppointmentsList />,
+        <AppointmentsPage />,
         {
           initialState,
         },
@@ -207,12 +210,9 @@ describe('VAOS integration: pending appointments', () => {
       };
       mockAppointmentInfo({ requests: [appointment] });
 
-      const { findByText } = renderWithStoreAndRouter(
-        <FutureAppointmentsList />,
-        {
-          initialState,
-        },
-      );
+      const { findByText } = renderWithStoreAndRouter(<AppointmentsPage />, {
+        initialState,
+      });
 
       return expect(findByText(/You don’t have any appointments/i)).to
         .eventually.be.ok;
@@ -230,12 +230,9 @@ describe('VAOS integration: pending appointments', () => {
       };
       mockAppointmentInfo({ requests: [appointment] });
 
-      const { findByText } = renderWithStoreAndRouter(
-        <FutureAppointmentsList />,
-        {
-          initialState,
-        },
-      );
+      const { findByText } = renderWithStoreAndRouter(<AppointmentsPage />, {
+        initialState,
+      });
 
       return expect(findByText(/You don’t have any appointments/i)).to
         .eventually.be.ok;
@@ -270,7 +267,7 @@ describe('VAOS integration: pending appointments', () => {
       );
 
       const { baseElement, findByText } = renderWithStoreAndRouter(
-        <FutureAppointmentsList />,
+        <AppointmentsPage />,
         {
           initialState,
         },
@@ -284,9 +281,12 @@ describe('VAOS integration: pending appointments', () => {
 
       expect(baseElement).to.contain.text('Call morning');
       expect(baseElement).to.contain.text('New issue');
+      expect(await findByText('New issue')).to.have.tagName('h4');
       expect(baseElement).to.contain.text('Your contact details');
+      expect(await findByText('Your contact details')).to.have.tagName('h4');
       expect(baseElement).to.contain.text('patient.test@va.gov');
       expect(baseElement).to.contain.text('5555555566');
+      expect(baseElement.querySelector('h4')).to.be.ok;
     });
 
     it('should show video request', async () => {
@@ -321,7 +321,7 @@ describe('VAOS integration: pending appointments', () => {
         baseElement,
         getByText,
         queryByText,
-      } = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+      } = renderWithStoreAndRouter(<AppointmentsPage />, {
         initialState,
       });
 
@@ -338,6 +338,7 @@ describe('VAOS integration: pending appointments', () => {
         '/find-locations/facility/vha_442GC',
       );
       expect(baseElement).to.contain.text('Preferred date and time');
+      expect(await findByText('Preferred date and time')).to.have.tagName('h4');
       expect(baseElement).to.contain.text(
         `${moment()
           .add(3, 'days')
@@ -346,6 +347,7 @@ describe('VAOS integration: pending appointments', () => {
 
       expect(baseElement).not.to.contain.text('Add to calendar');
       expect(getByText(/cancel request/i)).to.have.tagName('button');
+      expect(baseElement.querySelector('h4')).to.be.ok;
     });
   });
 
@@ -397,7 +399,7 @@ describe('VAOS integration: pending appointments', () => {
         baseElement,
         getByText,
         queryByText,
-      } = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+      } = renderWithStoreAndRouter(<AppointmentsPage />, {
         initialState,
       });
 
@@ -410,6 +412,7 @@ describe('VAOS integration: pending appointments', () => {
       expect(dateHeader).to.have.tagName('h3');
 
       expect(baseElement).to.contain.text('Preferred provider');
+      expect(await findByText('Preferred provider')).to.have.tagName('h4');
       expect(baseElement).to.contain.text('My drs office');
       expect(baseElement).to.contain.text('Jane Doe');
       expect(baseElement).to.contain.text(
@@ -422,8 +425,10 @@ describe('VAOS integration: pending appointments', () => {
       await findByText(/a message from the patient/i);
       expect(baseElement).to.contain.text('Call morning');
       expect(baseElement).to.contain.text('Your contact details');
+      expect(await findByText('Your contact details')).to.have.tagName('h4');
       expect(baseElement).to.contain.text('patient.test@va.gov');
       expect(baseElement).to.contain.text('5555555566');
+      expect(baseElement.querySelector('h4')).to.be.ok;
     });
   });
 });

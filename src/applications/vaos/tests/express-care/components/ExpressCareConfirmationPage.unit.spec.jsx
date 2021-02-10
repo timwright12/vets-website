@@ -1,4 +1,5 @@
 import React from 'react';
+import MockDate from 'mockdate';
 import { expect } from 'chai';
 import moment from 'moment';
 
@@ -45,8 +46,14 @@ const initialState = {
 };
 
 describe('VAOS integration: Express Care form submission', () => {
-  beforeEach(() => mockFetch());
-  afterEach(() => resetFetch());
+  beforeEach(() => {
+    mockFetch();
+    MockDate.set(moment('2020-01-26T14:00:00'));
+  });
+  afterEach(() => {
+    resetFetch();
+    MockDate.reset();
+  });
 
   it('should not allow submission of an empty form', async () => {
     setupExpressCareMocks({ isWindowOpen: true, isUnderRequestLimit: true });
@@ -156,7 +163,7 @@ describe('VAOS integration: Express Care form submission', () => {
     screen = renderWithStoreAndRouter(<ExpressCareConfirmationPage />, {
       store,
     });
-    expect(screen.baseElement).to.contain.text('Next step');
+    expect(await screen.findByText(/Next step/)).to.exist;
     expect(screen.baseElement).to.contain('.fa-exclamation-triangle');
     expect(screen.baseElement).to.contain(
       '.vads-u-border-color--warning-message',
@@ -231,10 +238,10 @@ describe('VAOS integration: Express Care form submission', () => {
       store,
     });
 
-    fireEvent.change(await screen.getByLabelText(/phone number/i), {
+    fireEvent.change(await screen.findByLabelText(/phone number/i), {
       target: { value: '9737790338' },
     });
-    fireEvent.change(await screen.getByLabelText(/email address/i), {
+    fireEvent.change(await screen.findByLabelText(/email address/i), {
       target: { value: 'judy.morrison@va.gov' },
     });
     fireEvent.click(await screen.findByText(/submit express care/i));
@@ -320,10 +327,10 @@ describe('VAOS integration: Express Care form submission', () => {
       store,
     });
 
-    fireEvent.change(await screen.getByLabelText(/phone number/i), {
+    fireEvent.change(await screen.findByLabelText(/phone number/i), {
       target: { value: requestData.attributes.phoneNumber },
     });
-    fireEvent.change(await screen.getByLabelText(/email address/i), {
+    fireEvent.change(await screen.findByLabelText(/email address/i), {
       target: { value: requestData.attributes.email },
     });
     fireEvent.click(await screen.findByText(/submit express care/i));
@@ -369,10 +376,10 @@ describe('VAOS integration: Express Care form submission', () => {
       store,
     });
 
-    fireEvent.change(await screen.getByLabelText(/phone number/i), {
+    fireEvent.change(await screen.findByLabelText(/phone number/i), {
       target: { value: '9737790338' },
     });
-    fireEvent.change(await screen.getByLabelText(/email address/i), {
+    fireEvent.change(await screen.findByLabelText(/email address/i), {
       target: { value: 'judy.morrison@va.gov' },
     });
     fireEvent.click(await screen.findByText(/submit express care/i));

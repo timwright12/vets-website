@@ -20,15 +20,14 @@ import {
 import { toggleValues } from 'platform/site-wide/feature-toggles/selectors';
 import FEATURE_FLAG_NAMES from 'platform/utilities/feature-toggles/featureFlagNames';
 
-import LoadingIndicator from '@department-of-veterans-affairs/formation-react/LoadingIndicator';
-import Pagination from '@department-of-veterans-affairs/formation-react/Pagination';
+import LoadingIndicator from '@department-of-veterans-affairs/component-library/LoadingIndicator';
+import Pagination from '@department-of-veterans-affairs/component-library/Pagination';
 import { getScrollOptions, focusElement } from 'platform/utilities/ui';
 import SearchResult from '../components/search/SearchResult';
 import RatedSearchResult from '../components/search/RatedSearchResult';
 import InstitutionSearchForm from '../components/search/InstitutionSearchForm';
 import ServiceError from '../components/ServiceError';
 import { renderSearchResultsHeader } from '../utils/render';
-import environment from 'platform/utilities/environment';
 import { isMobileView, useQueryParams } from '../utils/helpers';
 import { searchWithFilters } from '../utils/search';
 
@@ -50,6 +49,7 @@ export function SearchPage({
   filters,
   gibctBenefitFilterEnhancement,
   gibctSchoolRatings,
+  gibctStateSearch,
   search,
 }) {
   const location = useLocation();
@@ -119,7 +119,7 @@ export function SearchPage({
 
         dispatchInstitutionFilterChange(institutionFilter);
 
-        dispatchFetchInstitutionSearchResults(query);
+        dispatchFetchInstitutionSearchResults(query, gibctStateSearch);
       }
     },
     [location.search],
@@ -127,8 +127,7 @@ export function SearchPage({
 
   useEffect(
     () => {
-      // prod flag for bah-8821
-      if (environment.isProduction() || !isMobileView()) {
+      if (!isMobileView()) {
         scroller.scrollTo('searchPage', getScrollOptions());
       }
     },
@@ -302,6 +301,7 @@ const mapStateToProps = state => ({
   gibctBenefitFilterEnhancement: toggleValues(state)[
     FEATURE_FLAG_NAMES.gibctBenefitFilterEnhancement
   ],
+  gibctStateSearch: toggleValues(state)[FEATURE_FLAG_NAMES.gibctStateSearch],
 });
 
 const mapDispatchToProps = {

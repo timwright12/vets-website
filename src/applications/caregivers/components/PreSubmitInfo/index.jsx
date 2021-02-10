@@ -2,18 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { cloneDeep } from 'lodash';
 
 import SignatureCheckbox from './SignatureCheckbox';
+import {
+  PrivacyPolicy,
+  veteranSignatureContent,
+  primaryCaregiverContent,
+  secondaryCaregiverContent,
+  signatureBoxNoteContent,
+} from 'applications/caregivers/definitions/content.js';
 
 const PreSubmitCheckboxGroup = ({ onSectionComplete, formData, showError }) => {
   const veteranLabel = `Veteran\u2019s`;
   const primaryLabel = `Primary Family Caregiver applicant\u2019s`;
   const secondaryOneLabel = `Secondary Family Caregiver applicant\u2019s`;
   const secondaryTwoLabel = `Secondary Family Caregiver (2) applicant\u2019s`;
+  const hasPrimary = formData['view:hasPrimaryCaregiver'];
   const hasSecondaryOne = formData['view:hasSecondaryCaregiverOne'];
   const hasSecondaryTwo = formData['view:hasSecondaryCaregiverTwo'];
+  // we are separating the first paragraph due to each paragraph having unique styling
+  const veteranFirstParagraph = veteranSignatureContent[0];
+  const veteranWithoutFirstParagraph = veteranSignatureContent.slice(1);
+  const primaryFirstParagraph = primaryCaregiverContent[0];
+  const primaryWithoutFirstParagraph = primaryCaregiverContent.slice(1);
 
   const [signatures, setSignatures] = useState({
     [veteranLabel]: false,
-    [primaryLabel]: false,
   });
 
   const unSignedLength = Object.values(signatures).filter(
@@ -37,6 +49,14 @@ const PreSubmitCheckboxGroup = ({ onSectionComplete, formData, showError }) => {
 
   useEffect(
     () => {
+      if (!hasPrimary) {
+        setSignatures(prevState => {
+          const newState = cloneDeep(prevState);
+          delete newState[primaryLabel];
+          return newState;
+        });
+      }
+
       if (!hasSecondaryOne) {
         setSignatures(prevState => {
           const newState = cloneDeep(prevState);
@@ -54,59 +74,30 @@ const PreSubmitCheckboxGroup = ({ onSectionComplete, formData, showError }) => {
       }
     },
 
-    [hasSecondaryOne, hasSecondaryTwo, secondaryOneLabel, secondaryTwoLabel],
-  );
-
-  const PrivacyPolicy = () => (
-    <p>
-      I have read and accept the
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        className="vads-u-margin-left--0p5"
-        href="https://www.va.gov/privacy-policy/"
-      >
-        privacy policy
-      </a>
-      .
-    </p>
+    [
+      hasPrimary,
+      hasSecondaryOne,
+      hasSecondaryTwo,
+      secondaryOneLabel,
+      secondaryTwoLabel,
+      primaryLabel,
+    ],
   );
 
   const SecondaryCaregiverCopy = ({ label }) => {
-    const header = title => `${title} Statement of Truth`;
+    const header = title => `${title} statement of truth`;
+    const firstParagraph = secondaryCaregiverContent[0];
+    const contentWithoutFirstParagraph = secondaryCaregiverContent.slice(1);
+
     return (
       <div>
         <h3 className="vads-u-margin-top--4">{header(label)}</h3>
 
-        <p className="vads-u-margin-y--4">
-          I certify that I am at least 18 years of age.
-        </p>
+        <p className="vads-u-margin-y--4">{firstParagraph}</p>
 
-        <p>
-          I certify that I am a family member of the Veteran named in this
-          application or I reside with the Veteran, or will do so upon
-          designation as the Veteran's Secondary Family Caregiver.
-        </p>
-
-        <p>
-          I agree to perform personal care services as the Secondary Family
-          Caregiver for the Veteran named on this application.
-        </p>
-
-        <p>
-          I understand that the Veteran or Veteran’s surrogate may request my
-          discharge from the Program of Comprehensive Assistance for Family
-          Caregivers (PCAFC) at any time. I understand that my designation as a
-          Secondary Family Caregiver may be revoked or I may be discharged from
-          the program by the Secretary of Veterans Affairs or his designee, as
-          set forth in 38 CFR 71.45.
-        </p>
-
-        <p>
-          I understand that participation in PCAFC does not create an employment
-          relationship between me and the Department of Veterans Affairs.
-        </p>
-
+        {contentWithoutFirstParagraph.map((secondaryContent, idx) => {
+          return <p key={`${label}-${idx}`}>{secondaryContent}</p>;
+        })}
         <PrivacyPolicy />
       </div>
     );
@@ -114,7 +105,7 @@ const PreSubmitCheckboxGroup = ({ onSectionComplete, formData, showError }) => {
 
   /*
     - Vet first && last name must match, and be checked
-    - PrimaryCaregiver first && last name must match, and be checked
+    - if hasPrimaryCaregiver first && last name must match, and be checked
     - if hasSecondary one || two, first & last name must match, and be checked to submit
    */
 
@@ -134,58 +125,41 @@ const PreSubmitCheckboxGroup = ({ onSectionComplete, formData, showError }) => {
         showError={showError}
       >
         <h3>Veteran&apos;s statement of truth</h3>
-        <p>
-          I certify that I am a family member of the Veteran named in this
-          application or I reside with the Veteran, or will do so upon
-          designation as the Veteran's Primary Family Caregiver.
-        </p>
+
+        <p>{veteranFirstParagraph}</p>
+
+        {/* currently this array is empty due to it only having one string
+            checking for empty array then mapping it for future compatibility and consistency */}
+        {veteranWithoutFirstParagraph &&
+          veteranWithoutFirstParagraph.map((veteranContent, idx) => (
+            <p key={`veteran-signature-${idx}`}>{veteranContent}</p>
+          ))}
 
         <PrivacyPolicy />
       </SignatureCheckbox>
 
-      <SignatureCheckbox
-        fullName={formData.primaryFullName}
-        label={primaryLabel}
-        signatures={signatures}
-        setSignature={setSignatures}
-        isRequired
-        showError={showError}
-      >
-        <h3 className="vads-u-margin-top--4">
-          Primary Family Caregiver applicant&apos;s statement of truth
-        </h3>
+      {hasPrimary && (
+        <SignatureCheckbox
+          fullName={formData.primaryFullName}
+          label={primaryLabel}
+          signatures={signatures}
+          setSignature={setSignatures}
+          isRequired
+          showError={showError}
+        >
+          <h3 className="vads-u-margin-top--4">
+            Primary Family Caregiver applicant&apos;s statement of truth
+          </h3>
 
-        <p className="vads-u-margin-y--4">
-          I certify that I am at least 18 years of age.
-        </p>
+          <p className="vads-u-margin-y--4">{primaryFirstParagraph}</p>
 
-        <p>
-          I certify that I am a family member of the Veteran named in this
-          application or I reside with the Veteran, or will do so upon
-          designation as the Veteran's Primary Family Caregiver.
-        </p>
+          {primaryWithoutFirstParagraph.map((primaryContent, idx) => (
+            <p key={`primary-signature-${idx}`}>{primaryContent}</p>
+          ))}
 
-        <p>
-          I agree to perform personal care services as the Primary Family
-          Caregiver for the Veteran named on this application.
-        </p>
-
-        <p>
-          I understand that the Veteran or Veteran’s surrogate may request my
-          discharge from the Program of Comprehensive Assistance for Family
-          Caregivers (PCAFC) at any time. I understand that my designation as a
-          Primary Family Caregiver may be revoked or I may be discharged from
-          the program by the Secretary of Veterans Affairs or his designee, as
-          set forth in 38 CFR 71.45.
-        </p>
-
-        <p>
-          I understand that participation in PCAFC does not create an employment
-          relationship between me and the Department of Veterans Affairs.
-        </p>
-
-        <PrivacyPolicy />
-      </SignatureCheckbox>
+          <PrivacyPolicy />
+        </SignatureCheckbox>
+      )}
 
       {hasSecondaryOne && (
         <SignatureCheckbox
@@ -214,10 +188,7 @@ const PreSubmitCheckboxGroup = ({ onSectionComplete, formData, showError }) => {
       )}
 
       <p className="vads-u-margin-bottom--6">
-        <strong>Note:</strong> According to federal law, there are criminal
-        penalties, including a fine and/or imprisonment for up to 5 years, for
-        withholding information or providing incorrect information. (See 18
-        U.S.C. 1001)
+        <strong>Note:</strong> {signatureBoxNoteContent}
       </p>
     </section>
   );

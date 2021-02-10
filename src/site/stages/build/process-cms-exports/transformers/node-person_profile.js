@@ -23,7 +23,9 @@ const transform = (entity, { ancestors }) => ({
   fieldLastName: getDrupalValue(entity.fieldLastName),
   fieldMedia:
     entity.fieldMedia && entity.fieldMedia.length > 0
-      ? { entity: getImageCrop(entity.fieldMedia[0], '_23MEDIUMTHUMBNAIL') }
+      ? {
+          entity: getImageCrop(entity.fieldMedia[0], '_23MEDIUMTHUMBNAIL'),
+        }
       : null,
   fieldNameFirst: getDrupalValue(entity.fieldNameFirst),
   fieldOffice: entity.fieldOffice[0]

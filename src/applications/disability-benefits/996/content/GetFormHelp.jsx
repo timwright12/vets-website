@@ -1,18 +1,26 @@
 import React from 'react';
 import Telephone, {
   CONTACTS,
-  PATTERNS,
-} from '@department-of-veterans-affairs/formation-react/Telephone';
+} from '@department-of-veterans-affairs/component-library/Telephone';
 
 const GetFormHelp = () => (
-  <p className="help-talk">
-    Need help filling out the form or have questions about eligibility? Please
-    call VA Benefits and Services at{' '}
-    <Telephone contact={CONTACTS.VA_BENEFITS} />.<br />
-    <br />
-    If you have hearing loss, call TTY:{' '}
-    <Telephone contact={CONTACTS['711']} pattern={PATTERNS['911']} />.
-  </p>
+  <>
+    <p className="help-talk">
+      If you have questions or need help filling out this form, please call our{' '}
+      <span aria-label="My. VA. 4 1 1.">MYVA411</span> main information line at{' '}
+      <Telephone contact={CONTACTS.HELP_DESK} /> and select 0. We’re here{' '}
+      <abbr title="24 hours a day, 7 days a week">24/7</abbr>.
+    </p>
+    <p className="u-vads-margin-bottom--0">
+      If you have hearing loss, call TTY:{' '}
+      <Telephone
+        contact={CONTACTS['711']}
+        pattern={'###'}
+        ariaLabel={'7 1 1.'}
+      />
+      .
+    </p>
+  </>
 );
 
 export default GetFormHelp;

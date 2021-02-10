@@ -1,12 +1,11 @@
 import React from 'react';
 import { expect } from 'chai';
 import moment from 'moment';
-import reducers from '../../../redux/reducer';
 import { getCCAppointmentMock, getVAAppointmentMock } from '../../mocks/v0';
 import { mockAppointmentInfo } from '../../mocks/helpers';
 import { renderWithStoreAndRouter } from '../../mocks/setup';
 
-import FutureAppointmentsList from '../../../appointment-list/components/FutureAppointmentsList';
+import AppointmentsPage from '../../../appointment-list/components/AppointmentsPage';
 
 const initialState = {
   featureToggles: {
@@ -43,7 +42,7 @@ describe('VAOS integration: upcoming CC appointments', () => {
       baseElement,
       getByText,
       queryByText,
-    } = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
       initialState,
     });
 
@@ -69,6 +68,8 @@ describe('VAOS integration: upcoming CC appointments', () => {
     expect(baseElement).to.contain.text('Bring your glasses');
     expect(getByText(/add to calendar/i)).to.have.tagName('a');
     expect(getByText(/cancel appointment/i)).to.have.tagName('button');
+    expect(await findByText('Big sky medical')).to.have.tagName('h4');
+    expect(await findByText('Special instructions')).to.have.tagName('h4');
   });
 
   it('should display Community Care header for Vista CC appts', async () => {
@@ -87,9 +88,8 @@ describe('VAOS integration: upcoming CC appointments', () => {
       baseElement,
       getByText,
       queryByText,
-    } = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
       initialState,
-      reducers,
     });
 
     const dateHeader = await findByText(
@@ -108,7 +108,7 @@ describe('VAOS integration: upcoming CC appointments', () => {
     expect(getByText(/cancel appointment/i)).to.have.tagName('button');
   });
 
-  it('should not display when over 13 months away', () => {
+  it('should not display when over 13 months away', async () => {
     const appointment = getCCAppointmentMock();
     appointment.attributes = {
       ...appointment.attributes,
@@ -119,15 +119,11 @@ describe('VAOS integration: upcoming CC appointments', () => {
     };
 
     mockAppointmentInfo({ va: [appointment] });
-    const { findByText } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
-      {
-        initialState,
-      },
-    );
+    const { findByText } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState,
+    });
 
-    return expect(findByText(/You don’t have any appointments/i)).to.eventually
-      .be.ok;
+    expect(await findByText(/You don’t have any appointments/i)).to.exist;
   });
 
   it('should handle UTC zone', async () => {
@@ -140,12 +136,9 @@ describe('VAOS integration: upcoming CC appointments', () => {
     };
 
     mockAppointmentInfo({ cc: [appointment] });
-    const { findByText } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
-      {
-        initialState,
-      },
-    );
+    const { findByText } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState,
+    });
 
     const dateHeader = await findByText(
       new RegExp(appointmentTime.format('dddd, MMMM D, YYYY [at] h:mm a'), 'i'),

@@ -3,11 +3,10 @@ import { expect } from 'chai';
 import moment from 'moment';
 import environment from 'platform/utilities/environment';
 import { setFetchJSONFailure } from 'platform/testing/unit/helpers';
-import reducers from '../../../redux/reducer';
 import { getVAAppointmentMock, getVAFacilityMock } from '../../mocks/v0';
 import { mockAppointmentInfo, mockFacilitiesFetch } from '../../mocks/helpers';
 import { renderWithStoreAndRouter } from '../../mocks/setup';
-import FutureAppointmentsList from '../../../appointment-list/components/FutureAppointmentsList';
+import AppointmentsPage from '../../../appointment-list/components/AppointmentsPage';
 
 const initialState = {
   featureToggles: {
@@ -35,9 +34,8 @@ describe('VAOS integration: upcoming VA appointments', () => {
       baseElement,
       getByText,
       queryByText,
-    } = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
       initialState,
-      reducers,
     });
 
     const dateHeader = await findByText(
@@ -62,6 +60,24 @@ describe('VAOS integration: upcoming VA appointments', () => {
     expect(baseElement).not.to.contain.text('Some random note');
     expect(getByText(/add to calendar/i)).to.have.tagName('a');
     expect(getByText(/cancel appointment/i)).to.have.tagName('button');
+  });
+
+  it('should show subheader for phone appointments', async () => {
+    const appointment = getVAAppointmentMock();
+    appointment.attributes.phoneOnly = true;
+    appointment.attributes.vdsAppointments[0].currentStatus = 'FUTURE';
+    mockAppointmentInfo({ va: [appointment] });
+
+    const { findByText, baseElement } = renderWithStoreAndRouter(
+      <AppointmentsPage />,
+      {
+        initialState,
+      },
+    );
+
+    await findByText(new RegExp(moment().format('dddd, MMMM D, YYYY'), 'i'));
+
+    expect(baseElement).to.contain.text('VA Appointment over the phone');
   });
 
   it('should show information with facility details', async () => {
@@ -98,10 +114,9 @@ describe('VAOS integration: upcoming VA appointments', () => {
     mockFacilitiesFetch('vha_442GC', [facility]);
 
     const { findByText, baseElement } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
+      <AppointmentsPage />,
       {
         initialState,
-        reducers,
       },
     );
 
@@ -119,10 +134,12 @@ describe('VAOS integration: upcoming VA appointments', () => {
       'https://maps.google.com?saddr=Current+Location&daddr=2360 East Pershing Boulevard, Cheyenne, WY 82001-5356',
     );
     expect(baseElement).to.contain.text('C&P BEV AUDIO FTC1');
+    expect(await findByText(/BEV AUDIO FTC1/)).to.have.tagName('h4');
     expect(baseElement).to.contain.text('Cheyenne VA Medical Center');
     expect(baseElement).to.contain.text('2360 East Pershing Boulevard');
     expect(baseElement).to.contain.text('Cheyenne, WY 82001-5356');
     expect(baseElement).to.contain.text('307-778-7550');
+    expect(baseElement.querySelector('h4')).to.be.ok;
   });
 
   it('should show comment for self-scheduled appointments', async () => {
@@ -134,10 +151,9 @@ describe('VAOS integration: upcoming VA appointments', () => {
     mockAppointmentInfo({ va: [appointment] });
 
     const { findByText, baseElement } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
+      <AppointmentsPage />,
       {
         initialState,
-        reducers,
       },
     );
 
@@ -145,6 +161,8 @@ describe('VAOS integration: upcoming VA appointments', () => {
 
     expect(baseElement).to.contain.text('Follow-up/Routine');
     expect(baseElement).to.contain.text('Instructions');
+    expect(await findByText('Follow-up/Routine')).to.have.tagName('h4');
+    expect(baseElement.querySelector('h4')).to.be.ok;
   });
 
   it('should not show comment if does not start with preset purpose text', async () => {
@@ -155,10 +173,9 @@ describe('VAOS integration: upcoming VA appointments', () => {
     mockAppointmentInfo({ va: [appointment] });
 
     const { findByText, baseElement } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
+      <AppointmentsPage />,
       {
         initialState,
-        reducers,
       },
     );
 
@@ -175,10 +192,9 @@ describe('VAOS integration: upcoming VA appointments', () => {
     mockAppointmentInfo({ va: [appointment] });
 
     const { findByText, baseElement } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
+      <AppointmentsPage />,
       {
         initialState,
-        reducers,
       },
     );
 
@@ -196,13 +212,9 @@ describe('VAOS integration: upcoming VA appointments', () => {
     appointment.attributes.vdsAppointments[0].currentStatus = 'NO-SHOW';
 
     mockAppointmentInfo({ va: [appointment] });
-    const { findByText } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
-      {
-        initialState,
-        reducers,
-      },
-    );
+    const { findByText } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState,
+    });
 
     return expect(findByText(/You don’t have any appointments/i)).to.eventually
       .be.ok;
@@ -216,13 +228,9 @@ describe('VAOS integration: upcoming VA appointments', () => {
     appointment.attributes.vdsAppointments[0].currentStatus = 'FUTURE';
 
     mockAppointmentInfo({ va: [appointment] });
-    const { findByText } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
-      {
-        initialState,
-        reducers,
-      },
-    );
+    const { findByText } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState,
+    });
 
     return expect(findByText(/You don’t have any appointments/i)).to.eventually
       .be.ok;
@@ -240,13 +248,9 @@ describe('VAOS integration: upcoming VA appointments', () => {
       { errors: [] },
     );
 
-    const { findByText } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
-      {
-        initialState,
-        reducers,
-      },
-    );
+    const { findByText } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState,
+    });
 
     expect(
       await findByText(

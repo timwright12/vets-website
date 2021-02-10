@@ -82,10 +82,20 @@ describe('VAOS <ReviewPage> direct scheduling', () => {
           },
         },
         facilities: {
-          '323_var983': [
+          '323': [
             {
               id: 'var983',
               name: 'Cheyenne VA Medical Center',
+              identifier: [
+                { system: 'urn:oid:2.16.840.1.113883.6.233', value: '983' },
+              ],
+              address: {
+                postalCode: '82001-5356',
+                city: 'Cheyenne',
+                state: 'WY',
+                line: ['2360 East Pershing Boulevard'],
+              },
+              telecom: [{ system: 'phone', value: '307-778-7550' }],
             },
           ],
         },
@@ -130,16 +140,7 @@ describe('VAOS <ReviewPage> direct scheduling', () => {
       },
     });
     store.dispatch(startDirectScheduleFlow());
-    store.dispatch(
-      onCalendarChange({
-        currentlySelectedDate: start.format(),
-        selectedDates: [
-          {
-            datetime: start.format(),
-          },
-        ],
-      }),
-    );
+    store.dispatch(onCalendarChange([start.format()]));
   });
   afterEach(() => resetFetch());
 
@@ -191,11 +192,12 @@ describe('VAOS <ReviewPage> direct scheduling', () => {
   });
 
   it('should submit successfully', async () => {
+    mockAppointmentSubmit({});
+
     const screen = renderWithStoreAndRouter(<Route component={ReviewPage} />, {
       store,
     });
 
-    mockAppointmentSubmit({});
     await screen.findByText(/scheduling a primary care appointment/i);
 
     userEvent.click(screen.getByText(/Confirm appointment/i));
@@ -212,10 +214,6 @@ describe('VAOS <ReviewPage> direct scheduling', () => {
   });
 
   it('should show appropriate message on bad request submit error', async () => {
-    const screen = renderWithStoreAndRouter(<Route component={ReviewPage} />, {
-      store,
-    });
-
     mockFacilityFetch('vha_442', {
       id: 'vha_442',
       attributes: {
@@ -245,6 +243,11 @@ describe('VAOS <ReviewPage> direct scheduling', () => {
         ],
       },
     );
+
+    const screen = renderWithStoreAndRouter(<Route component={ReviewPage} />, {
+      store,
+    });
+
     await screen.findByText(/scheduling a primary care appointment/i);
 
     userEvent.click(screen.getByText(/Confirm appointment/i));

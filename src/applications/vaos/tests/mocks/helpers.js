@@ -19,15 +19,20 @@ export function mockAppointmentInfo({
   vaError = false,
   cc = [],
   requests = [],
+  isHomepageRefresh = false,
 }) {
   mockFetch();
 
+  const startDate = isHomepageRefresh
+    ? moment().subtract(30, 'days')
+    : moment();
+
   const baseUrl = `${
     environment.API_URL
-  }/vaos/v0/appointments?start_date=${moment()
+  }/vaos/v0/appointments?start_date=${startDate
     .startOf('day')
     .toISOString()}&end_date=${moment()
-    .add(13, 'months')
+    .add(395, 'days')
     .startOf('day')
     .toISOString()}`;
 
@@ -45,7 +50,7 @@ export function mockAppointmentInfo({
   setFetchJSONResponse(
     global.fetch.withArgs(
       `${environment.API_URL}/vaos/v0/appointment_requests?start_date=${moment()
-        .add(-30, 'days')
+        .add(isHomepageRefresh ? -120 : -30, 'days')
         .format('YYYY-MM-DD')}&end_date=${moment().format('YYYY-MM-DD')}`,
     ),
     { data: requests },
@@ -119,6 +124,42 @@ export function mockFacilityFetch(id, facility) {
     global.fetch.withArgs(`${environment.API_URL}/v1/facilities/va/${id}`),
     { data: facility },
   );
+}
+
+export function mockCCProviderFetch(
+  address,
+  specialties,
+  bbox,
+  providers,
+  vaError = false,
+  radius = 60,
+) {
+  const bboxQuery = bbox.map(c => `bbox[]=${c}`).join('&');
+  const specialtiesQuery = specialties.map(s => `specialties[]=${s}`).join('&');
+
+  if (vaError) {
+    setFetchJSONFailure(
+      global.fetch.withArgs(
+        `${environment.API_URL}/v1/facilities/ccp?latitude=${
+          address.latitude
+        }&longitude=${
+          address.longitude
+        }&radius=${radius}&per_page=15&page=1&${bboxQuery}&${specialtiesQuery}&type=provider&trim=true`,
+      ),
+      { errors: [] },
+    );
+  } else {
+    setFetchJSONResponse(
+      global.fetch.withArgs(
+        `${environment.API_URL}/v1/facilities/ccp?latitude=${
+          address.latitude
+        }&longitude=${
+          address.longitude
+        }&radius=${radius}&per_page=15&page=1&${bboxQuery}&${specialtiesQuery}&type=provider&trim=true`,
+      ),
+      { data: providers },
+    );
+  }
 }
 
 export function mockVACancelFetches(id, reasons) {
@@ -328,24 +369,27 @@ export function mockAppointmentSlotFetch({
   siteId,
   typeOfCareId,
   preferredDate,
+  startDate,
+  endDate,
   length = '20',
   clinicId,
   slots,
 }) {
+  const start = startDate || preferredDate.clone().startOf('month');
+  const end =
+    endDate ||
+    preferredDate
+      .clone()
+      .add(1, 'month')
+      .endOf('month');
+
   setFetchJSONResponse(
     global.fetch.withArgs(
       `${
         environment.API_URL
       }/vaos/v0/facilities/${siteId}/available_appointments?type_of_care_id=${typeOfCareId}&clinic_ids[]=${clinicId}` +
-        `&start_date=${preferredDate
-          .clone()
-          .startOf('month')
-          .format('YYYY-MM-DD')}` +
-        `&end_date=${preferredDate
-          .clone()
-          .add(1, 'month')
-          .endOf('month')
-          .format('YYYY-MM-DD')}`,
+        `&start_date=${start.format('YYYY-MM-DD')}` +
+        `&end_date=${end.format('YYYY-MM-DD')}`,
     ),
     {
       data: [

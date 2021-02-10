@@ -6,7 +6,7 @@ import { mockAppointmentInfo, mockFacilitiesFetch } from '../../mocks/helpers';
 import { getVAFacilityMock, getVideoAppointmentMock } from '../../mocks/v0';
 import { renderWithStoreAndRouter } from '../../mocks/setup';
 
-import FutureAppointmentsList from '../../../appointment-list/components/FutureAppointmentsList';
+import AppointmentsPage from '../../../appointment-list/components/AppointmentsPage';
 
 const initialState = {
   featureToggles: {
@@ -38,7 +38,7 @@ describe('VAOS integration: upcoming video appointments', () => {
       baseElement,
       getByText,
       queryByText,
-    } = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
       initialState,
     });
 
@@ -46,11 +46,11 @@ describe('VAOS integration: upcoming video appointments', () => {
       (_, node) => node.textContent === 'VA Video Connect at home',
     );
 
+    expect(baseElement).to.contain('h4');
     expect(queryByText(/You don’t have any appointments/i)).not.to.exist;
     expect(baseElement).to.contain.text('VA Video Connect');
     expect(baseElement).to.contain.text('Confirmed');
     expect(baseElement).to.contain('.fa-check-circle');
-
     expect(getByText(/join appointment/i)).to.have.attribute(
       'aria-disabled',
       'true',
@@ -68,6 +68,7 @@ describe('VAOS integration: upcoming video appointments', () => {
     const timeEl = getByText(
       new RegExp(startDate.tz('America/Denver').format('h:mm'), 'i'),
     );
+    expect(baseElement).to.contain('h4');
     expect(timeEl).to.contain.text('MT');
     expect(timeEl).to.contain.text('Mountain time');
     expect(baseElement).not.to.contain.text('Some random note');
@@ -110,12 +111,14 @@ describe('VAOS integration: upcoming video appointments', () => {
     };
     mockAppointmentInfo({ va: [appointment] });
 
-    const { findByText, getByText, queryByText } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
-      {
-        initialState,
-      },
-    );
+    const {
+      baseElement,
+      findByText,
+      getByText,
+      queryByText,
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState,
+    });
 
     await findByText(
       new RegExp(
@@ -127,13 +130,12 @@ describe('VAOS integration: upcoming video appointments', () => {
       ),
     );
 
+    expect(baseElement).to.contain('h4');
     expect(queryByText(/You don’t have any appointments/i)).not.to.exist;
-
     expect(getByText(/join appointment/i)).to.have.attribute(
       'aria-disabled',
       'false',
     );
-
     expect(getByText(/join appointment/i)).to.have.attribute(
       'href',
       'http://videourl.va.gov',
@@ -168,7 +170,7 @@ describe('VAOS integration: upcoming video appointments', () => {
     mockAppointmentInfo({ va: [appointment] });
 
     const { findByText, getByText, queryByText } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
+      <AppointmentsPage />,
       {
         initialState,
       },
@@ -225,12 +227,14 @@ describe('VAOS integration: upcoming video appointments', () => {
     };
     mockAppointmentInfo({ va: [appointment] });
 
-    const { findByText, getByText, queryByText } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
-      {
-        initialState,
-      },
-    );
+    const {
+      baseElement,
+      findByText,
+      getByText,
+      queryByText,
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState,
+    });
 
     await findByText(
       new RegExp(
@@ -241,6 +245,8 @@ describe('VAOS integration: upcoming video appointments', () => {
         'i',
       ),
     );
+
+    expect(baseElement).to.contain('h4');
 
     expect(queryByText(/You don’t have any appointments/i)).not.to.exist;
 
@@ -272,7 +278,7 @@ describe('VAOS integration: upcoming video appointments', () => {
     };
     mockAppointmentInfo({ va: [appointment] });
 
-    const screen = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+    const screen = renderWithStoreAndRouter(<AppointmentsPage />, {
       initialState,
     });
 
@@ -343,12 +349,14 @@ describe('VAOS integration: upcoming video appointments', () => {
     };
     mockAppointmentInfo({ va: [appointment] });
 
-    const { findByText, getByText, queryByText } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
-      {
-        initialState,
-      },
-    );
+    const {
+      baseElement,
+      findByText,
+      getByText,
+      queryByText,
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState,
+    });
 
     await findByText(
       new RegExp(
@@ -360,8 +368,8 @@ describe('VAOS integration: upcoming video appointments', () => {
       ),
     );
 
+    expect(baseElement).to.contain('h4');
     expect(queryByText(/You don’t have any appointments/i)).not.to.exist;
-
     expect(queryByText(/medication review/i)).to.not.exist;
     fireEvent.click(getByText(/prepare for video visit/i));
 
@@ -388,12 +396,14 @@ describe('VAOS integration: upcoming video appointments', () => {
     };
     mockAppointmentInfo({ va: [appointment] });
 
-    const { findByText, getByText, queryByText } = renderWithStoreAndRouter(
-      <FutureAppointmentsList />,
-      {
-        initialState,
-      },
-    );
+    const {
+      baseElement,
+      findByText,
+      getByText,
+      queryByText,
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
+      initialState,
+    });
 
     await findByText(
       new RegExp(
@@ -405,8 +415,10 @@ describe('VAOS integration: upcoming video appointments', () => {
       ),
     );
 
+    expect(baseElement).to.contain('h4');
     expect(queryByText(/You don’t have any appointments/i)).not.to.exist;
     expect(queryByText(/before your appointment/i)).to.not.exist;
+
     fireEvent.click(getByText(/prepare for video visit/i));
 
     return expect(findByText('Before your appointment:')).to.eventually.be.ok;
@@ -435,7 +447,7 @@ describe('VAOS integration: upcoming video appointments', () => {
       baseElement,
       getByText,
       queryByText,
-    } = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
       initialState,
     });
 
@@ -443,6 +455,7 @@ describe('VAOS integration: upcoming video appointments', () => {
       (_, node) => node.textContent === 'VA Video Connect at home',
     );
 
+    expect(baseElement).to.contain('h4');
     expect(queryByText(/You don’t have any appointments/i)).not.to.exist;
     expect(baseElement).to.contain.text('VA Video Connect');
     expect(baseElement).to.contain.text('Canceled');
@@ -523,12 +536,12 @@ describe('VAOS integration: upcoming video appointments', () => {
       baseElement,
       getByText,
       queryByText,
-    } = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+    } = renderWithStoreAndRouter(<AppointmentsPage />, {
       initialState,
     });
 
     await findByText(/Cheyenne VA Medical Center/i);
-
+    expect(baseElement).to.contain('h4');
     expect(queryByText(/You don’t have any appointments/i)).not.to.exist;
     expect(baseElement).to.contain.text('VA Video Connect');
     expect(baseElement).to.contain.text('Confirmed');
@@ -618,7 +631,7 @@ describe('VAOS integration: upcoming ATLAS video appointments', () => {
 
     mockAppointmentInfo({ va: [appointment] });
 
-    const screen = renderWithStoreAndRouter(<FutureAppointmentsList />, {
+    const screen = renderWithStoreAndRouter(<AppointmentsPage />, {
       initialState,
     });
 
@@ -649,7 +662,7 @@ describe('VAOS integration: upcoming ATLAS video appointments', () => {
 
     // Should display appointment location address
     expect(screen.getByText(/114 Dewey Ave/i)).to.be.ok;
-    expect(screen.getByText(/Eureka, MT 59917/i)).to.be.ok;
+    expect(screen.baseElement).to.contain.text('Eureka, MT 59917');
 
     // Should display directions to location
     expect(

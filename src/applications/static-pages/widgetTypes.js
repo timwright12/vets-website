@@ -1,10 +1,10 @@
 export default {
   BURIALS_APP_STATUS: 'burials-app-status',
-  CAREGIVER_CONTENT_TOGGLE: 'caregiver-content-toggle',
   CHAPTER_31_WIZARD: 'chapter-31-Wizard',
   CHAPTER_36_CTA: 'chapter-36-cta',
   CHAPTER_31_CTA: 'chapter-31-cta',
   CORONAVIRUS_CHATBOT: 'va-coronavirus-chatbot',
+  COVID_VACCINE_UPDATES_CTA: 'va-covid-vaccine-updates-cta',
   CTA: 'cta',
   DISABILITY_APP_STATUS: 'disability-app-status',
   DISABILITY_RATING_CALCULATOR: 'disability-rating-calculator',
@@ -27,4 +27,5 @@ export default {
   SCHEDULE_VIEW_VA_APPOINTMENTS_PAGE: 'schedule-view-va-appointments-page',
   SECURE_MESSAGING_PAGE: 'secure-messaging-page',
   VIEW_TEST_AND_LAB_RESULTS_PAGE: 'view-test-and-lab-results-page',
+  VIEW_PAYMENT_HISTORY: 'view-payment-history',
 };

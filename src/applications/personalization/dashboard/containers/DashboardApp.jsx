@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Scroll from 'react-scroll';
 import { withRouter } from 'react-router';
 
-import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
+import AlertBox from '@department-of-veterans-affairs/component-library/AlertBox';
 
 import backendServices from 'platform/user/profile/constants/backendServices';
 import {
@@ -213,7 +213,7 @@ class DashboardApp extends React.Component {
             </a>
             <p>
               <a
-                href="/sign-in-faq#verifying-your-identity"
+                href="/resources/verifying-your-identity-on-vagov/"
                 onClick={recordDashboardClick('learn-more-identity')}
               >
                 Learn about how to verify your identity

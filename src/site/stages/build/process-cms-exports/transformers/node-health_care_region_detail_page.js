@@ -6,14 +6,20 @@ const {
 } = require('./helpers');
 
 const transform = (entity, { ancestors }) => ({
-  entityType: 'node',
   entityBundle: 'health_care_region_detail_page',
   title: getDrupalValue(entity.title),
   changed: utcToEpochTime(getDrupalValue(entity.changed)),
   entityPublished: isPublished(getDrupalValue(entity.status)),
   entityMetatags: createMetaTagArray(entity.metatag.value),
   fieldAlert: getDrupalValue(entity.fieldAlert),
-  fieldContentBlock: entity.fieldContentBlock,
+  fieldContentBlock: entity.fieldContentBlock.filter(
+    content =>
+      // Include only published content blocks.
+      // Limiting scope of this check to staff_profile for now.
+      content.entity?.entityBundle === 'staff_profile'
+        ? content.entity?.entityPublished
+        : true,
+  ),
   fieldFeaturedContent: entity.fieldFeaturedContent,
   fieldIntroText: getDrupalValue(entity.fieldIntroText),
   fieldOffice: entity.fieldOffice[0]
@@ -24,7 +30,7 @@ const transform = (entity, { ancestors }) => ({
           ? entity.fieldOffice[0]
           : {
               entityLabel: getDrupalValue(entity.fieldOffice[0].title),
-              entityType: entity.fieldOffice[0].entityType,
+              title: getDrupalValue(entity.fieldOffice[0].title),
             },
       }
     : null,

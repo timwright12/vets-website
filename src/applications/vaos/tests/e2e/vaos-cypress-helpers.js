@@ -1,4 +1,6 @@
 /* eslint-disable no-param-reassign */
+import { mockContactInformation } from '~/platform/user/profile/vap-svc/util/local-vapsvc.js';
+
 import moment from '../../lib/moment-tz';
 
 import confirmedVA from '../../services/mocks/var/confirmed_va.json';
@@ -11,11 +13,116 @@ import facilityData from '../../services/mocks/var/facility_data.json';
 import facilities983 from '../../services/mocks/var/facilities_983.json';
 import clinicList983 from '../../services/mocks/var/clinicList983.json';
 import slots from '../../services/mocks/var/slots.json';
+import requestEligibilityCriteria from '../../services/mocks/var/request_eligibility_criteria.json';
+import directEligibilityCriteria from '../../services/mocks/var/direct_booking_eligibility_criteria.json';
+
 import {
   getVAAppointmentMock,
   getExpressCareRequestCriteriaMock,
   getParentSiteMock,
 } from '../mocks/v0';
+
+const mockUser = {
+  data: {
+    id: '',
+    type: 'users_scaffolds',
+    attributes: {
+      services: [
+        'facilities',
+        'hca',
+        'edu-benefits',
+        'form-save-in-progress',
+        'form-prefill',
+        'evss-claims',
+        'form526',
+        'user-profile',
+        'appeals-status',
+        'identity-proofed',
+      ],
+      account: {
+        accountUuid: '6af59b36-f14d-482e-88b4-3d7820422343',
+      },
+      profile: {
+        email: 'vets.gov.user+228@gmail.com',
+        firstName: 'MARK',
+        middleName: null,
+        lastName: 'WEBB',
+        birthDate: '1950-10-04',
+        gender: 'M',
+        zip: null,
+        lastSignedIn: '2020-06-18T21:15:19.664Z',
+        loa: {
+          current: 3,
+          highest: 3,
+        },
+        multifactor: true,
+        verified: true,
+        signIn: {
+          serviceName: 'idme',
+          accountType: 'N/A',
+        },
+        authnContext: 'http://idmanagement.gov/ns/assurance/loa/3/vets',
+      },
+      vaProfile: {
+        status: 'OK',
+        birthDate: '19501004',
+        familyName: 'Webb-ster',
+        gender: 'M',
+        givenNames: ['Mark'],
+        isCernerPatient: false,
+        facilities: [
+          {
+            facilityId: '556',
+            isCerner: false,
+          },
+          {
+            facilityId: '668',
+            isCerner: false,
+          },
+        ],
+        vaPatient: true,
+        mhvAccountState: 'NONE',
+      },
+      veteranStatus: null,
+      inProgressForms: [],
+      prefillsAvailable: [
+        '21-686C',
+        '40-10007',
+        '22-1990',
+        '22-1990N',
+        '22-1990E',
+        '22-1995',
+        '22-1995S',
+        '22-5490',
+        '22-5495',
+        '22-0993',
+        '22-0994',
+        'FEEDBACK-TOOL',
+        '22-10203',
+        '21-526EZ',
+        '1010ez',
+        '21P-530',
+        '21P-527EZ',
+        '686C-674',
+        '20-0996',
+        'MDOT',
+      ],
+      vet360ContactInformation: mockContactInformation,
+    },
+  },
+  meta: {
+    errors: [
+      {
+        externalService: 'EMIS',
+        startTime: '2020-06-18T21:15:34Z',
+        endTime: null,
+        description:
+          'IOError, Betamocks default response requested but none exist. Please create one at: [/cache/emis/veteran_status/default.yml]., Betamocks default response requested but none exist. Please create one at: [/cache/emis/veteran_status/default.yml].',
+        status: 503,
+      },
+    ],
+  },
+};
 
 function updateConfirmedVADates(data) {
   data.data.forEach(item => {
@@ -88,7 +195,7 @@ export function createPastVAAppointments() {
   };
 }
 
-function mockFeatureToggles() {
+export function mockFeatureToggles({ providerSelectionEnabled = false } = {}) {
   cy.route({
     method: 'GET',
     url: '/v0/feature_toggles*',
@@ -121,12 +228,16 @@ function mockFeatureToggles() {
             value: true,
           },
           {
-            name: 'vaOnlineSchedulingExpressCare',
+            name: 'vaOnlineSchedulingExpressCareNew',
             value: true,
           },
           {
-            name: 'vaOnlineSchedulingExpressCareNew',
-            value: true,
+            name: `cerner_override_668`,
+            value: false,
+          },
+          {
+            name: 'vaOnlineSchedulingProviderSelection',
+            value: providerSelectionEnabled,
           },
         ],
       },
@@ -172,6 +283,30 @@ function mockCCPrimaryCareEligibility() {
   });
 }
 
+function mockRequestEligibilityCriteria() {
+  cy.route({
+    method: 'GET',
+    url: '/vaos/v0/request_eligibility_criteria*',
+    response: requestEligibilityCriteria,
+  });
+}
+
+function mockDirectBookingEligibilityCriteria() {
+  cy.route({
+    method: 'GET',
+    url: '/vaos/v0/direct_booking_eligibility_criteria*',
+    response: directEligibilityCriteria,
+  });
+}
+
+function mockFacilityDetails() {
+  cy.route({
+    method: 'GET',
+    url: '/v1/facilities/va?ids=*',
+    response: facilityData,
+  });
+}
+
 function mockFacilities() {
   cy.route({
     method: 'GET',
@@ -214,23 +349,55 @@ function mockSubmitVAAppointment() {
   }).as('appointmentPreferences');
 }
 
-function setupSchedulingMocks() {
+function setupSchedulingMocks({ cernerUser = false } = {}) {
   cy.server();
-  cy.login();
   mockFeatureToggles();
+
+  if (cernerUser) {
+    const mockCernerUser = {
+      ...mockUser,
+      data: {
+        ...mockUser.data,
+        attributes: {
+          ...mockUser.data.attributes,
+          vaProfile: {
+            ...mockUser.data.attributes.vaProfile,
+            facilities: [
+              ...mockUser.data.attributes.vaProfile.facilities,
+              {
+                facilityID: '123',
+                isCerner: true,
+              },
+            ],
+          },
+        },
+      },
+    };
+    cy.login(mockCernerUser);
+  } else {
+    cy.login(mockUser);
+  }
+
   mockSupportedSites();
   mockCCPrimaryCareEligibility();
+  mockRequestEligibilityCriteria();
+  mockDirectBookingEligibilityCriteria();
+  mockFacilityDetails();
   mockFacilities();
   mockDirectSchedulingFacilities();
 }
 
 function updateTimeslots(data) {
   const startDateTime = moment()
-    .add(4, 'days')
+    .add(1, 'day')
+    .add(1, 'months')
+    .startOf('month')
     .day(9)
     .format('YYYY-MM-DDTHH:mm:ss[+00:00]');
   const endDateTime = moment()
-    .add(4, 'days')
+    .add(1, 'day')
+    .add(1, 'months')
+    .startOf('month')
     .day(9)
     .add(60, 'minutes')
     .format('YYYY-MM-DDTHH:mm:ss[+00:00]');
@@ -402,8 +569,8 @@ export function initExpressCareMocks() {
   });
 }
 
-export function initVAAppointmentMock() {
-  setupSchedulingMocks();
+export function initVAAppointmentMock({ cernerUser = false } = {}) {
+  setupSchedulingMocks({ cernerUser });
   cy.route({
     method: 'GET',
     url: '/v1/facilities/va/vha_442',
@@ -426,8 +593,8 @@ export function initVAAppointmentMock() {
   mockSubmitVAAppointment();
 }
 
-export function initVARequestMock() {
-  setupSchedulingMocks();
+export function initVARequestMock({ cernerUser = false } = {}) {
+  setupSchedulingMocks({ cernerUser });
   cy.route({
     method: 'GET',
     url: '/vaos/v0/facilities/983/clinics*',
@@ -464,6 +631,46 @@ export function initCommunityCareMock() {
     method: 'GET',
     url: '/vaos/v0/appointments?start_date=*&end_date=*&type=va',
     response: updateConfirmedVADates(confirmedVA),
+  });
+  cy.route({
+    method: 'GET',
+    url: '/v1/facilities/ccp*',
+    response: {
+      data: [
+        {
+          id: '1497723753',
+          type: 'provider',
+          attributes: {
+            accNewPatients: 'true',
+            address: {
+              street: '1012 14TH ST NW STE 700',
+              city: 'WASHINGTON',
+              state: 'DC',
+              zip: '20005-3477',
+            },
+            caresitePhone: '202-638-0750',
+            email: null,
+            fax: null,
+            gender: 'Male',
+            lat: 38.903195,
+            long: -77.032382,
+            name: 'Doe, Jane',
+            phone: null,
+            posCodes: null,
+            prefContact: null,
+            uniqueId: '1497723753',
+          },
+          relationships: {
+            specialties: {
+              data: [
+                { id: '363L00000X', type: 'specialty' },
+                { id: '363LP2300X', type: 'specialty' },
+              ],
+            },
+          },
+        },
+      ],
+    },
   });
 
   cy.route({

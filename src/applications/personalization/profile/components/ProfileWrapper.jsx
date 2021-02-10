@@ -2,36 +2,37 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link, useLocation } from 'react-router-dom';
-import AlertBox from '@department-of-veterans-affairs/formation-react/AlertBox';
-import Breadcrumbs from '@department-of-veterans-affairs/formation-react/Breadcrumbs';
+import { isEmpty } from 'lodash';
+import AlertBox from '@department-of-veterans-affairs/component-library/AlertBox';
+import Breadcrumbs from '@department-of-veterans-affairs/component-library/Breadcrumbs';
 
 import { isWideScreen } from '~/platform/utilities/accessibility/index';
 import { selectProfile } from '~/platform/user/selectors';
 
 import {
-  directDepositLoadError,
+  cnpDirectDepositLoadError,
+  eduDirectDepositLoadError,
   fullNameLoadError,
   militaryInformationLoadError,
   personalInformationLoadError,
 } from '@@profile/selectors';
 
-import ProfileHeader from './ProfileHeader';
+import NameTag from '~/applications/personalization/components/NameTag';
 import ProfileSubNav from './ProfileSubNav';
 import ProfileMobileSubNav from './ProfileMobileSubNav';
 import { PROFILE_PATHS } from '../constants';
-import { isEmpty } from 'lodash';
 
 const NotAllDataAvailableError = () => (
   <div data-testid="not-all-data-available-error">
     <AlertBox
       level={2}
       status="warning"
-      headline="We can’t load all of your information"
+      headline="We can’t load all the information in your profile"
       className="vads-u-margin-bottom--4"
     >
       <p>
         We’re sorry. Something went wrong on our end. We can’t display all the
-        information on this page. Please refresh the page or try again later.
+        information in your profile. Please refresh the page or try again later.
       </p>
     </AlertBox>
   </div>
@@ -83,7 +84,7 @@ const ProfileWrapper = ({
         </Breadcrumbs>
       </div>
 
-      {isEmpty(hero.errors) && <ProfileHeader />}
+      {isEmpty(hero.errors) && isLOA3 && <NameTag />}
 
       <div className="medium-screen:vads-u-display--none">
         <ProfileMobileSubNav
@@ -117,7 +118,8 @@ const mapStateToProps = state => {
   return {
     hero: state.vaProfile?.hero,
     showNotAllDataAvailableError:
-      !!directDepositLoadError(state) ||
+      !!cnpDirectDepositLoadError(state) ||
+      !!eduDirectDepositLoadError(state) ||
       !!fullNameLoadError(state) ||
       !!personalInformationLoadError(state) ||
       (!!militaryInformationLoadError(state) && !invalidVeteranStatus),
