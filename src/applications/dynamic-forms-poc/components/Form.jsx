@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import moment from 'moment';
+// import moment from 'moment';
 import recordEvent from 'platform/monitoring/record-event';
 
 import {
@@ -28,8 +28,10 @@ import useSubmitForm from '../hooks/useSubmitForm';
 import FormFooter from 'platform/forms/components/FormFooter';
 import GetHelp from './GetHelp';
 
-function Form({ formState, updateFormData, router, isLoggedIn, profile }) {
+function Form({ formState, updateFormData, router }) {
   const [submitStatus, submitToApi] = useSubmitForm();
+
+  useInitializeForm(formState, updateFormData);
 
   useEffect(() => {
     focusElement('#covid-vaccination-heading-form');
@@ -51,12 +53,13 @@ function Form({ formState, updateFormData, router, isLoggedIn, profile }) {
     [submitStatus],
   );
 
-  const [previouslySubmittedFormData] = useInitializeForm(
-    formState,
-    updateFormData,
-    isLoggedIn,
-    profile,
-  );
+  // console.log('Calling useInitializeForm');
+  // const [previouslySubmittedFormData] = useInitializeForm(
+  //   formState,
+  //   updateFormData,
+  //   isLoggedIn,
+  //   profile,
+  // );
 
   const onFormChange = useCallback(
     nextFormData => {
@@ -85,37 +88,7 @@ function Form({ formState, updateFormData, router, isLoggedIn, profile }) {
         <h1 id="covid-vaccination-heading-form" className="no-outline">
           Fill out the form below
         </h1>
-        {previouslySubmittedFormData ? (
-          <p>
-            Our records show you provided the information below on{' '}
-            {moment(previouslySubmittedFormData.createdAt).format(
-              'MMMM D, YYYY',
-            )}
-            . If you’d like to update your information, please make any updates
-            below and click <strong>Submit form.</strong>
-          </p>
-        ) : (
-          <p>
-            We’ll send you updates on how we’re providing COVID-19 vaccines
-            across the country—and when you can get your vaccine if you want
-            one.
-          </p>
-        )}
 
-        {isLoggedIn ? (
-          <p>
-            <strong>Note:</strong> The information below is from your VA.gov
-            profile. If you need to make a change,{' '}
-            <a
-              href="/profile"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Go to your VA Profile (Open in a new window)"
-            >
-              go to your profile now.
-            </a>{' '}
-          </p>
-        ) : null}
         {formState ? (
           <SchemaForm
             addNameAttribute
