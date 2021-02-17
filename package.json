@@ -288,6 +288,7 @@
     "@fortawesome/fontawesome-free": "^5.6.3",
     "@mapbox/mapbox-sdk": "^0.10.0",
     "blob-polyfill": "^4.0.20200601",
+    "botframework-webchat": "^4.11.0",
     "camelcase-keys-recursive": "^0.8.3",
     "classlist-polyfill": "^1.2.0",
     "classnames": "^2.2.6",
