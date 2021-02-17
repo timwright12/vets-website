@@ -4,6 +4,37 @@ import ReactWebChat, {
   createStore,
 } from 'botframework-webchat';
 
+const BotActivityDecorator = ({ children }) => {
+  return (
+    <div className="botActivityDecorator">
+      <ul className="botActivityDecorator__buttonBar">
+        <li>
+          <button className="botActivityDecorator__button">yes</button>
+        </li>
+        <li>
+          <button className="botActivityDecorator__button">no</button>
+        </li>
+      </ul>
+      <div className="botActivityDecorator__content">{children}</div>
+    </div>
+  );
+};
+
+const activityMiddleware = () => next => (...setupArgs) => {
+  const [card] = setupArgs;
+  if (card.activity.from.role === 'bot') {
+    return (...renderArgs) => (
+      <BotActivityDecorator
+        activityID={card.activity.id}
+        key={card.activity.id}
+      >
+        {next(card)(...renderArgs)}
+      </BotActivityDecorator>
+    );
+  }
+  return next(...setupArgs);
+};
+
 export default function App() {
   const store = useMemo(() => createStore(), []);
   const directLine = useMemo(
@@ -20,7 +51,12 @@ export default function App() {
   return (
     <div className={'vads-l-grid-container'}>
       <div className={'vads-l-row'}>
-        <ReactWebChat directLine={directLine} store={store} userID="12345" />
+        <ReactWebChat
+          activityMiddleware={activityMiddleware}
+          directLine={directLine}
+          store={store}
+          userID="12345"
+        />
       </div>
     </div>
   );
