@@ -10,15 +10,18 @@ export default function useSchemas() {
   useEffect(() => {
     function createUISchema() {
       const uiSchemaObject = {};
+      const order = [];
+
       questionnaireData.item.forEach(element => {
+        const itemKey = `va-${element.linkId.toString()}`;
+        uiSchemaObject[itemKey] = { 'ui:options': {} };
+        // order.push(itemKey);
         if (
           element.type === R4.Questionnaire_ItemTypeKind._date ||
           element.type === R4.Questionnaire_ItemTypeKind._dateTime ||
           element.type === R4.Questionnaire_ItemTypeKind._time
         ) {
-          uiSchemaObject[element.linkId.toString()] = currentOrPastDateUI(
-            element.text,
-          );
+          uiSchemaObject[itemKey] = currentOrPastDateUI(element.text);
         } else if (element.type === R4.Questionnaire_ItemTypeKind._choice) {
           const labels = {};
           element.answerOption.forEach(option => {
@@ -29,7 +32,7 @@ export default function useSchemas() {
             element.extension[0].valueCodeableConcept.coding[0].code ===
             'radio-button'
           ) {
-            uiSchemaObject[element.linkId.toString()] = {
+            uiSchemaObject[itemKey] = {
               'ui:title': element.text,
               'ui:widget': 'radio',
               'ui:options': {
@@ -37,26 +40,39 @@ export default function useSchemas() {
               },
             };
           } else {
-            const schemaKey = element.linkId.toString();
-
-            uiSchemaObject[schemaKey] = {
+            uiSchemaObject[itemKey] = {
               'ui:title': element.text,
             };
 
             Object.keys(labels).forEach(key => {
-              uiSchemaObject[schemaKey] = {
-                ...uiSchemaObject[schemaKey],
+              uiSchemaObject[itemKey] = {
+                ...uiSchemaObject[itemKey],
                 [key]: { 'ui:title': labels[key] },
               };
             });
           }
         } else {
-          uiSchemaObject[element.linkId.toString()] = {
+          uiSchemaObject[itemKey] = {
             'ui:title': element.text,
           };
         }
+        if (element.enableWhen !== undefined) {
+          // console.log('CONDITIONAL ENABLEMENT');
+          // console.log('uischema when adding conditional: ', uiSchemaObject);
+
+          uiSchemaObject[itemKey]['ui:options'] = {
+            ...uiSchemaObject[itemKey]['ui:options'],
+            expandUnder: 'va-100',
+            expandUnderCondition: '100.01',
+          };
+        }
       });
+      // console.log('Order: ', order);
+      uiSchemaObject['ui:order'] = order;
+      // console.log('UISCHEMA Object Created: ', uiSchemaObject);
+      // console.log('SCHEMA AT UISCHEMA CREATED: ', schema);
       setUiSchema(uiSchemaObject);
+      // console.log('UISCema: ', uiSchemaObject);
       return uiSchema;
     }
     function createSchema() {
@@ -67,15 +83,17 @@ export default function useSchemas() {
         required: [],
       };
       questionnaireData.item.forEach(element => {
+        const itemKey = `va-${element.linkId.toString()}`;
+
         if (element.required) {
-          schemaObject.required.push(element.linkId.toString());
+          schemaObject.required.push(itemKey);
         }
         if (
           element.type === R4.Questionnaire_ItemTypeKind._date ||
           element.type === R4.Questionnaire_ItemTypeKind._dateTime ||
           element.type === R4.Questionnaire_ItemTypeKind._time
         ) {
-          schemaObject.properties[element.linkId.toString()] = {
+          schemaObject.properties[itemKey] = {
             type: 'string',
           };
         } else if (element.type === R4.Questionnaire_ItemTypeKind._choice) {
@@ -85,7 +103,7 @@ export default function useSchemas() {
           const subtype =
             element.extension[0].valueCodeableConcept.coding[0].code;
           if (subtype === 'radio-button') {
-            schemaObject.properties[element.linkId.toString()] = {
+            schemaObject.properties[itemKey] = {
               type: 'string',
               enum: keysArray,
             };
@@ -95,17 +113,19 @@ export default function useSchemas() {
             keysArray.forEach(key => {
               properties[key] = { type: 'boolean' };
             });
-            schemaObject.properties[element.linkId.toString()] = {
+            schemaObject.properties[itemKey] = {
               type: 'object',
               properties,
             };
           }
         } else {
-          schemaObject.properties[element.linkId.toString()] = {
+          schemaObject.properties[itemKey] = {
             type: element.type,
           };
         }
       });
+      // console.log('Schema Object Created: ', schemaObject);
+
       setSchema(schemaObject);
       return schema;
     }
@@ -148,3 +168,14 @@ export default function useSchemas() {
 */
 
 // _error3 = TypeError: Cannot read property '08' of null at eval (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:65:62) at Array.reduce (<anonymous>) at get (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:64:15) at setHiddenFields (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:169:26) at eval (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:197:23) at Array.reduce (<anonymous>) at setHiddenFields (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:196:63) at eval (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:197:23) at Array.reduce (<anonymous>) at setHiddenFields (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:196:63)
+
+// "enableWhen": [
+//   {
+//     "question": "1.1",
+//     "operator": "=",
+//     "answerCoding": {
+//       "system": "http://terminology.hl7.org/CodeSystem/v2-0136",
+//       "code": "Y"
+//     }
+//   }
+// ],

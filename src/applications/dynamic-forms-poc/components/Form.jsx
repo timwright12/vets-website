@@ -53,14 +53,6 @@ function Form({ formState, updateFormData, router }) {
     [submitStatus],
   );
 
-  // console.log('Calling useInitializeForm');
-  // const [previouslySubmittedFormData] = useInitializeForm(
-  //   formState,
-  //   updateFormData,
-  //   isLoggedIn,
-  //   profile,
-  // );
-
   const onFormChange = useCallback(
     nextFormData => {
       updateFormData(formState.formSchema, formState.uiSchema, nextFormData);
@@ -129,6 +121,7 @@ function Form({ formState, updateFormData, router }) {
 }
 
 const mapStateToProps = state => {
+  // console.log('State: ', state);
   return {
     isLoggedIn: userSelectors.isLoggedIn(state),
     profile: userSelectors.selectProfile(state),

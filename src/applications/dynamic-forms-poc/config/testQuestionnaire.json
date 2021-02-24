@@ -37,6 +37,87 @@
   ],
   "item": [
     {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "A control where choices are listed with a button beside them. The button can be toggled to select or de-select a given choice. Selecting one item deselects all others."
+          }
+        }
+      ],
+      "linkId": "100",
+      "text": "Did you receive a COVID-19 vaccine at a non-VA location?",
+      "type": "choice",
+      "required": true,
+      "answerOption": [
+        { "100.01": { "valueString": "Yes" } },
+        { "100.02": { "valueString": "No" } }
+      ]
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "radio-button",
+                "display": "Radio Button"
+              }
+            ],
+            "text": "A control where choices are listed with a button beside them. The button can be toggled to select or de-select a given choice. Selecting one item deselects all others."
+          }
+        }
+      ],
+      "linkId": "101",
+      "text": "Which manufacturer supplied the vaccine you recieved?",
+      "type": "choice",
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "100",
+          "operator": "=",
+          "answerString": "Yes"
+        }
+      ],
+      "answerOption": [
+        { "101.01": { "valueString": "Moderna" } },
+        { "101.02": { "valueString": "Pfizer" } }
+      ]
+    },
+    {
+      "linkId": "102",
+      "text": "Date of first dose",
+      "type": "date",
+      "required": true
+    },
+    {
+      "linkId": "103",
+      "text": "Where did you receive the first dose?",
+      "type": "string",
+      "required": true
+    },
+    {
+      "linkId": "104",
+      "text": "Date of second dose (if received)",
+      "type": "date",
+      "required": false
+    },
+    {
+      "linkId": "105",
+      "text": "Where did you receive the second dose?",
+      "type": "string",
+      "required": false
+    },
+    {
       "linkId": "01",
       "text": "What is the reason for this appointment? <br><strong>Note:</strong>this is another part of the text",
       "type": "string",
