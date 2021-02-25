@@ -81,13 +81,6 @@
       "text": "Which manufacturer supplied the vaccine you recieved?",
       "type": "choice",
       "required": true,
-      "enableWhen": [
-        {
-          "question": "100",
-          "operator": "=",
-          "answerString": "Yes"
-        }
-      ],
       "answerOption": [
         { "101.01": { "valueString": "Moderna" } },
         { "101.02": { "valueString": "Pfizer" } }
@@ -103,7 +96,14 @@
       "linkId": "103",
       "text": "Where did you receive the first dose?",
       "type": "string",
-      "required": true
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "100",
+          "operator": "=",
+          "answerString": "100.01"
+        }
+      ]
     },
     {
       "linkId": "104",

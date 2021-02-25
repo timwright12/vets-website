@@ -10,8 +10,6 @@ export default function useInitializeForm(formState, updateFormData) {
   useEffect(
     () => {
       if (formData.questionnaireId !== null) {
-        // console.log('schema just before updateFormData: ', schema);
-        // console.log('UIschema just before updateFormData: ', uiSchema);
         updateFormData(schema, uiSchema, {
           questionnaireId: schema.questionnaireId,
         });

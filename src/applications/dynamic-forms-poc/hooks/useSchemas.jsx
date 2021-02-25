@@ -15,7 +15,7 @@ export default function useSchemas() {
       questionnaireData.item.forEach(element => {
         const itemKey = `va-${element.linkId.toString()}`;
         uiSchemaObject[itemKey] = { 'ui:options': {} };
-        // order.push(itemKey);
+        order.push(itemKey);
         if (
           element.type === R4.Questionnaire_ItemTypeKind._date ||
           element.type === R4.Questionnaire_ItemTypeKind._dateTime ||
@@ -57,20 +57,19 @@ export default function useSchemas() {
           };
         }
         if (element.enableWhen !== undefined) {
-          // console.log('CONDITIONAL ENABLEMENT');
-          // console.log('uischema when adding conditional: ', uiSchemaObject);
-
           uiSchemaObject[itemKey]['ui:options'] = {
             ...uiSchemaObject[itemKey]['ui:options'],
-            expandUnder: 'va-100',
-            expandUnderCondition: '100.01',
+            expandUnder: `va-${element.enableWhen[0].question}`,
+            expandUnderCondition: formData => {
+              return (
+                formData !== undefined &&
+                formData === element.enableWhen[0].answerString
+              );
+            },
           };
         }
       });
-      // console.log('Order: ', order);
       uiSchemaObject['ui:order'] = order;
-      // console.log('UISCHEMA Object Created: ', uiSchemaObject);
-      // console.log('SCHEMA AT UISCHEMA CREATED: ', schema);
       setUiSchema(uiSchemaObject);
       // console.log('UISCema: ', uiSchemaObject);
       return uiSchema;
@@ -78,7 +77,7 @@ export default function useSchemas() {
     function createSchema() {
       const schemaObject = {
         type: 'object',
-        properties: [],
+        properties: {},
         questionnaireId: questionnaireData.id,
         required: [],
       };
@@ -136,46 +135,3 @@ export default function useSchemas() {
 
   return [uiSchema, schema];
 }
-
-/*
-,
-    {
-      "extension": [
-        {
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-          "valueCodeableConcept": {
-            "coding": [
-              {
-                "system": "http://hl7.org/fhir/questionnaire-item-control",
-                "code": "check-box",
-                "display": "Check-Box"
-              }
-            ],
-            "text": "A control where choices are listed with a box beside them. The box can be toggled to select or de-select a given choice. Multiple selections may be possible."
-          }
-        }
-      ],
-      "linkId": "08",
-      "text": "Select a truck",
-      "type": "choice",
-      "required": false,
-      "answerOption": [
-        { "08.01": { "valueString": "Tesla" } },
-        { "08.02": { "valueString": "Rivian" } },
-        { "08.03": { "valueString": "E150" } }
-      ]
-    }
-*/
-
-// _error3 = TypeError: Cannot read property '08' of null at eval (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:65:62) at Array.reduce (<anonymous>) at get (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:64:15) at setHiddenFields (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:169:26) at eval (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:197:23) at Array.reduce (<anonymous>) at setHiddenFields (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:196:63) at eval (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:197:23) at Array.reduce (<anonymous>) at setHiddenFields (webpack-internal:///./src/platform/forms-system/src/js/state/helpers.js:196:63)
-
-// "enableWhen": [
-//   {
-//     "question": "1.1",
-//     "operator": "=",
-//     "answerCoding": {
-//       "system": "http://terminology.hl7.org/CodeSystem/v2-0136",
-//       "code": "Y"
-//     }
-//   }
-// ],

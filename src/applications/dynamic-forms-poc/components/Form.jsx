@@ -121,7 +121,6 @@ function Form({ formState, updateFormData, router }) {
 }
 
 const mapStateToProps = state => {
-  // console.log('State: ', state);
   return {
     isLoggedIn: userSelectors.isLoggedIn(state),
     profile: userSelectors.selectProfile(state),
