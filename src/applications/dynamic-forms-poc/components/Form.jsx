@@ -31,7 +31,7 @@ import GetHelp from './GetHelp';
 function Form({ formState, updateFormData, router }) {
   const [submitStatus, submitToApi] = useSubmitForm();
 
-  useInitializeForm(formState, updateFormData);
+  useInitializeForm(formState, updateFormData, router.location.query.formid);
 
   useEffect(() => {
     focusElement('#covid-vaccination-heading-form');
@@ -78,7 +78,7 @@ function Form({ formState, updateFormData, router }) {
         dependencies={[externalServices.vetextVaccine]}
       >
         <h1 id="covid-vaccination-heading-form" className="no-outline">
-          Fill out the form below
+          {formState?.formSchema?.formTitle}
         </h1>
 
         {formState ? (

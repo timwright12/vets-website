@@ -3,15 +3,16 @@ import _ from 'lodash';
 
 import useSchemas from '../hooks/useSchemas';
 
-export default function useInitializeForm(formState, updateFormData) {
+export default function useInitializeForm(formState, updateFormData, formId) {
   const [formData, setFormData] = useState({ questionnaireId: null });
-  const [uiSchema, schema] = useSchemas();
+  const [uiSchema, schema] = useSchemas(formId);
 
   useEffect(
     () => {
       if (formData.questionnaireId !== null) {
         updateFormData(schema, uiSchema, {
           questionnaireId: schema.questionnaireId,
+          title: schema.formTitle,
         });
       }
     },

@@ -1,45 +1,120 @@
-import { useEffect, useState } from 'react';
-import questionnaireData from '../config/testQuestionnaire.json';
+import React, { useEffect, useState } from 'react';
+
+// this will not be necessary when Questionnaire json files are fetched from PGD
+import externalVaccine from '../config/externalVaccine.json';
+import trucks from '../config/trucks.json';
+import preVisitSummary from '../config/preVisitSummary.json';
+
 import currentOrPastDateUI from 'platform/forms-system/src/js/definitions/currentOrPastDate';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 
-export default function useSchemas() {
+export default function useSchemas(formId) {
   const [uiSchema, setUiSchema] = useState({});
   const [schema, setSchema] = useState({});
 
   useEffect(() => {
-    function createUISchema() {
+    // In real life this will be a call to get the Questionnaire JSON from PGD
+    let questionnaireData;
+    switch (formId) {
+      case 'trucks':
+        questionnaireData = trucks;
+        break;
+
+      case 'externalVaccine':
+        questionnaireData = externalVaccine;
+        break;
+
+      case 'preVisitSummary':
+        questionnaireData = preVisitSummary;
+        break;
+
+      default:
+        questionnaireData = externalVaccine;
+    }
+
+    // const FormatedString = props => {
+    //   if (spanRef.current) {
+    //     spanRef.current.innerHTML = props.textString;
+    //   }
+    //   return <span ref={spanRef} />;
+    //   // <>
+    //   //   <span>
+    //   //     <strong>{props.textString}</strong>
+    //   //   </span>
+    //   // </>
+    // };
+
+    function createSchemas() {
+      const schemaObject = {
+        type: 'object',
+        properties: {},
+        questionnaireId: questionnaireData.id,
+        formTitle: questionnaireData.title,
+        required: [],
+      };
+
       const uiSchemaObject = {};
       const order = [];
 
       questionnaireData.item.forEach(element => {
         const itemKey = `va-${element.linkId.toString()}`;
+
+        if (element.required) {
+          schemaObject.required.push(itemKey);
+        }
+
         uiSchemaObject[itemKey] = { 'ui:options': {} };
         order.push(itemKey);
+
         if (
           element.type === R4.Questionnaire_ItemTypeKind._date ||
           element.type === R4.Questionnaire_ItemTypeKind._dateTime ||
           element.type === R4.Questionnaire_ItemTypeKind._time
         ) {
           uiSchemaObject[itemKey] = currentOrPastDateUI(element.text);
+          schemaObject.properties[itemKey] = {
+            type: 'string',
+          };
         } else if (element.type === R4.Questionnaire_ItemTypeKind._choice) {
+          const subtype =
+            element.extension[0].valueCodeableConcept.coding[0].code;
+
+          // get keys array for schema
+          const keysArray = element.answerOption.map(option => {
+            return Object.keys(option)[0];
+          });
+
           const labels = {};
           element.answerOption.forEach(option => {
             const key = Object.keys(option)[0];
             labels[key] = option[key].valueString;
           });
-          if (
-            element.extension[0].valueCodeableConcept.coding[0].code ===
-            'radio-button'
-          ) {
+          if (subtype === 'radio-button') {
+            const values = Object.values(labels);
+            const widgetType =
+              values.length === 2 && (values[0] === 'Yes' && values[1] === 'No')
+                ? 'yesNo'
+                : 'radio';
             uiSchemaObject[itemKey] = {
               'ui:title': element.text,
-              'ui:widget': 'radio',
+              'ui:widget': widgetType,
               'ui:options': {
                 labels,
               },
             };
+            if (widgetType === 'radio') {
+              schemaObject.properties[itemKey] = {
+                type: 'string',
+                enum: keysArray,
+              };
+            } else {
+              // yes/no widget requires boolean type in schema
+              schemaObject.properties[itemKey] = {
+                type: 'boolean',
+              };
+            }
           } else {
+            // Select Group
             uiSchemaObject[itemKey] = {
               'ui:title': element.text,
             };
@@ -50,64 +125,6 @@ export default function useSchemas() {
                 [key]: { 'ui:title': labels[key] },
               };
             });
-          }
-        } else {
-          uiSchemaObject[itemKey] = {
-            'ui:title': element.text,
-          };
-        }
-        if (element.enableWhen !== undefined) {
-          uiSchemaObject[itemKey]['ui:options'] = {
-            ...uiSchemaObject[itemKey]['ui:options'],
-            expandUnder: `va-${element.enableWhen[0].question}`,
-            expandUnderCondition: formData => {
-              return (
-                formData !== undefined &&
-                formData === element.enableWhen[0].answerString
-              );
-            },
-          };
-        }
-      });
-      uiSchemaObject['ui:order'] = order;
-      setUiSchema(uiSchemaObject);
-      // console.log('UISCema: ', uiSchemaObject);
-      return uiSchema;
-    }
-    function createSchema() {
-      const schemaObject = {
-        type: 'object',
-        properties: {},
-        questionnaireId: questionnaireData.id,
-        required: [],
-      };
-      questionnaireData.item.forEach(element => {
-        const itemKey = `va-${element.linkId.toString()}`;
-
-        if (element.required) {
-          schemaObject.required.push(itemKey);
-        }
-        if (
-          element.type === R4.Questionnaire_ItemTypeKind._date ||
-          element.type === R4.Questionnaire_ItemTypeKind._dateTime ||
-          element.type === R4.Questionnaire_ItemTypeKind._time
-        ) {
-          schemaObject.properties[itemKey] = {
-            type: 'string',
-          };
-        } else if (element.type === R4.Questionnaire_ItemTypeKind._choice) {
-          const keysArray = element.answerOption.map(option => {
-            return Object.keys(option)[0];
-          });
-          const subtype =
-            element.extension[0].valueCodeableConcept.coding[0].code;
-          if (subtype === 'radio-button') {
-            schemaObject.properties[itemKey] = {
-              type: 'string',
-              enum: keysArray,
-            };
-          } else {
-            // Select Group
             const properties = {};
             keysArray.forEach(key => {
               properties[key] = { type: 'boolean' };
@@ -118,19 +135,61 @@ export default function useSchemas() {
             };
           }
         } else {
+          const [title, description] = element.text.split('|');
+
+          uiSchemaObject[itemKey] = {
+            'ui:title': title,
+          };
+          if (description !== undefined) {
+            uiSchemaObject[itemKey] = {
+              ...uiSchemaObject[itemKey],
+              'ui:description': () => (
+                <span
+                  // surely there is a better way??
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{
+                    __html: description,
+                  }}
+                />
+              ),
+              // FormatedString({ textString: description }),
+            };
+          }
           schemaObject.properties[itemKey] = {
             type: element.type,
           };
         }
-      });
-      // console.log('Schema Object Created: ', schemaObject);
+        if (element.enableWhen !== undefined) {
+          uiSchemaObject[itemKey]['ui:options'] = {
+            ...uiSchemaObject[itemKey]['ui:options'],
+            expandUnder: `va-${element.enableWhen[0].question}`,
+          };
+          const conditionKey = `va-${element.enableWhen[0].question}`;
 
+          if (schemaObject.properties[conditionKey].type !== 'boolean') {
+            uiSchemaObject[itemKey]['ui:options'] = {
+              ...uiSchemaObject[itemKey]['ui:options'],
+              expandUnderCondition: formData => {
+                // multiple expand under conditions are treated as an OR
+                // for future enhancement, FHIR Questionnaire supports specifying AND or OR:
+                // https://www.hl7.org/fhir/questionnaire-definitions.html#Questionnaire.item.enableBehavior
+                return element.enableWhen.some(
+                  elem => elem.answerString === formData,
+                );
+              },
+            };
+          }
+        }
+      });
+      uiSchemaObject['ui:order'] = order;
+      setUiSchema(uiSchemaObject);
       setSchema(schemaObject);
-      return schema;
+
+      // console.log('UISCema: ', uiSchemaObject);
+      // console.log('Schema Object Created: ', schemaObject);
     }
 
-    createSchema();
-    createUISchema();
+    createSchemas();
   }, []);
 
   return [uiSchema, schema];
