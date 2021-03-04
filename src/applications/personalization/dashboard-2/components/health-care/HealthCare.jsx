@@ -2,20 +2,26 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { loadPrescriptions as loadPrescriptionsAction } from '~/applications/personalization/dashboard/actions/prescriptions';
+import { fetchConfirmedFutureAppointments as fetchConfirmedFutureAppointmentsAction } from '~/applications/personalization/appointments/actions';
 
 import { isAuthenticatedWithSSOe } from '~/platform/user/authentication/selectors';
 import { mhvUrl } from '~/platform/site-wide/mhv/utilities';
 import Prescriptions from './Prescriptions';
+import Appointments from './Appointments';
 import HealthCareCard from './HealthCareCard';
 
 const HealthCare = ({
   loadPrescriptions,
   prescriptions,
+  appointments,
   authenticatedWithSSOe,
   canAccessRx,
+  fetchConfirmedFutureAppointments,
 }) => {
   useEffect(
     () => {
+      fetchConfirmedFutureAppointments();
+
       if (canAccessRx) {
         loadPrescriptions({
           active: true,
@@ -23,7 +29,7 @@ const HealthCare = ({
         });
       }
     },
-    [canAccessRx, loadPrescriptions],
+    [canAccessRx, loadPrescriptions, fetchConfirmedFutureAppointments],
   );
 
   return (
@@ -33,8 +39,12 @@ const HealthCare = ({
       <div className="vads-u-display--flex vads-u-flex-wrap--wrap">
         {/* Messages */}
         <HealthCareCard type="messages" />
+
         {/* Appointments */}
-        <HealthCareCard type="appointments" />
+        <Appointments
+          appointments={appointments}
+          authenticatedWithSSOe={authenticatedWithSSOe}
+        />
 
         {/* Prescriptions */}
         {canAccessRx && (
@@ -84,6 +94,7 @@ const mapStateToProps = state => {
   const prescriptions = rxState.prescriptions?.items;
 
   return {
+    appointments: state?.health?.appointmentsReducer?.appointments,
     prescriptions,
     canAccessRx,
     authenticatedWithSSOe: isAuthenticatedWithSSOe(state),
@@ -92,6 +103,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   loadPrescriptions: loadPrescriptionsAction,
+  fetchConfirmedFutureAppointments: fetchConfirmedFutureAppointmentsAction,
 };
 
 HealthCare.propTypes = {
